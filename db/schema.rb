@@ -109,7 +109,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_21_102243) do
     t.string "jti", null: false
     t.string "name"
     t.string "role"
-    t.string "first_name"
+    t.string "first_name", null: false
     t.string "last_name"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
