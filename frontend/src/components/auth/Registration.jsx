@@ -93,6 +93,7 @@ export default function Registration() {
             onSubmit={handleSubmit}
             
           >
+            {/* Added first and last name fields */}
             <div className="container">
             <div className="mb-5">
               <div>
@@ -107,7 +108,7 @@ export default function Registration() {
                     placeholder="Your First Name *"
                     data-sb-validations="required"
                   />
-                  {/* <div className="form-group"> */}
+                 
                   <input
                     className="form-control shadow"
                     id="lastName"
@@ -124,7 +125,7 @@ export default function Registration() {
                   >
                     A name is required.
                   </div>
-                {/* </div> */}
+                
                 </div>
                 <div className="form-group">
                   <input
@@ -167,13 +168,7 @@ export default function Registration() {
                 </div>
               </div>
             </div>
-            </div>
-
-            {/* <div className="d-none" id="submitSuccessMessage">
-                    <div className="text-center text-primary mb-3">Message sent!</div> 
-                    </div> */}
-
-            
+            </div>            
 
             <div className="text-center">
               <button
