@@ -1,5 +1,4 @@
 class Api::V1::KitItemsController < ApplicationController
-
   # GET /api/v1/kit_items_only
   def index_kit_items_only
     kit_items = KitItem.all
