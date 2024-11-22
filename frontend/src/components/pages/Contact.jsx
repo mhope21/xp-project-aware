@@ -4,7 +4,9 @@ import { API_URL } from '../../constants';
 
 
 function Contact({ user }) {
-    const [name, setName] = useState("");
+    // Added useState for first and last name
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [message, setMessage] = useState("");
@@ -18,7 +20,8 @@ function Contact({ user }) {
     useEffect(() => {
         // If the user is signed in, user name and email are auto populated in the form
         if (user) {
-            setName(user.name);
+            setFirstName(user.first_name);
+            setLastName(user.last_name);
             setEmail(user.email);
         }
     }, [user]);
@@ -27,7 +30,7 @@ function Contact({ user }) {
         e.preventDefault();
     
         // Basic validation that all fields are populated
-        if (!name || !email || !message) {
+        if (!firstName || !lastName || !email || !message) {
             setErrorMessages("All fields are required.");
             return;
         }
@@ -39,7 +42,7 @@ function Contact({ user }) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ name, email, phone, message }),
+                body: JSON.stringify({ firstName, lastName, email, phone, message }),
             });
     
             if (!response.ok) {
@@ -47,8 +50,10 @@ function Contact({ user }) {
                 setErrorMessages(errorData.errors.join(", "));
             } else {
                 // Handle success, clear the form
+                // Added code to clear first and last name
                 console.log(response.json)
-                setName("");
+                setFirstName("");
+                setLastName("");
                 setEmail("");
                 setPhone("");
                 setMessage("");
@@ -71,18 +76,25 @@ function Contact({ user }) {
                 </div>
                 <div className={errorMessages ? "text-center text-danger text-bold mb-3" : "d-none"} id="submitErrorMessage">
               {errorMessages && <p>{errorMessages}</p>}
-              </div>
-                
+              </div> 
+              {/* Added first name and last name input fields */}
                 <form id="contactForm" onSubmit={handleSubmit}>
                     <div className="row align-items-stretch mb-5">
                         <div className="col-md-6">
-                            <div className="form-group">
-                                <input className="form-control border border-dark" name="name" id="name" type="text"
-                                value={name} placeholder="Your Name *" autoComplete="name"
-                                onChange={(e) => setName(e.target.value)} data-sb-validations="required" />
-                                <div className="invalid-feedback" data-sb-feedback="name:required"
-                                >A name is required.</div>
+                            <div className="form-group d-flex justify-content-between">
+                                <input className="form-control border border-dark me-3" name="firstName" id="firstName" type="text"
+                                value={firstName} placeholder="Your First Name *" autoComplete="firstName"
+                                onChange={(e) => setFirstName(e.target.value)} data-sb-validations="required" />
+                                <div className="invalid-feedback" data-sb-feedback="firstName:required"
+                                >A first name is required.</div>
+                            
+                                <input className="form-control border border-dark" name="lastName" id="lastName" type="text"
+                                value={lastName} placeholder="Your Last Name *" autoComplete="lastName"
+                                onChange={(e) => setLastName(e.target.value)} data-sb-validations="required" />
+                                <div className="invalid-feedback" data-sb-feedback="lastName:required"
+                                >A last name is required.</div>
                             </div>
+          
                             <div className="form-group">
                                 <input className="form-control border border-dark" id="email" type="email" 
                                 name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your Email *" data-sb-validations="required,email" />

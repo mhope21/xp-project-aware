@@ -5,7 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  // Removed useState for name and added for firstName, lastName
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [registrationMessages, setRegistrationMessages] = useState("");
   const navigate = useNavigate();
   
@@ -24,7 +26,9 @@ export default function Registration() {
         user: {
           email,
           password,
-          name,
+          // Removed name, and added firstName and lastName
+          firstName,
+          lastName,
           role: "user",
         },
       };
@@ -49,7 +53,9 @@ export default function Registration() {
         // Clear input fields
       setEmail("");
       setPassword("");
-      setName("");
+      // Removed name field and added firstName and lastName field
+      setFirstName("");
+      setLastName("");
 
         navigate("/login")
       } else {
@@ -87,26 +93,38 @@ export default function Registration() {
             onSubmit={handleSubmit}
             
           >
-            <div className="container w-75">
+            <div className="container">
             <div className="mb-5">
               <div>
-                <div className="form-group">
+                <div className="form-group d-flex justify-content-between">
+                  <input
+                    className="form-control shadow me-3"
+                    id="firstName"
+                    type="text"
+                    name="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Your First Name *"
+                    data-sb-validations="required"
+                  />
+                  {/* <div className="form-group"> */}
                   <input
                     className="form-control shadow"
-                    id="name"
+                    id="lastName"
                     type="text"
-                    name="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your Name *"
+                    name="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Your Last Name *"
                     data-sb-validations="required"
                   />
                   <div
                     className="invalid-feedback"
-                    data-sb-feedback="name:required"
+                    data-sb-feedback="firstName:required"
                   >
                     A name is required.
                   </div>
+                {/* </div> */}
                 </div>
                 <div className="form-group">
                   <input
