@@ -112,7 +112,7 @@ function Donation({user}) {
         <div className="black-strip"></div>
         <section className="page-section" id="register">
         <h2 className="text-center section-heading text-uppercase text-dark" style={{ fontSize: 32, marginTop: 80 }}>Support Our Mission to Make Classrooms More Inclusive</h2>
-        <h3 class="text-center section-subheading" style={{ fontSize: 20 }}>Your donation helps provide free neurodiversity awareness kits to classrooms across the country.</h3>
+        <h3 className="text-center section-subheading" style={{ fontSize: 20 }}>Your donation helps provide free neurodiversity awareness kits to classrooms across the country.</h3>
         <div className="container mb-5 text-centered" style={{ width: 1000}}>
             <p>When you donate to Project Aware, you're helping create inclusive learning environments for students everywhere. Every contribution, big or small, allows us to provide free classroom kits filled with books, lesson plans, and materials that encourage neurodiversity awareness.</p>
 
@@ -138,16 +138,16 @@ function Donation({user}) {
         <form action="PAYMENT_PROCESSOR_URL" method="POST" id="registerForm" onSubmit={handleSubmit}>
             <div className="form-group">
                 {/* Added input fields for first name and last name*/}
-                <label for="firstName">First Name:</label>
-                <input type="text" className="form-control shadow" id="firstName" name="firstName" value={firstName} required/>
+                <label htmlFor="firstName">First Name:</label>
+                <input type="text" className="form-control shadow" id="firstName" name="firstName" value={firstName} readOnly/>
             </div>
             <div className="form-group">
-                <label for="lastName">Last Name:</label>
-                <input type="text" className="form-control shadow" id="lastName" name="lastName" value={lastName} required/>
+                <label htmlFor="lastName">Last Name:</label>
+                <input type="text" className="form-control shadow" id="lastName" name="lastName" value={lastName} readOnly/>
             </div>
             <div className="form-group">
-                <label for="email">Email:</label>
-                <input type="email" className="form-control shadow" id="email" name="email" value={email} required/>
+                <label htmlFor="email">Email:</label>
+                <input type="email" className="form-control shadow" id="email" name="email" value={email} readOnly/>
             </div>
             
            <div className="form-group">
@@ -258,7 +258,7 @@ function Donation({user}) {
                 </div>
             </div>
             <div className="text-center">
-            <button type="submit" class="btn btn-primary btn-lg text-uppercase mt-4 mb-3 shadow">Donate Now</button>
+            <button type="submit" className="btn btn-primary btn-lg text-uppercase mt-4 mb-3 shadow">Donate Now</button>
             </div>
         </form>
     </div>

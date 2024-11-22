@@ -26,9 +26,9 @@ export default function Registration() {
         user: {
           email,
           password,
-          // Removed name, and added firstName and lastName
-          firstName,
-          lastName,
+          // Removed name, and added firstName and lastName, mapped name details to column names
+          first_name: firstName,
+          last_name: lastName,
           role: "user",
         },
       };

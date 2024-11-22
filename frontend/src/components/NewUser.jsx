@@ -22,8 +22,8 @@ const NewUser = () => {
       const updatedUserData = {
         user: {
           // Add firstName and lastName to data sent
-          firstName,
-          lastName,
+          first_name: firstName,
+          last_name: lastName,
           email,
           password,
           role,
