@@ -136,18 +136,18 @@ function Donation({user}) {
               </div>
 
         <form action="PAYMENT_PROCESSOR_URL" method="POST" id="registerForm" onSubmit={handleSubmit}>
-            <div class="form-group">
+            <div className="form-group">
                 {/* Added input fields for first name and last name*/}
                 <label for="firstName">First Name:</label>
-                <input type="text" class="form-control shadow" id="firstName" name="firstName" value={firstName} required/>
+                <input type="text" className="form-control shadow" id="firstName" name="firstName" value={firstName} required/>
             </div>
-            <div class="form-group">
+            <div className="form-group">
                 <label for="lastName">Last Name:</label>
-                <input type="text" class="form-control shadow" id="lastName" name="lastName" value={lastName} required/>
+                <input type="text" className="form-control shadow" id="lastName" name="lastName" value={lastName} required/>
             </div>
-            <div class="form-group">
+            <div className="form-group">
                 <label for="email">Email:</label>
-                <input type="email" class="form-control shadow" id="email" name="email" value={email} required/>
+                <input type="email" className="form-control shadow" id="email" name="email" value={email} required/>
             </div>
             
            <div className="form-group">
