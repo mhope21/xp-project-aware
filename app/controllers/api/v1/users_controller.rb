@@ -38,14 +38,19 @@ before_action :set_user, only: [ :update, :show ]
     @user.destroy
     render json: { message: "User deleted successfully!" }
   end
-end
+  # Add profile action that renderd json: UserProfileSerializer and pass current_user as params for conditional statement in serializer
+  def profile
+    render json: UserProfileSerializer.new(current_user, { params: { current_user: current_user } })
+  end
 
-private
+  private
 
-def set_user
+  def set_user
   @user = User.find(params[:id])
-end
+  end
 
-def user_params
+  def user_params
   params.require(:user).permit(:first_name, :last_name, :role)
+  end
+  # Noticed my end was in the wrong place
 end
