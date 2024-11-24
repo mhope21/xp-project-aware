@@ -5,9 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   // Set useState for isTeacher with a default value of false
   const [isTeacher, setIsTeacher] = useState(false);
+  // Removed useState for name and added for firstName, lastName
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [registrationMessages, setRegistrationMessages] = useState("");
   const navigate = useNavigate();
   const [userData, setUserData] = useState({});
@@ -35,11 +37,13 @@ export default function Registration() {
       user: {
         email,
         password,
-        name,
         // if isTeacher is true, then role set as teacher, otherwise, user
         role: isTeacher ? "teacher" : "user",
-      },
-    };
+        // Removed name, and added firstName and lastName, mapped name details to column names
+        first_name: firstName,
+        last_name: lastName,
+        },
+      };
 
     setUserData(updatedUserData);
 
@@ -58,10 +62,12 @@ export default function Registration() {
         console.log("Registration successful!");
         setRegistrationMessages("Registration successful!");
 
-        // Clear input fields
-        setEmail("");
-        setPassword("");
-        setName("");
+       // Clear input fields
+      setEmail("");
+      setPassword("");
+      // Removed name field and added firstName and lastName field
+      setFirstName("");
+      setLastName("");
 
         navigate("/login");
       } else {
@@ -113,50 +119,56 @@ export default function Registration() {
             data-sb-form-api-token="API_TOKEN"
             onSubmit={handleSubmit}
           >
-            <div className="container w-75">
-              <div className="mb-5">
-                <div>
-                  <div className="form-group">
-                    <input
-                      className="form-control shadow"
-                      id="name"
-                      type="text"
-                      name="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Your Name *"
-                      data-sb-validations="required"
-                    />
-                    <div
-                      className="invalid-feedback"
-                      data-sb-feedback="name:required"
-                    >
-                      A name is required.
-                    </div>
+            {/* Added first and last name fields */}
+            <div className="container">
+            <div className="mb-5">
+              <div>
+                <div className="form-group d-flex justify-content-between">
+                  <input
+                    className="form-control shadow me-3"
+                    id="firstName"
+                    type="text"
+                    name="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Your First Name *"
+                    data-sb-validations="required"
+                  />
+                 
+                  <input
+                    className="form-control shadow"
+                    id="lastName"
+                    type="text"
+                    name="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Your Last Name *"
+                    data-sb-validations="required"
+                  />
+                  <div
+                    className="invalid-feedback"
+                    data-sb-feedback="firstName:required"
+                  >
+                    A name is required.
                   </div>
-                  <div className="form-group">
-                    <input
-                      className="form-control shadow"
-                      id="email"
-                      type="email"
-                      name="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Your Email *"
-                      data-sb-validations="required,email"
-                    />
-                    <div
-                      className="invalid-feedback"
-                      data-sb-feedback="email:required"
-                    >
-                      An email is required.
-                    </div>
-                    <div
-                      className="invalid-feedback"
-                      data-sb-feedback="email:email"
-                    >
-                      Email is not valid.
-                    </div>
+                
+                </div>
+                <div className="form-group">
+                  <input
+                    className="form-control shadow"
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Your Email *"
+                    data-sb-validations="required,email"
+                  />
+                  <div
+                    className="invalid-feedback"
+                    data-sb-feedback="email:required"
+                  >
+                    An email is required.
                   </div>
                   <div className="form-group mb-md-0">
                     <input
@@ -175,6 +187,7 @@ export default function Registration() {
                     >
                       A password is required.
                     </div>
+
                     {/* Added checkbox for teacher role */}
                     <div className="form-check">
                       <input
