@@ -156,7 +156,7 @@ export default function Registration() {
                 </div>
                 <div className="form-group">
                   <input
-                    className="form-control shadow"
+                    className="form-control shadow mb-4"
                     id="email"
                     type="email"
                     name="email"
