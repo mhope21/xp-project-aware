@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "securerandom"
+
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -306,12 +308,15 @@ Devise.setup do |config|
 
   # ==> Configuration for :registerable
 
+  jwt_secret = ENV["DEVISE_JWT_SECRET_KEY"] || SecureRandom.hex(20) unless Rails.env.production?
+  jwt_secret ||= Rails.application.credentials.fetch(:secret_key_base)
+
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
   # Sets JWT in header for login and logout and auto expires token in 120 minutes, can set shorter for deployment.
   config.jwt do |jwt|
-    jwt.secret = ENV["DEVISE_JWT_SECRET_KEY"] || Rails.application.credentials.fetch(:secret_key_base)
+    jwt.secret = jwt_secret
     jwt.dispatch_requests = [
       [ "POST", %r{^/login$} ]
     ]
