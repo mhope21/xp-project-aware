@@ -107,7 +107,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_22_015154) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "jti", null: false
-    t.string "name"
     t.string "role"
     t.string "first_name"
     t.string "last_name"
