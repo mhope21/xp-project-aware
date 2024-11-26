@@ -17,15 +17,7 @@ export default function Registration() {
 
   // Toggles the isTeacher state and logs to console
   const handleClick = () => {
-    setIsTeacher((prevIsTeacher) => {
-      const newIsTeacher = !prevIsTeacher;
-      if (newIsTeacher) {
-        console.log("I am a Teacher");
-      } else {
-        console.log("I am not a teacher");
-      }
-      return newIsTeacher;
-    });
+    setIsTeacher((prevIsTeacher) => !prevIsTeacher);
   };
   // Handles initial signup, sets default role as user since only admin can assign a user as admin. Uses a POST action to sign up new user.
   const handleSubmit = async (event) => {
