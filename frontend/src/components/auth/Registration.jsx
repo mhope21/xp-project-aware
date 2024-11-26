@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // Set useState for isTeacher with a default value of false
   const [isTeacher, setIsTeacher] = useState(false);
   // Removed useState for name and added for firstName, lastName
   const [firstName, setFirstName] = useState("");
