@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function Registration() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [isTeacher, setIsTeacher] = useState(false);
   // Removed useState for name and added for firstName, lastName
   const [firstName, setFirstName] = useState("");
@@ -16,15 +17,9 @@ export default function Registration() {
 
   // Toggles the isTeacher state and logs to console
   const handleClick = () => {
-    setIsTeacher((prevIsTeacher) => {
-      const newIsTeacher = !prevIsTeacher;
-      if (newIsTeacher) {
-        console.log("I am a Teacher");
-      } else {
-        console.log("I am not a teacher");
-      }
-      return newIsTeacher;
-    });
+
+    setIsTeacher((prevIsTeacher) => !prevIsTeacher);
+
   };
   // Handles initial signup, sets default role as user since only admin can assign a user as admin. Uses a POST action to sign up new user.
   const handleSubmit = async (event) => {
@@ -41,8 +36,10 @@ export default function Registration() {
         // Removed name, and added firstName and lastName, mapped name details to column names
         first_name: firstName,
         last_name: lastName,
+
       },
     };
+
 
     setUserData(updatedUserData);
 
@@ -61,12 +58,14 @@ export default function Registration() {
         console.log("Registration successful!");
         setRegistrationMessages("Registration successful!");
 
+
         // Clear input fields
         setEmail("");
         setPassword("");
         // Removed name field and added firstName and lastName field
         setFirstName("");
         setLastName("");
+
 
         navigate("/login");
       } else {
@@ -151,6 +150,7 @@ export default function Registration() {
                       A name is required.
                     </div>
                   </div>
+
                   <div className="form-group">
                     {/* Add space between email and password field */}
                     <input
@@ -202,10 +202,12 @@ export default function Registration() {
                           <strong>I am a teacher</strong>
                         </label>
                       </div>
+
                     </div>
                   </div>
                 </div>
               </div>
+
 
               <div className="text-center">
                 <button
@@ -219,6 +221,7 @@ export default function Registration() {
                   <p>Already signed up? Login now.</p>
                 </Link>
               </div>
+
             </div>
           </form>
         </div>
