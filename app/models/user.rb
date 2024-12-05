@@ -7,7 +7,7 @@ class User < ApplicationRecord
 
   # Defines available roles and sets default role as user.
   ROLES = %w[admin user].freeze
-  has_many :kit_requests
+  has_many :orders
   has_many :donations, -> { where(canceled: false) }
   has_many :contacts
 
