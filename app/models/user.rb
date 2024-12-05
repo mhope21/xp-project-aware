@@ -6,7 +6,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: self
 
   # Defines available roles and sets default role as user.
-  ROLES = %w[admin user].freeze
+  ROLES = %w[admin user teacher].freeze
+
   has_many :orders
   has_many :donations, -> { where(canceled: false) }
   has_many :contacts
