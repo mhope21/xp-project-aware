@@ -17,6 +17,10 @@ class User < ApplicationRecord
   validates :last_name, presence: true
   validates :role, inclusion: { in: ROLES }
 
+  def name
+    "#{first_name} #{last_name}"
+  end
+
   def set_default_role
     self.role ||= "user"
   end
