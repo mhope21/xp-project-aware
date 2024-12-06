@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-before_action :authenticate_user!
+before_action :authenticate_user!, except: [ :index, :show ]
 load_and_authorize_resource
 before_action :set_user, only: [ :update, :show ]
 
