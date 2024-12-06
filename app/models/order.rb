@@ -1,6 +1,7 @@
 class Order < ApplicationRecord
   belongs_to :kit
   belongs_to :user
+  has_one :address, as: :addressable
 
   # Validates that phone number is in the right format
   validates :phone, presence: true, format: { with: /\A\d{3}-\d{3}-\d{4}\z/, message: "must be in the format 'XXX-XXX-XXXX'" }

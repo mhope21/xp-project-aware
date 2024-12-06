@@ -298,3 +298,4 @@ Order.create([
   { school_year: '2024-2025', kit: discovery_kit },
   { school_year: '2024-2025', kit: empowerment_kit }
 ])
+
