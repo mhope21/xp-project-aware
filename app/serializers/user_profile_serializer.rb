@@ -1,17 +1,12 @@
-class UserProfileSerializer < ActiveModel::Serializer
+class UserProfileSerializer
+  include JSONAPI::Serializer
   attributes :name, :email
 
-  # handle nil values
   attribute :donations do |user|
-    user.donations ? DonationSerializer.new(user.donations) : []
+    user.donations ? user.donations.map { |donation| DonationSerializer.new(donation).serializable_hash } : []
   end
 
-  attribute :orders, if: :include_orders? do |user|
-    user.orders ? OrderSerializer.new(user.orders) : []
-  end
-
-  # check if the user is a teacher
-  def include_orders?(user, params)
-    params[:current_user].teacher?
+  attribute :orders do |user|
+    user.orders ? user.orders.map { |order| OrderSerializer.new(order).serializable_hash } : []
   end
 end

@@ -1,4 +1,5 @@
 class Api::V1::UsersController < ApplicationController
+before_action :authenticate_user!
 load_and_authorize_resource
 before_action :set_user, only: [ :update, :show ]
 
@@ -30,7 +31,7 @@ before_action :set_user, only: [ :update, :show ]
 
   # Add profile action and pass current_user as params
   def profile
-    render json: UserProfileSerializer.new(current_user, { params: { current_user: current_user } })
+    render json: UserProfileSerializer.new(current_user, { params: { current_user: current_user } }).serializable_hash
   end
 
   private

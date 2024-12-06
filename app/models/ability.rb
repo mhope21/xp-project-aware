@@ -17,6 +17,8 @@ class Ability
     else
       # Allow users to update their own profile
       can :update, User, id: user.id
+      can :read, User, id: user.id
+      can :profile, User, id: user.id
       can :read, Order, user_id: user.id # Users can read their own kit requests
       can :create, Order # Users can create new kit requests
       can [ :update ], Order, user_id: user.id # Users can update their own kit requests
