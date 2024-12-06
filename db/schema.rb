@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_06_155422) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_06_182303) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -44,10 +44,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_06_155422) do
     t.string "city", null: false
     t.string "state", null: false
     t.string "postal_code", null: false
-    t.integer "addressable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["addressable_id"], name: "index_addresses_on_addressable_id"
+    t.string "addressable_type", null: false
+    t.integer "addressable_id", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -128,7 +129,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_06_155422) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "addresses", "addressables"
   add_foreign_key "contacts", "users"
   add_foreign_key "donations", "users"
   add_foreign_key "orders", "kits"
