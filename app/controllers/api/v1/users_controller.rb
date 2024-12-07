@@ -1,7 +1,8 @@
 class Api::V1::UsersController < ApplicationController
 before_action :authenticate_user!, except: [ :index, :show ]
-load_and_authorize_resource
 before_action :set_user, only: [ :update, :show ]
+load_and_authorize_resource
+
 
   # GET /api/v1/users
   def index
@@ -16,7 +17,10 @@ before_action :set_user, only: [ :update, :show ]
 
   # PATCH/PUT api/v1/users/1
   def update
-    if @user.update(user_params)
+    @user = User.find(params[:id])
+    if params[:user].key?(:role)
+      render json: { error: "You are not authorized to change the role" }, status: :forbidden
+    elsif @user.update(user_params)
       render json: { message: "User updated successfully!" }
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -41,6 +45,6 @@ before_action :set_user, only: [ :update, :show ]
   end
 
   def user_params
-  params.require(:user).permit(:first_name, :last_name, :role)
+  params.require(:user).permit(:first_name, :last_name)
   end
 end

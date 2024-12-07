@@ -15,7 +15,6 @@ class Ability
       can :manage, Order
       can :manage, Donation
     else
-      # Allow users to update their own profile
       can :update, User, id: user.id
       can :profile, User, id: user.id
       can :read, Order, user_id: user.id # Users can read their own kit requests
