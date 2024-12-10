@@ -28,6 +28,9 @@ function Kits() {
       } catch (e) {
         setError("An error occurred.");
         console.log("An error occurred", e);
+        setLoggedIn(false);
+        setUser(null);
+        localStorage.removeItem('jwt');
       } finally {
         setLoading(false);
       }
