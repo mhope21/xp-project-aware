@@ -65,6 +65,9 @@ const NewUser = () => {
         
         setRegistrationMessages("An error occurred: " + error.message);
         console.log(error.message);
+        setLoggedIn(false);
+        setUserData(null);
+        localStorage.removeItem('jwt');
       }
     };
   

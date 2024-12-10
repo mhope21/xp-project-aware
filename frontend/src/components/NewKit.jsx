@@ -68,6 +68,9 @@ const NewKit = () => {
       } catch (error) {
         
         setMessages("An error occurred: " + error.message);
+        setLoggedIn(false);
+        setUserData(null);
+        localStorage.removeItem('jwt');
         console.log(error.message);
       }
     };
