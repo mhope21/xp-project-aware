@@ -1,6 +1,6 @@
 import './App.css';
 import { useContext } from 'react';
-import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import PageWrapper from './components/PageWrapper';
 import Home from './components/pages/Home';
 import About from './components/pages/About';
@@ -31,6 +31,7 @@ import { AuthContext } from './components/auth/AuthContext';
 
 function App() {
   const { loggedIn, user } = useContext(AuthContext);
+
 
   return (
     // Sets routes for app navigation and passes props to the necessary components

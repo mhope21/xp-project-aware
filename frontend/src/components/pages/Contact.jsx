@@ -55,6 +55,9 @@ function Contact() {
             }
         } catch (error) {
             setErrorMessages("An error occurred. Please try again.");
+            setLoggedIn(false);
+            setUser(null);
+            localStorage.removeItem('jwt');
         }
     };
 
