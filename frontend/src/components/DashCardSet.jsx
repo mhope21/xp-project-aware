@@ -4,7 +4,7 @@ import { API_URL } from '../constants';
 
 const DashCardSet = () => {
   const [userCount, setUserCount] = useState(0);
-  const [kitRequestCount, setKitRequestCount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
   const [totalDonations, setTotalDonations] = useState(0);
   const dashUrl = `${API_URL}/admin_dashboard`
 
@@ -22,7 +22,7 @@ const DashCardSet = () => {
         if (response.ok) {
           const data = await response.json();
           setUserCount(data.users_count);
-          setKitRequestCount(data.kit_requests_count);
+          setOrderCount(data.orders_count);
           setTotalDonations(parseFloat(data.total_donations));
         } else {
           console.error('Failed to fetch data:', response.statusText);
@@ -42,7 +42,7 @@ const DashCardSet = () => {
         <DashboardCard title="Total # of Registered Users" value={userCount} color="success" />
       </div>
       <div className="col-md-4 mb-3">
-        <DashboardCard title="Total # of Kit Requests" value={kitRequestCount} color="info" />
+        <DashboardCard title="Total # of Orders" value={orderCount} color="info" />
       </div>
       <div className="col-md-4 mb-3">
         <DashboardCard title="Total Donations" value={`$${totalDonations.toFixed(2)}`} color="warning" />
