@@ -21,16 +21,21 @@ const CurrentUser = ({ setLoggedIn, setUser, user }) => {
                 } else {
                     console.log("No user logged in.")
                     setUser(null);
-                    const error = await response.json()
+                    setLoggedIn(false);
+                    localStorage.removeItem('jwt');
+                    const error = await response.json();
                     console.log(error)
                 }
             } catch (error) {
                 console.error("Error fetching current user");
+                setUser(null);
+                setLoggedIn(false);
+                localStorage.removeItem('jwt');
             }
         }};
 
         fetchUser();
-    }, [setLoggedIn, user, setUser, userUrl]);
+    }, [setLoggedIn, user, setUser ]);
     // Stretch Goal: Add admin dashboard
     if (!user) return null;
 
@@ -40,7 +45,7 @@ const CurrentUser = ({ setLoggedIn, setUser, user }) => {
             <p className='text-white bold' style={{ marginRight: 100 }}>
             <em>Welcome, {user.first_name}!</em>
             </p>
-            {user.role === 'admin' && <Link to="/admin"><i className="fas fa-user-shield"></i>
+            {user && user.role === 'admin' && <Link to="/admin"><i className="fas fa-user-shield"></i>
                 </Link>}
             {user.role != 'admin' && <Link to={`/profile/${user.id}`}><i className='fas fa-user'></i></Link>}   
         </div>

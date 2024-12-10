@@ -56,15 +56,19 @@ export default function Logout({ setLoggedIn, setUser }) {
         const message = response.json();
         setErrorMessage(message.error.message);
         console.error(errorMessage);
-        alert("Your session has expired, please sign in again.");
+        localStorage.removeItem("jwt");
         setLoggedIn(false);
         setUser(null);
-        navigate("/login")
+        navigate("/login");
+        alert("Your session has expired, please sign in again.");
 
     }
 
     } catch (error) {
         console.error("An error occurred:", error.message);
+        localStorage.removeItem("jwt");
+        setUser(null);
+        setLoggedIn(false);
         alert(error.message)
     }
     
