@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../constants';
 
 
-function Contact({ user }) {
+function Contact({ user, setLoggedIn, setUser }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
@@ -58,6 +58,9 @@ function Contact({ user }) {
             }
         } catch (error) {
             setErrorMessages("An error occurred. Please try again.");
+            setLoggedIn(false);
+            setUser(null);
+            localStorage.removeItem('jwt');
         }
     };
 

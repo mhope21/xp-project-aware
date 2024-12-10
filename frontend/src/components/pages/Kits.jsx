@@ -22,7 +22,6 @@ function Kits({user, setUser}) {
         const response = await fetch(kitsUrl);
         if (response.ok) {
           const json = await response.json();
-          console.log("Fetched kits data:", json);
           setKits(json);
         } else {
           throw response;
@@ -30,6 +29,9 @@ function Kits({user, setUser}) {
       } catch (e) {
         setError("An error occurred.");
         console.log("An error occurred", e);
+        setLoggedIn(false);
+        setUser(null);
+        localStorage.removeItem('jwt');
       } finally {
         setLoading(false);
       }
@@ -79,13 +81,9 @@ function Kits({user, setUser}) {
             {error && <p>{error}</p>}
 
             <div className="row d-flex p-2">
-              {kits.map(
-                (
-                  kit // Map through the list of kits
-                ) => (
-                  <>
-                    <div className="col-lg-6 col-sm-6 mb-4">
-                      <div className="portfolio-item" key={kit.id}>
+              {kits.map(kit => (
+                    <div className="col-lg-6 col-sm-6 mb-4" key={kit.id}>
+                      <div className="portfolio-item">
                         <a
                           className="portfolio-link"
                           data-bs-toggle="modal"
@@ -121,7 +119,7 @@ function Kits({user, setUser}) {
                         <div
                           className="portfolio-modal modal fade"
                           id={`portfolioModal${kit.id}`}
-                          tabindex="-1"
+                          tabIndex="-1"
                           role="dialog"
                           aria-hidden="true"
                           key={kit.id}
@@ -227,7 +225,6 @@ function Kits({user, setUser}) {
                         </div>
                       </div>
                     </div>
-                  </>
                 )
               )}
             </div>

@@ -3,7 +3,7 @@ import { API_URL, API_URL2 } from "../../constants";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
-function RequestKit({ user }) {
+function RequestKit({ user, setLoggedIn, setUser }) {
   const location = useLocation();
   const kitId = location.state?.kitId || "";
 
@@ -88,6 +88,9 @@ function RequestKit({ user }) {
       // Handle network or other errors
       setRequestMessages("An error occurred: " + error.message);
       console.log(error);
+      setLoggedIn(false);
+      setUser(null);
+      localStorage.removeItem('jwt');
     }
   };
 
