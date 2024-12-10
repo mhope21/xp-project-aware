@@ -52,7 +52,6 @@ export default function Login({setLoggedIn}) {
       if (jwt) {
         // Store the JWT in local storage 
         localStorage.setItem('jwt', jwt.split(' ')[1]);
-        console.log(localStorage.getItem('jwt'));
       }
 
           console.log("Login successful!");
@@ -69,7 +68,10 @@ export default function Login({setLoggedIn}) {
         } else {
           // Handle registration error
           const errorData = await response.json();
-          setLoginMessages(errorData.status.message || "Login failed");
+          setLoginMessages('Login failed. Please check your credentials and try again.');
+          setLoggedIn(false);
+          setUserData(null);
+          localStorage.removeItem('jwt');
           
 
       // Access the status and message in the JSON response
@@ -79,7 +81,10 @@ export default function Login({setLoggedIn}) {
      } catch (error) {
         // Handle other errors
         console.log("An error occurred:", error)
-        setLoginMessages(error)
+        setLoginMessages("Unable to connect to the server. Please try again later.");
+        setUserData(null);
+        setLoggedIn(false);
+        localStorage.removeItem("jwt");
       }
     };
   

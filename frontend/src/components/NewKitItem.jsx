@@ -60,6 +60,9 @@ const NewKitItem = () => {
         
         setMessages("An error occurred: " + error.message);
         console.log(error.message);
+        setLoggedIn(false);
+        setUserData(null);
+        localStorage.removeItem('jwt');
       }
     };
 

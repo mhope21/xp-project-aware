@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DashboardCard from './DashboardCard'; 
 import { API_URL } from '../constants';
 
-const DashCardSet = () => {
+const DashCardSet = ({ setUser, setLoggedIn }) => {
   const [userCount, setUserCount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [totalDonations, setTotalDonations] = useState(0);
@@ -29,6 +29,9 @@ const DashCardSet = () => {
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        setLoggedIn(false);
+        setUser(null);
+        localStorage.removeItem('jwt');
       }
     };
 

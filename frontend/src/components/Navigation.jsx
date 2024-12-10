@@ -13,6 +13,9 @@ function Navigation({ loggedIn, setLoggedIn, setUser, user }) {
     if (!user) {
         // If user not logged in, navigate to login page
         alert("You must be logged in to make a donation. Please log in or register if you haven't already.");
+        setLoggedIn(false);
+        setUserData(null);
+        localStorage.removeItem('jwt');
         navigate("/login")
     } else {
         // If user is logged in, navigate to the donation page
