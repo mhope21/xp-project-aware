@@ -17,10 +17,7 @@ load_and_authorize_resource
 
   # PATCH/PUT api/v1/users/1
   def update
-    @user = User.find(params[:id])
-    if params[:user].key?(:role)
-      render json: { error: "You are not authorized to change the role" }, status: :forbidden
-    elsif @user.update(user_params)
+    if @user.update(user_params)
       render json: { message: "User updated successfully!" }
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
@@ -35,16 +32,16 @@ load_and_authorize_resource
 
   # Add profile action and pass current_user as params
   def profile
-    render json: UserProfileSerializer.new(current_user, { params: { current_user: current_user } }).serializable_hash
+    render json: UserProfileSerializer.new(current_user)
   end
 
   private
 
   def set_user
-  @user = User.find(params[:id])
+    @user = User.find(params[:id])
   end
 
   def user_params
-  params.require(:user).permit(:first_name, :last_name)
+    params.require(:user).permit(:first_name, :last_name)
   end
 end
