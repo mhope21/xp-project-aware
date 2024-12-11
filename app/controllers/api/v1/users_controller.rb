@@ -16,7 +16,6 @@ load_and_authorize_resource
 
   # PATCH/PUT api/v1/users/1
   def update
-    @user = User.find(params[:id])
     if params[:user].key?(:role)
       render json: { error: "You are not authorized to change the role" }, status: :forbidden
     elsif @user.update(user_params)
