@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // Passed in the various api endpoints for the tables
-const DataEndpoint = ({ userUrl, kitsUrl, kitItemsUrl,  donationUrl, contactsUrl, kitRequestsUrl, setSelectedEndpoint }) => {  
+const DataEndpoint = ({ userUrl, kitsUrl, kitItemsUrl,  donationUrl, contactsUrl, ordersUrl, setSelectedEndpoint }) => {  
 
   
   return (
@@ -60,11 +60,11 @@ const DataEndpoint = ({ userUrl, kitsUrl, kitItemsUrl,  donationUrl, contactsUrl
                 </Link>
             </li>
               <li className="mb-2">
-                <Link to="#table"  className="nav-link px-3" onClick={() => setSelectedEndpoint(kitRequestsUrl)}>
+                <Link to="#table"  className="nav-link px-3" onClick={() => setSelectedEndpoint(ordersUrl)}>
                   <span className="me-2">
                     <i className="bi bi-clipboard-check-fill"></i>
                   </span>
-                  <span>Kit Requests</span>
+                  <span>Orders</span>
                 </Link>
               </li>
               <li className="mb-2">
