@@ -103,7 +103,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact user={user} />} />
             <Route path="/kits" element={<Kits user={user} setUser={setUser} />} />
-            <Route path="/kit_requests" element={<RequestKit user={user} setUser={setUser} />} />
+            <Route path="/orders" element={<RequestKit user={user} setUser={setUser} />} />
             <Route path="/registration" element={<Registration />} />
             <Route path="/login" element={<Login setLoggedIn={setLoggedIn} />}/>
             <Route path="/confirmation" element={<Confirmation user={user}/> } />

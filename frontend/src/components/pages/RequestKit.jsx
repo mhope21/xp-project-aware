@@ -7,7 +7,7 @@ function RequestKit({ user }) {
   const location = useLocation();
   const kitId = location.state?.kitId || "";
 
-  const [requestMessages, setRequestMessages] = useState("");
+  const [orderMessages, setOrderMessages] = useState("");
 
   // Predefine name, email, and kitId
   const [firstName, setFirstName] = useState(user ? user.first_name : "");
@@ -21,7 +21,7 @@ function RequestKit({ user }) {
   const [schoolAddress, setSchoolAddress] = useState("");
   const [comments, setComments] = useState("");
   const [schoolYear, setSchoolYear] = useState("");
-  const requestKitUrl = `${API_URL}/kit_requests`;
+  const ordersUrl = `${API_URL}/orders`;
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ function RequestKit({ user }) {
     e.preventDefault();
 
     const formData = {
-      kit_request: {
+      order: {
         phone,
         school_address: schoolAddress,
         school_name: schoolName,
@@ -54,7 +54,7 @@ function RequestKit({ user }) {
 
     try {
       // Send POST request to registration endpoint
-      const response = await fetch(requestKitUrl, {
+      const response = await fetch(ordersUrl, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
@@ -65,8 +65,8 @@ function RequestKit({ user }) {
 
       if (response.ok) {
         // Handle successful registration
-        console.log("Request saved.");
-        alert("Your request has been processed.");
+        console.log("Order saved.");
+        alert("Your order has been processed.");
 
         // Clear input fields
         setPhone("");
@@ -82,11 +82,11 @@ function RequestKit({ user }) {
         const errorMessages = errorData.errors.map((error) => {
           return error.replace("School year ", "");
         });
-        setRequestMessages(errorMessages.join(", ") || "Request failed");
+        setOrderMessages(errorMessages.join(", ") || "Order failed");
       }
     } catch (error) {
       // Handle network or other errors
-      setRequestMessages("An error occurred: " + error.message);
+      setOrderMessages("An error occurred: " + error.message);
       console.log(error);
     }
   };
@@ -108,19 +108,19 @@ function RequestKit({ user }) {
           >
             <div className="text-center mb-5">
               <h4 className="text-center section-heading text-uppercase text-dark">
-                Request A Kit
+                Order A Kit
               </h4>
             </div>
 
             <div
               className={
-                requestMessages
+                orderMessages
                   ? "text-center text-dark text-bold mb-3"
                   : "d-none"
               }
               id="submitErrorMessage"
             >
-              {requestMessages && <p>{requestMessages}</p>}
+              {orderMessages && <p>{orderMessages}</p>}
             </div>
 
             <form
@@ -258,7 +258,7 @@ function RequestKit({ user }) {
                       />
                     </div>
                     <div className="form-group form-group-textarea mb-md-0">
-                      <label htmlFor="comments">Request Comments:</label>
+                      <label htmlFor="comments">Order Comments:</label>
                       <textarea
                         className="form-control shadow mb-5"
                         id="comments"

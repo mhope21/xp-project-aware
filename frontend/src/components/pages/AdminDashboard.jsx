@@ -15,7 +15,7 @@ const AdminDashboard = ({ user }) => {
   const kitItemsUrl = `${API_URL}/kit_items_only`;
   const donationUrl = `${API_URL}/donations`;
   const contactsUrl = `${API_URL}/contacts`;
-  const kitRequestsUrl = `${API_URL}/kit_requests`;
+   const ordersUrl = `${API_URL}/orders`;
   const adminUserUrl = `${ADMIN_URL}/users`
   const [cardHeader, setCardHeader] = useState("Data Tables");
   const [record, setRecord] = useState(null);
@@ -48,16 +48,16 @@ const AdminDashboard = ({ user }) => {
       { key: "name", label: "Kit Item Name" },
       { key: "description", label: "Description" },
     ],
-    kitRequestsUrl: [
-      { key: "id", label: "Kit Request Id" },
-      { key: "request_name", label: "User Name" },
-      { key: "request_email", label: "User Email" },
-      { key: "requested_kit", label: "Kit Name" },
+    ordersUrl: [
+      { key: "id", label: "Order Id" },
+      { key: "order_name", label: "Order Name" },
+      { key: "order_email", label: "Order Email" },
+      { key: "ordered_kit", label: "Kit Name" },
       { key: "kit_id", label: "Kit Id" },
       { key: "school_name", label: "School Name" },
       { key: "school_address", label: "School Address" },
       { key: "school_year", label: "School Year" },
-      { key: "created_at", label: "Date Requested" },
+      { key: "created_at", label: "Date Ordered" },
     ],
     donationUrl: [
       { key: "id", label: "Donation Id" },
@@ -103,8 +103,8 @@ const AdminDashboard = ({ user }) => {
       case 'donation':
         url = `${API_URL}/donations/${id}`;
         break;
-      case 'kitRequest':
-        url = `${API_URL}/kit_requests/${id}`;
+      case 'order':
+        url = `${API_URL}/orders/${id}`;
         break;
       case 'contact':
         url = `${API_URL}/contacts/${id}`;
@@ -159,11 +159,11 @@ const AdminDashboard = ({ user }) => {
       handleShow={(item) => handleShow(item, "kitItem")}
     />
   );
-  const KitRequestsTable = () => (
+  const OrdersTable = () => (
     <DashTable
-      header={headers.kitRequestsUrl}
-      apiEndpoint={kitRequestsUrl}
-      handleShow={(item) => handleShow(item, "kitRequest")}
+      header={headers.ordersUrl}
+      apiEndpoint={ordersUrl}
+      handleShow={(item) => handleShow(item, "order")}
     />
   );
   const DonationsTable = () => (
@@ -197,8 +197,8 @@ const AdminDashboard = ({ user }) => {
       case donationUrl:
         setCardHeader("Donations Table");
         break;
-      case kitRequestsUrl:
-        setCardHeader("Kit Requests Table");
+      case ordersUrl:
+        setCardHeader("Orders Table");
         break;
       case contactsUrl:
         setCardHeader("Contacts Table");
@@ -274,7 +274,7 @@ const AdminDashboard = ({ user }) => {
           kitItemsUrl={kitItemsUrl}
           donationUrl={donationUrl}
           contactsUrl={contactsUrl}
-          kitRequestsUrl={kitRequestsUrl}
+          ordersUrl={ordersUrl}
           setSelectedEndpoint={setSelectedEndpoint}
         />
       </div>
@@ -284,7 +284,7 @@ const AdminDashboard = ({ user }) => {
           <div className="row">
             <div className="col-md-6 mb-3">
               <div className="card">
-                <div className="card-header">Kit Requests (January - July)</div>
+                <div className="card-header">Orders (January - July)</div>
                 <div className="card-body">
                   <SampleChart />
                 </div>
@@ -328,12 +328,12 @@ const AdminDashboard = ({ user }) => {
                             handleShow={(item) => handleShow(item, "kitItem")}
                           />
                         )}
-                        {selectedEndpoint === kitRequestsUrl && (
+                        {selectedEndpoint === ordersUrl && (
                           <DashTable
-                            headers={headers.kitRequestsUrl}
-                            apiEndpoint={kitRequestsUrl}
+                            headers={headers.ordersUrl}
+                            apiEndpoint={ordersUrl}
                             handleShow={(item) =>
-                              handleShow(item, "kitRequest")
+                              handleShow(item, "order")
                             }
                           />
                         )}

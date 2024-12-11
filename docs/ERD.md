@@ -61,7 +61,7 @@ erDiagram
         int kit_item_id FK
     }
 
-    KIT_REQUESTS {
+    ORDERS {
         int id PK
         int kit_id FK
         int user_id FK
@@ -103,10 +103,10 @@ erDiagram
 
     USERS ||--o{ CONTACTS : "has many"
     USERS ||--o{ DONATIONS : "has many"
-    USERS ||--o{ KIT_REQUESTS : "submits"
+    USERS ||--o{ ORDERS : "submits"
     KITS ||--o{ KIT_ITEMS_KITS : "contains"
     KIT_ITEMS ||--o{ KIT_ITEMS_KITS : "is contained in"
-    KITS ||--o{ KIT_REQUESTS : "is requested by"
+    KITS ||--o{ ORDERS : "is requested by"
     ACTIVE_STORAGE_BLOBS ||--o{ ACTIVE_STORAGE_ATTACHMENTS : "is attached to"
     ACTIVE_STORAGE_BLOBS ||--o{ ACTIVE_STORAGE_VARIANT_RECORDS : "has variants"
 
