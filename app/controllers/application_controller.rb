@@ -5,6 +5,6 @@ class ApplicationController < ActionController::API
   end
 
   rescue_from ActionController::UnpermittedParameters do |exception|
-    render json: { error: "You are not authorized to change this parameter." }, status: :forbidden
+    render json: { error: "Forbidden" }, status: :forbidden
   end
 end
