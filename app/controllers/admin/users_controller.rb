@@ -24,10 +24,6 @@ class Admin::UsersController < ApplicationController
   end
 
   def admin_user_params
-    if current_user.role === "admin"
       params.require(:user).permit(:first_name, :last_name, :role)
-    else
-      params.require(:user).permit(:first_name, :last_name)
-    end
   end
 end
