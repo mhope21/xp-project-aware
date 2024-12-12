@@ -14,13 +14,14 @@ function RequestKit({ user }) {
   const [lastName, setLastName] = useState(user ? user.last_name : "");
   const [email, setEmail] = useState(user ? user.email : "");
   const [, setKitId] = useState(kitId || "");
+  const [kitName, setKitName] = useState("");
 
   // Other inputs
   const [phone, setPhone] = useState("");
   const [schoolName, setSchoolName] = useState("");
   const [schoolAddress, setSchoolAddress] = useState("");
   const [comments, setComments] = useState("");
-  const [schoolYear, setSchoolYear] = useState("");
+  const [schoolYear, setSchoolYear] = useState("");  
   const ordersUrl = `${API_URL}/orders`;
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
@@ -28,6 +29,24 @@ function RequestKit({ user }) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const fetchKitName = async () => {
+      if (kitId) {
+        try {
+          const response = await fetch(`${API_URL}/kits/${kitId}`);
+          const data = await response.json();
+          setKitName(data.name);
+        } catch (error) {
+          console.error('Error fetching kit name:', error);
+        }
+      } else {
+        setKitName('');
+      }
+    };
+
+    fetchKitName();
+  }, [kitId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -247,13 +266,13 @@ function RequestKit({ user }) {
                       A school year is required.
                     </div>
                     <div className="form-group">
-                      <label htmlFor="kitId">Kit Id:</label>
+                      <label htmlFor="kitId">Kit Name:</label>
                       <input
                         className="form-control shadow mb-5"
-                        id="kitId"
+                        id="kitName"
                         type="text"
-                        name="kitId"
-                        value={kitId}
+                        name="kitName"
+                        value={kitName}
                         readOnly
                       />
                     </div>
