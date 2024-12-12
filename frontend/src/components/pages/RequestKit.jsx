@@ -266,7 +266,7 @@ function RequestKit({ user }) {
                       A school year is required.
                     </div>
                     <div className="form-group">
-                      <label htmlFor="kitId">Kit Name:</label>
+                      <label htmlFor="kitName">Kit Name:</label>
                       <input
                         className="form-control shadow mb-5"
                         id="kitName"
