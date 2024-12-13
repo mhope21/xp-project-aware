@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { API_URL } from '../../constants';
 
 
@@ -10,6 +10,7 @@ function Contact({ user }) {
     const [message, setMessage] = useState("");
     const [errorMessages, setErrorMessages] = useState("");
     const contactUrl = `${API_URL}/contacts`
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -46,15 +47,9 @@ function Contact({ user }) {
                 const errorData = await response.json();
                 setErrorMessages(errorData.errors.join(", "));
             } else {
-                // Handle success, clear the form
-                // Added code to clear first and last name
-                console.log(response.json)
-                setName("");
-                setEmail("");
-                setPhone("");
-                setMessage("");
-                setErrorMessages("");
                 alert("Contact submitted successfully!");
+                navigate("/");
+
             }
         } catch (error) {
             setErrorMessages("An error occurred. Please try again.");

@@ -37,20 +37,6 @@ function Kits({user, setUser}) {
     loadKits();
   }, [kitsUrl]);
 
-  // Stretch Goal: Send user back to the resource they requested after login
-  const handleOrderKit = (kitId) => {
-    if (!user) {
-      // Alert the user that they must log in first
-      alert('You must log in to request a kit.');
-  
-      navigate('/login');
-    } else {
-      // If the user exists, navigate to the RequestKit page and pass kitId as state to ensure they request the correct kit selection
-      navigate('/orders', { state: { kitId } });
-    }
-  };
-  
-
   return (
     // Displays kit page
     <>
@@ -112,9 +98,12 @@ function Kits({user, setUser}) {
                             {kit.description}
                           </div>
                           
-                            <button className="btn btn-primary btn-small" onClick= {() => handleOrderKit(kit.id)}>
-                              Order {kit.name}
-                            </button>
+                          <Link 
+                            to="/orders" state= { kit.id }
+                            className="btn btn-primary btn-small"
+                          >
+                            Order {kit.name}
+                          </Link>
                           
                         </div>
                         <div>

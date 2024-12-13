@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 function RequestKit({ user }) {
   const location = useLocation();
-  const kitId = location.state?.kitId || "";
+  const kitId = location.state || "";
 
   const [orderMessages, setOrderMessages] = useState("");
 
