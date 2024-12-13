@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../../constants";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import RequestKit from "./RequestKit";
 
-function Kits({user, setUser}) {
+
+function Kits({user}) {
   const [kits, setKits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,7 +37,7 @@ function Kits({user, setUser}) {
   }, [kitsUrl]);
 
   // Stretch Goal: Send user back to the resource they requested after login
-  const handleOrderKit = (kitId) => {
+  const handleOrderKit = (kitId, kitName) => {
     if (!user) {
       // Alert the user that they must log in first
       alert('You must log in to request a kit.');
@@ -46,7 +45,7 @@ function Kits({user, setUser}) {
       navigate('/login');
     } else {
       // If the user exists, navigate to the RequestKit page and pass kitId as state to ensure they request the correct kit selection
-      navigate('/orders', { state: { kitId } });
+      navigate('/orders', { state: { kitId, kitName } });
     }
   };
   
@@ -112,7 +111,7 @@ function Kits({user, setUser}) {
                             {kit.description}
                           </div>
                           
-                            <button className="btn btn-primary btn-small" onClick= {() => handleOrderKit(kit.id)}>
+                            <button className="btn btn-primary btn-small" onClick= {() => handleOrderKit(kit.id, kit.name)}>
                               Order {kit.name}
                             </button>
                           

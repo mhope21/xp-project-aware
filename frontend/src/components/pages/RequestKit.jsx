@@ -1,29 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { API_URL, API_URL2 } from "../../constants";
+import { API_URL } from "../../constants";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 function RequestKit({ user }) {
   const location = useLocation();
   const kitId = location.state?.kitId || "";
+  const kitName = location.state?.kitName || "";
 
-  const [orderMessages, setOrderMessages] = useState("");
-
-  // Predefine name, email, and kitId
-  const [firstName, setFirstName] = useState(user ? user.first_name : "");
-  const [lastName, setLastName] = useState(user ? user.last_name : "");
-  const [email, setEmail] = useState(user ? user.email : "");
-  const [, setKitId] = useState(kitId || "");
-
-  // Other inputs
-  const [phone, setPhone] = useState("");
-  const [schoolName, setSchoolName] = useState("");
-  const [schoolAddress, setSchoolAddress] = useState("");
-  const [comments, setComments] = useState("");
-  const [schoolYear, setSchoolYear] = useState("");
+  const [orderMessages, setOrderMessages] = useState("");  
   const ordersUrl = `${API_URL}/orders`;
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
+
+  const [orderForm, setOrderForm] = useState({
+    phone: "",
+    schoolName: "",
+    schoolAddress: "",
+    comments: "",
+    schoolYear: "",
+    email: user ? user.email : "",
+    firstName: user ? user.first_name : "",
+    lastName: user ? user.last_name : "",
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,25 +30,25 @@ function RequestKit({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = {
+    
+    const data = {
       order: {
-        phone,
-        school_address: schoolAddress,
-        school_name: schoolName,
-        school_year: schoolYear,
+        phone: orderForm.phone,
+        school_address: orderForm.schoolAddress,
+        school_name: orderForm.schoolName,
+        school_year: orderForm.schoolYear,
         kit_id: kitId,
-        comments,
+        comments: orderForm.comments,
       },
     };
-
-    console.log("Submitting form data: ", formData);
-    console.log(jwt);
+    
     if (!jwt) {
       console.log("No user logged in. Please log in to continue.");
       // Redirect to login
       navigate("/login");
       return;
     }
+
 
     try {
       // Send POST request to registration endpoint
@@ -60,20 +58,13 @@ function RequestKit({ user }) {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
         // Handle successful registration
         console.log("Order saved.");
         alert("Your order has been processed.");
-
-        // Clear input fields
-        setPhone("");
-        setSchoolName("");
-        setSchoolYear("");
-        setSchoolAddress("");
-        setComments("");
 
         navigate("/confirmation");
       } else {
@@ -139,7 +130,7 @@ function RequestKit({ user }) {
                         className="form-control shadow"
                         id="firstName"
                         name="firstName"
-                        value={firstName}
+                        value={orderForm.firstName}
                         readOnly
                       />
                     </div>
@@ -150,7 +141,7 @@ function RequestKit({ user }) {
                         className="form-control shadow"
                         id="lastName"
                         name="lastName"
-                        value={lastName}
+                        value={orderForm.lastName}
                         readOnly
                       />
                     </div>
@@ -161,7 +152,7 @@ function RequestKit({ user }) {
                         id="email"
                         type="email"
                         name="email"
-                        value={email}
+                        value={orderForm.email}
                         readOnly
                       />
                     </div>
@@ -172,8 +163,8 @@ function RequestKit({ user }) {
                         id="phone"
                         type="tel"
                         name="phone"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        value={orderForm.phone}
+                        onChange={(e) => setOrderForm({...orderForm, phone:e.target.value})}
                         placeholder="123-456-7890*"
                         data-sb-validations="required"
                         required
@@ -192,8 +183,8 @@ function RequestKit({ user }) {
                         id="schoolName"
                         type="text"
                         name="schoolName"
-                        value={schoolName}
-                        onChange={(e) => setSchoolName(e.target.value)}
+                        value={orderForm.schoolName}
+                        onChange={(e) => setOrderForm({...orderForm, schoolName:e.target.value})}
                         placeholder="City High School*"
                         data-sb-validations="required"
                         required
@@ -213,8 +204,8 @@ function RequestKit({ user }) {
                         id="schoolAddress"
                         type="text"
                         name="schoolAddress"
-                        value={schoolAddress}
-                        onChange={(e) => setSchoolAddress(e.target.value)}
+                        value={orderForm.schoolAddress}
+                        onChange={(e) => setOrderForm({...orderForm, schoolAddress:e.target.value})}
                         placeholder="123 Example Street, City, ST 12345*"
                         data-sb-validations="required"
                         required
@@ -234,8 +225,8 @@ function RequestKit({ user }) {
                       id="schoolYear"
                       type="text"
                       name="schoolYear"
-                      value={schoolYear}
-                      onChange={(e) => setSchoolYear(e.target.value)}
+                      value={orderForm.schoolYear}
+                      onChange={(e) => setOrderForm({...orderForm, schoolYear:e.target.value})}
                       placeholder="YYYY-YYYY*"
                       data-sb-validations="required"
                       required
@@ -247,13 +238,13 @@ function RequestKit({ user }) {
                       A school year is required.
                     </div>
                     <div className="form-group">
-                      <label htmlFor="kitId">Kit Id:</label>
+                      <label htmlFor="kitName">Kit Name:</label>
                       <input
                         className="form-control shadow mb-5"
-                        id="kitId"
+                        id="kitName"
                         type="text"
-                        name="kitId"
-                        value={kitId}
+                        name="kitName"
+                        value={kitName}
                         readOnly
                       />
                     </div>
@@ -264,8 +255,8 @@ function RequestKit({ user }) {
                         id="comments"
                         name="comments"
                         type="text"
-                        value={comments}
-                        onChange={(e) => setComments(e.target.value)}
+                        value={orderForm.comments}
+                        onChange={(e) => setOrderForm({...orderForm, comments:e.target.value})}
                         placeholder="Your Message *"
                       ></textarea>
                     </div>
