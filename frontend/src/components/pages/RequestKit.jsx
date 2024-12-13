@@ -66,18 +66,6 @@ function RequestKit({ user }) {
         console.log("Order saved.");
         alert("Your order has been processed.");
 
-        // Clear input fields
-        setOrderForm({
-          phone: "",
-          schoolName: "",
-          schoolAddress: "",
-          comments: "",
-          schoolYear: "",
-          email: user ? user.email : "",
-          firstName: user ? user.first_name : "",
-          lastName: user ? user.last_name : "",
-        });
-
         navigate("/confirmation");
       } else {
         // Handle request error
