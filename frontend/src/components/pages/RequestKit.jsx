@@ -40,24 +40,6 @@ function RequestKit({ user }) {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(() => {
-    const fetchKitName = async () => {
-      if (kitId) {
-        try {
-          const response = await fetch(`${API_URL}/kits/${kitId}`);
-          const data = await response.json();
-          setKitName(data.name);
-        } catch (error) {
-          console.error('Error fetching kit name:', error);
-        }
-      } else {
-        setKitName('');
-      }
-    };
-
-    fetchKitName();
-  }, [kitId]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -83,7 +65,7 @@ function RequestKit({ user }) {
 
     try {
       // Send POST request to registration endpoint
-      await validationSchema.validate(formData, { abortEarly: false });
+      await validationSchema.validate(orderForm, { abortEarly: false });
       const response = await fetch(ordersUrl, {
         method: "POST",
         headers: {
