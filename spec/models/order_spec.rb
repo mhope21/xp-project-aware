@@ -29,8 +29,6 @@ RSpec.describe Order, type: :model do
     expect(order).to_not be_valid
   end
 
-  
-
   it { should belong_to(:user) }
 
   it { should belong_to(:kit) }

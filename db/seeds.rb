@@ -295,7 +295,7 @@ impact_kit.kit_items << curious_dog_book << rosie_book << different_book << clas
 
 # Seeding Order
 order = Order.create!(
-  school_year: '2024-2025', 
+  school_year: '2024-2025',
   kit: discovery_kit,
   phone: "#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 4)}",
   user_id: 1
@@ -309,5 +309,3 @@ Address.create!(
   postal_code: Faker::Address.zip_code,
   addressable: order
 )
-
-
