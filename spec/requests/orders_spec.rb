@@ -20,7 +20,7 @@ RSpec.describe "Orders", type: :request do
       sign_in regular_user
       get api_v1_order_path(order), headers: { 'Authorization': "Bearer #{@auth_token}" }
       expect(response).to have_http_status(:ok)
-      expect(JSON.parse(response.body)["school_name"]).to eq(order.school_name)
+      expect(JSON.parse(response.body)["school_year"]).to eq(order.school_year)
     end
   end
 
