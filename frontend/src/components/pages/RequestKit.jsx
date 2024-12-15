@@ -1,29 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { API_URL, API_URL2 } from "../../constants";
+import { API_URL } from "../../constants";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 
 function RequestKit({ user }) {
   const location = useLocation();
   const kitId = location.state?.kitId || "";
+  const kitName = location.state?.kitName || "";
 
-  const [requestMessages, setRequestMessages] = useState("");
-
-  // Predefine name, email, and kitId
-  const [firstName, setFirstName] = useState(user ? user.first_name : "");
-  const [lastName, setLastName] = useState(user ? user.last_name : "");
-  const [email, setEmail] = useState(user ? user.email : "");
-  const [, setKitId] = useState(kitId || "");
-
-  // Other inputs
-  const [phone, setPhone] = useState("");
-  const [schoolName, setSchoolName] = useState("");
-  const [schoolAddress, setSchoolAddress] = useState("");
-  const [comments, setComments] = useState("");
-  const [schoolYear, setSchoolYear] = useState("");
-  const requestKitUrl = `${API_URL}/kit_requests`;
+  const [orderMessages, setOrderMessages] = useState("");  
+  const ordersUrl = `${API_URL}/orders`;
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
+
+  const [orderForm, setOrderForm] = useState({
+    phone: "",
+    schoolName: "",
+    schoolAddress: "",
+    comments: "",
+    schoolYear: "",
+    email: user ? user.email : "",
+    firstName: user ? user.first_name : "",
+    lastName: user ? user.last_name : "",
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,19 +30,18 @@ function RequestKit({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = {
-      kit_request: {
-        phone,
-        school_address: schoolAddress,
-        school_name: schoolName,
-        school_year: schoolYear,
+    
+    const data = {
+      order: {
+        phone: orderForm.phone,
+        school_address: orderForm.schoolAddress,
+        school_name: orderForm.schoolName,
+        school_year: orderForm.schoolYear,
         kit_id: kitId,
-        comments,
+        comments: orderForm.comments,
       },
     };
-
-    console.log("Submitting form data: ", formData);
-    console.log(jwt);
+    
     if (!jwt) {
       console.log("No user logged in. Please log in to continue.");
       // Redirect to login
@@ -52,28 +49,22 @@ function RequestKit({ user }) {
       return;
     }
 
+
     try {
       // Send POST request to registration endpoint
-      const response = await fetch(requestKitUrl, {
+      const response = await fetch(ordersUrl, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
         // Handle successful registration
-        console.log("Request saved.");
-        alert("Your request has been processed.");
-
-        // Clear input fields
-        setPhone("");
-        setSchoolName("");
-        setSchoolYear("");
-        setSchoolAddress("");
-        setComments("");
+        console.log("Order saved.");
+        alert("Your order has been processed.");
 
         navigate("/confirmation");
       } else {
@@ -82,11 +73,11 @@ function RequestKit({ user }) {
         const errorMessages = errorData.errors.map((error) => {
           return error.replace("School year ", "");
         });
-        setRequestMessages(errorMessages.join(", ") || "Request failed");
+        setOrderMessages(errorMessages.join(", ") || "Order failed");
       }
     } catch (error) {
       // Handle network or other errors
-      setRequestMessages("An error occurred: " + error.message);
+      setOrderMessages("An error occurred: " + error.message);
       console.log(error);
     }
   };
@@ -108,19 +99,19 @@ function RequestKit({ user }) {
           >
             <div className="text-center mb-5">
               <h4 className="text-center section-heading text-uppercase text-dark">
-                Request A Kit
+                Order A Kit
               </h4>
             </div>
 
             <div
               className={
-                requestMessages
+                orderMessages
                   ? "text-center text-dark text-bold mb-3"
                   : "d-none"
               }
               id="submitErrorMessage"
             >
-              {requestMessages && <p>{requestMessages}</p>}
+              {orderMessages && <p>{orderMessages}</p>}
             </div>
 
             <form
@@ -139,7 +130,7 @@ function RequestKit({ user }) {
                         className="form-control shadow"
                         id="firstName"
                         name="firstName"
-                        value={firstName}
+                        value={orderForm.firstName}
                         readOnly
                       />
                     </div>
@@ -150,7 +141,7 @@ function RequestKit({ user }) {
                         className="form-control shadow"
                         id="lastName"
                         name="lastName"
-                        value={lastName}
+                        value={orderForm.lastName}
                         readOnly
                       />
                     </div>
@@ -161,7 +152,7 @@ function RequestKit({ user }) {
                         id="email"
                         type="email"
                         name="email"
-                        value={email}
+                        value={orderForm.email}
                         readOnly
                       />
                     </div>
@@ -172,8 +163,8 @@ function RequestKit({ user }) {
                         id="phone"
                         type="tel"
                         name="phone"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        value={orderForm.phone}
+                        onChange={(e) => setOrderForm({...orderForm, phone:e.target.value})}
                         placeholder="123-456-7890*"
                         data-sb-validations="required"
                         required
@@ -192,8 +183,8 @@ function RequestKit({ user }) {
                         id="schoolName"
                         type="text"
                         name="schoolName"
-                        value={schoolName}
-                        onChange={(e) => setSchoolName(e.target.value)}
+                        value={orderForm.schoolName}
+                        onChange={(e) => setOrderForm({...orderForm, schoolName:e.target.value})}
                         placeholder="City High School*"
                         data-sb-validations="required"
                         required
@@ -213,8 +204,8 @@ function RequestKit({ user }) {
                         id="schoolAddress"
                         type="text"
                         name="schoolAddress"
-                        value={schoolAddress}
-                        onChange={(e) => setSchoolAddress(e.target.value)}
+                        value={orderForm.schoolAddress}
+                        onChange={(e) => setOrderForm({...orderForm, schoolAddress:e.target.value})}
                         placeholder="123 Example Street, City, ST 12345*"
                         data-sb-validations="required"
                         required
@@ -234,8 +225,8 @@ function RequestKit({ user }) {
                       id="schoolYear"
                       type="text"
                       name="schoolYear"
-                      value={schoolYear}
-                      onChange={(e) => setSchoolYear(e.target.value)}
+                      value={orderForm.schoolYear}
+                      onChange={(e) => setOrderForm({...orderForm, schoolYear:e.target.value})}
                       placeholder="YYYY-YYYY*"
                       data-sb-validations="required"
                       required
@@ -247,25 +238,25 @@ function RequestKit({ user }) {
                       A school year is required.
                     </div>
                     <div className="form-group">
-                      <label htmlFor="kitId">Kit Id:</label>
+                      <label htmlFor="kitName">Kit Name:</label>
                       <input
                         className="form-control shadow mb-5"
-                        id="kitId"
+                        id="kitName"
                         type="text"
-                        name="kitId"
-                        value={kitId}
+                        name="kitName"
+                        value={kitName}
                         readOnly
                       />
                     </div>
                     <div className="form-group form-group-textarea mb-md-0">
-                      <label htmlFor="comments">Request Comments:</label>
+                      <label htmlFor="comments">Order Comments:</label>
                       <textarea
                         className="form-control shadow mb-5"
                         id="comments"
                         name="comments"
                         type="text"
-                        value={comments}
-                        onChange={(e) => setComments(e.target.value)}
+                        value={orderForm.comments}
+                        onChange={(e) => setOrderForm({...orderForm, comments:e.target.value})}
                         placeholder="Your Message *"
                       ></textarea>
                     </div>

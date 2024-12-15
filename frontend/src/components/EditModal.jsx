@@ -44,15 +44,15 @@ const EditModal = ({ record, show, handleClose, handleDelete, recordType }) => {
         updatedFormData.append('kit_item[name]', formData.name);
         updatedFormData.append('kit_item[description]', formData.description); 
         api = "kit_items_only";      
-    } else if (recordType === 'kitRequest') {
-        updatedFormData.append('kit_request[phone]', formData.phone);
-        updatedFormData.append('kit_request[school_year]', formData.school_year);
-        updatedFormData.append('kit_request[kit_id]', formData.kit_id);
-        updatedFormData.append('kit_request[school_name]', formData.school_name);
-        updatedFormData.append('kit_request[school_address]', formData.school_address);
-        updatedFormData.append('kit_request[comments]', formData.comments);
-        updatedFormData.append('kit_request[user_id]', formData.user_id);
-        api = "kit_requests";
+    } else if (recordType === 'order') {
+        updatedFormData.append('order[phone]', formData.phone);
+        updatedFormData.append('order[school_year]', formData.school_year);
+        updatedFormData.append('order[kit_id]', formData.kit_id);
+        updatedFormData.append('order[school_name]', formData.school_name);
+        updatedFormData.append('order[school_address]', formData.school_address);
+        updatedFormData.append('order[comments]', formData.comments);
+        updatedFormData.append('order[user_id]', formData.user_id);
+        api = "orders";
     } else if (recordType === 'donation') {
         updatedFormData.append('donation[amount]', formData.amount);
         updatedFormData.append('donation[user_id]', formData.user_id);
@@ -67,11 +67,10 @@ const EditModal = ({ record, show, handleClose, handleDelete, recordType }) => {
         updatedFormData.append('contact[message]', formData.message);
         api = "contacts";       
     } else if (recordType === 'user') {
-        // added first name and last name
-        updatedFormData.append('user[first_name]', formData.first_name);  
-        updatedFormData.append('user[last_name]', formData.last_name); 
-        updatedFormData.append('user[role]', formData.role);
-        api = "users";
+      // Add first name and last name
+      updatedFormData.append('user[first_name]', formData.first_name);  
+      updatedFormData.append('user[last_name]', formData.last_name);
+      updatedFormData.append('user[role]', formData.role);
     }
     
     // Add the image if selected
@@ -86,10 +85,18 @@ if (selectedImage) {
 }
 
     
-    const apiEndpoint = `${API_URL}/${api}/${formData.id}`;
+let apiEndpoint;
+
+if (recordType === 'user') {
+  // If updating the user with role, use the admin endpoint
+  apiEndpoint = `http://localhost:3000/admin/users/${formData.id}`;
+} else {
+  // Otherwise, use the standard update endpoint
+  apiEndpoint = `${API_URL}/api/v1/users/${formData.id}`;
+}
     console.log(apiEndpoint);
     console.log(updatedFormData);
-    // Call the reusable function
+    
     const result = await handleApiUpdate(apiEndpoint, updatedFormData);
     
     if (result.success) {
@@ -173,7 +180,7 @@ if (selectedImage) {
                 <input
                   type="text"
                   className="form-control"
-                  name="firstName"
+                  name="first_name"
                   value={formData.first_name || ''}
                   onChange={onChange}
                 />
@@ -183,7 +190,7 @@ if (selectedImage) {
                 <input
                   type="text"
                   className="form-control"
-                  name="lastName"
+                  name="last_name"
                   value={formData.last_name || ''}
                   onChange={onChange}
                 />
@@ -196,7 +203,7 @@ if (selectedImage) {
                   className="form-control"
                   value={formData.role || ''} 
                   onChange={onChange}
-                  placeholder='user or admin' 
+                  placeholder='user, teacher, or admin' 
                   
                 />
               </div>
@@ -278,7 +285,7 @@ if (selectedImage) {
               </div>
             </>
           )}
-           {recordType === 'kitRequest' && (
+           {recordType === 'order' && (
             <>
               <div className="mb-3">
                 <label>Phone</label>
