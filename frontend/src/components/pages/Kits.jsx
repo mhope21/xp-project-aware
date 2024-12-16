@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { API_URL } from "../../constants";
 import { Link } from "react-router-dom";
 
-function Kits({user, setUser}) {
+
+
+function Kits({user}) {
   const [kits, setKits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -96,11 +98,12 @@ function Kits({user, setUser}) {
                           </div>
                           
                           <Link 
-                            to="/orders" state= { kit.id }
+                            to="/orders" state= { kit.id, kit.name }
                             className="btn btn-primary btn-small"
                           >
                             Order {kit.name}
                           </Link>
+
                           
                         </div>
                         <div>
