@@ -97,12 +97,17 @@ function Kits({user}) {
                             {kit.description}
                           </div>
                           
-                          <Link 
-                            to="/orders" state= { kit.id, kit.name }
-                            className="btn btn-primary btn-small"
-                          >
-                            Order {kit.name}
-                          </Link>
+                          {user ? (
+                            <Link 
+                              to="/orders" 
+                              state={{ kitId: kit.id, kitName: kit.name }}
+                              className="btn btn-primary btn-small"
+                            >
+                              Order {kit.name}
+                            </Link>
+                          ) : (
+                            <p><em>Please log in to place an order.</em></p>
+                          )}
 
                           
                         </div>
