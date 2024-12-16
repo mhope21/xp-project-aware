@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../../constants";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import RequestKit from "./RequestKit";
 
 function Kits({user, setUser}) {
   const [kits, setKits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const kitsUrl = `${API_URL}/kits`;
-  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
