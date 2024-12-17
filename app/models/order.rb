@@ -7,9 +7,6 @@ class Order < ApplicationRecord
   # Validates that phone number is in the right 10 digit format
   validates :phone, presence: true, format: { with: /\A\d{10}\z/, message: "must be a valid 10-digit phone number" }
 
-  # Validates that phone number is in the right format
-  # validates :phone, presence: true, format: { with: /\A\d{3}-\d{3}-\d{4}\z/, message: "must be in the format 'XXX-XXX-XXXX'" }
-
   validates :school_name, presence: true, length: { minimum: 5, message: "must be at least 5 characters long" }
   validates :school_address, presence: true
 
