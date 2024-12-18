@@ -1,7 +1,7 @@
 class Order < ApplicationRecord
   belongs_to :kit
   belongs_to :user
-  belong_to :product, polymorphic: true
+  belongs_to :product, polymorphic: true
 
   # Validates that phone number is in the right format
   validates :phone, presence: true, format: { with: /\A\d{3}-\d{3}-\d{4}\z/, message: "must be in the format 'XXX-XXX-XXXX'" }
