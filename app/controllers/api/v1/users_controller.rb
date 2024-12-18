@@ -31,7 +31,30 @@ load_and_authorize_resource
 
   # Add profile action and pass current_user as params
   def profile
-    render json: UserProfileSerializer.new(current_user)
+    # render json: UserProfileSerializer.new(current_user)
+    user = User.find(current_user.id)
+
+    render json: {
+      "id": ,
+      "name": ,
+      "email": ,
+      "donations": [
+        {
+          "amount": , 
+          "created_at": ,
+        }
+      ],
+      "orders": [
+        {
+        "requested_kit": ,
+        "address": , 
+        "school_year" :, 
+        "phone": , 
+        "comments": ,  
+        }
+      ],
+    }
+    end
   end
 
   private
