@@ -10,11 +10,9 @@ import RequestKit from './components/pages/RequestKit'
 import Registration from './components/auth/Registration';
 import Login from './components/auth/Login';
 import ScrollToHash from './components/ScrollToHash';
-import { useState, useEffect } from 'react';
 import Confirmation from './components/pages/Confirmation';
 import Donation from './components/pages/Donation';
 import RequestSpeaker from './components/pages/RequestSpeaker';
-import { jwtDecode } from 'jwt-decode';
 import AdminDashboard from './components/pages/AdminDashboard';
 import NewForms from './components/NewForms';
 import NewKit from './components/NewKit';
@@ -29,8 +27,7 @@ import { AuthContext } from './components/auth/AuthContext';
 
 
 function App() {
-  const { loggedIn, user } = useContext(AuthContext);
-
+  const { user } = useContext(AuthContext);
 
   return (
     // Sets routes for app navigation and passes props to the necessary components
@@ -46,7 +43,7 @@ function App() {
             <Route path="/orders" element={<RequestKit />} />
             <Route path="/registration" element={<Registration />} />
             <Route path="/login" element={<Login />}/>
-            <Route path="/confirmation" element={<Confirmation user={user}/> } />
+            <Route path="/confirmation" element={<Confirmation /> } />
             <Route path="/donation" element={<Donation />} />
             <Route path="/speaker" element={<RequestSpeaker/>}/>
             <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} />
