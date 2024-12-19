@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../constants';
+import { Link } from 'react-router-dom';
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
