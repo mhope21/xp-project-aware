@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../constants';
+import { AuthContext } from './auth/AuthContext';
 
 // Component for creating a new kit
 const NewKit = () => {
+  const { logout } = useContext(AuthContext);
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -50,12 +52,6 @@ const NewKit = () => {
           
           console.log("New Kit added successfully!");
           alert("New Kit added successfully!");
-    
-          // Clear input fields
-          setName("");
-          setDescription("");
-          setGradeLevel("");
-          setImage('');
           // Redirect to admin page
           navigate("/admin");
         } else {
@@ -68,9 +64,7 @@ const NewKit = () => {
       } catch (error) {
         
         setMessages("An error occurred: " + error.message);
-        setLoggedIn(false);
-        setUserData(null);
-        localStorage.removeItem('jwt');
+        logout();
         console.log(error.message);
       }
     };

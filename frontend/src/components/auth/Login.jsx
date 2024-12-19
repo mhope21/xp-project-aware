@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API_URL2 } from "../../constants";
 import { Link } from "react-router-dom";
 import CurrentUser from "./CurrentUser";
+import { AuthContext } from "./AuthContext";
 
 
 
-
-export default function Login({setLoggedIn}) {
+export default function Login() {
     // Handles login, setting the data for the user
+    const { setLoggedIn, logout } = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     
@@ -58,20 +59,13 @@ export default function Login({setLoggedIn}) {
           
           setLoggedIn(true);
           <CurrentUser />
-                                
-        // Clear input fields
-        setEmail("");
-        setPassword("");
-        
   
           navigate("/")
         } else {
           // Handle registration error
           const errorData = await response.json();
           setLoginMessages('Login failed. Please check your credentials and try again.');
-          setLoggedIn(false);
-          setUserData(null);
-          localStorage.removeItem('jwt');
+          logout();
           
 
       // Access the status and message in the JSON response
@@ -81,10 +75,8 @@ export default function Login({setLoggedIn}) {
      } catch (error) {
         // Handle other errors
         console.log("An error occurred:", error)
-        setLoginMessages("Unable to connect to the server. Please try again later.");
-        setUserData(null);
-        setLoggedIn(false);
-        localStorage.removeItem("jwt");
+        setLoginMessages("An error occurred, please try again.");
+        logout();
       }
     };
   
