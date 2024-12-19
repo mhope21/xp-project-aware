@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import SampleChart from "../SampleChart";
 import SampleChartThree from "../SampleChartThree";
@@ -7,8 +7,10 @@ import { API_URL, API_URL2,ADMIN_URL } from "../../constants";
 import DataEndpoint from "../DataEndpoint";
 import DashTable from "../DashTable";
 import EditModal from "../EditModal";
+import { AuthContext } from "../auth/AuthContext";
 
-const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
+const AdminDashboard = () => {
+  const { user, setLoggedIn, setUser } = useContext(AuthContext);
   // Necessary api endpoints
   const userUrl = `${API_URL}/users`;
   const kitsUrl = `${API_URL}/kits`;
@@ -143,8 +145,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
       headers={headers.userUrl}
       apiEndpoint={userUrl}
       handleShow={(item) => handleShow(item, "user")}
-      setLoggedIn={setLoggedIn}
-      setUser={setUser}
     />
   );
   const KitsTable = () => (
@@ -152,8 +152,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
       headers={headers.kitsUrl}
       apiEndpoint={kitsUrl}
       handleShow={(item) => handleShow(item, "kit")}
-      setLoggedIn={setLoggedIn}
-      setUser={setUser}
     />
   );
   const KitItemsTable = () => (
@@ -161,8 +159,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
       header={headers.kitItemsUrl}
       apiEndpoint={kitItemsUrl}
       handleShow={(item) => handleShow(item, "kitItem")}
-      setLoggedIn={setLoggedIn}
-      setUser={setUser}
     />
   );
   const OrdersTable = () => (
@@ -177,8 +173,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
       header={headers.donationUrl}
       apiEndpoint={donationUrl}
       handleShow={(item) => handleShow(item, "donation")}
-      setLoggedIn={setLoggedIn}
-      setUser={setUser}
     />
   );
   const ContactsTable = () => (
@@ -186,8 +180,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
       header={headers.contactsUrl}
       apiEndpoint={contactsUrl}
       handleShow={(item) => handleShow(item, "contact")}
-      setLoggedIn={setLoggedIn}
-      setUser={setUser}
     />
   );
 
@@ -289,7 +281,7 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
       </div>
       <main className="mt-3 pt-3" style={{ zIndex: -500 }}>
         <div className="container-fluid">
-          <DashCardSet user={user} setUser={setUser} setLoggedIn={setLoggedIn} />
+          <DashCardSet />
           <div className="row">
             <div className="col-md-6 mb-3">
               <div className="card">
@@ -321,17 +313,13 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
                             headers={headers.userUrl}
                             apiEndpoint={userUrl}
                             handleShow={(item) => handleShow(item, "user")}
-                            setLoggedIn={setLoggedIn}
-                            setUser={setUser}
-                          />
+                            />
                         )}
                         {selectedEndpoint === kitsUrl && (
                           <DashTable
                             headers={headers.kitsUrl}
                             apiEndpoint={kitsUrl}
                             handleShow={(item) => handleShow(item, "kit")}
-                            setLoggedIn={setLoggedIn}
-                            setUser={setUser}
                           />
                         )}
                         {selectedEndpoint === kitItemsUrl && (
@@ -339,8 +327,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
                             headers={headers.kitItemsUrl}
                             apiEndpoint={kitItemsUrl}
                             handleShow={(item) => handleShow(item, "kitItem")}
-                            setLoggedIn={setLoggedIn}
-                            setUser={setUser}
                           />
                         )}
                         {selectedEndpoint === ordersUrl && (
@@ -350,8 +336,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
                             handleShow={(item) =>
                               handleShow(item, "order")
                             }
-                            setLoggedIn={setLoggedIn}
-                            setUser={setUser}
                           />
                         )}
                         {selectedEndpoint === donationUrl && (
@@ -359,8 +343,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
                             headers={headers.donationUrl}
                             apiEndpoint={donationUrl}
                             handleShow={(item) => handleShow(item, "donation")}
-                            setLoggedIn={setLoggedIn}
-                            setUser={setUser}
                           />
                         )}
                         {selectedEndpoint === contactsUrl && (
@@ -368,8 +350,6 @@ const AdminDashboard = ({ user, setLoggedIn, setUser }) => {
                             headers={headers.contactsUrl}
                             apiEndpoint={contactsUrl}
                             handleShow={(item) => handleShow(item, "contact")}
-                            setLoggedIn={setLoggedIn}
-                            setUser={setUser}
                           />
                         )}
                       </>

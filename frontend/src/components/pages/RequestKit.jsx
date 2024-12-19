@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { API_URL } from "../../constants";
 import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../auth/AuthContext";
 import * as Yup from "yup";
 
 
-function RequestKit({ user }) {
-
+function RequestKit() {
+  const { user, logout } = useContext(AuthContext);
   const validationSchema = Yup.object().shape({
     phone: Yup.string().required('Phone is required'),
     schoolAddress: Yup.string().required('School address is required'),
@@ -54,14 +55,6 @@ function RequestKit({ user }) {
         comments: orderForm.comments,
       },
     };
-    
-    if (!jwt) {
-      console.log("No user logged in. Please log in to continue.");
-      // Redirect to login
-      navigate("/login");
-      return;
-    }
-
 
     try {
       // Send POST request to registration endpoint
@@ -100,6 +93,7 @@ function RequestKit({ user }) {
       } else {
         // Handle network or other errors
         setOrderMessages({general: "Network error: " + error.message});
+        logout();
       }
       console.error(error);
     }

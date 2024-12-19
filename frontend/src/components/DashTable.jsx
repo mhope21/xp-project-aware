@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AuthContext } from './auth/AuthContext';
 
 // Passed in api endpoint, headers for tables, and the event handler for showing the Edit Modal from Admin Dashboard component
-const DashTable = ({ apiEndpoint, headers, handleShow, setLoggedIn, setUser }) => {
+const DashTable = ({ apiEndpoint, headers, handleShow }) => {
+  const { logout } = useContext(AuthContext);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,9 +30,7 @@ const DashTable = ({ apiEndpoint, headers, handleShow, setLoggedIn, setUser }) =
       } catch (err) {
         setError(err.message); 
         console.error("Error fetching data:", err);
-        setLoggedIn(false);
-        setUser(null);
-        localStorage.removeItem('jwt');
+        logout();
         alert("A network error occurred.")
       } finally {
         setLoading(false);

@@ -1,15 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../constants';
+import { AuthContext } from '../auth/AuthContext';
 
 
-function Contact({ user, setLoggedIn, setUser }) {
+function Contact() {
+    const { user } = useContext(AuthContext);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [message, setMessage] = useState("");
     const [errorMessages, setErrorMessages] = useState("");
     const contactUrl = `${API_URL}/contacts`
+    const navigate = useNavigate();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -46,21 +49,12 @@ function Contact({ user, setLoggedIn, setUser }) {
                 const errorData = await response.json();
                 setErrorMessages(errorData.errors.join(", "));
             } else {
-                // Handle success, clear the form
-                // Added code to clear first and last name
-                console.log(response.json)
-                setName("");
-                setEmail("");
-                setPhone("");
-                setMessage("");
-                setErrorMessages("");
+                // Handle success
                 alert("Contact submitted successfully!");
+                navigate("/")
             }
         } catch (error) {
             setErrorMessages("An error occurred. Please try again.");
-            setLoggedIn(false);
-            setUser(null);
-            localStorage.removeItem('jwt');
         }
     };
 

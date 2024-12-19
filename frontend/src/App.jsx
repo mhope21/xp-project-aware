@@ -1,4 +1,5 @@
 import './App.css';
+import { useContext } from 'react';
 import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import PageWrapper from './components/PageWrapper';
 import Home from './components/pages/Home';
@@ -21,129 +22,33 @@ import NewUser from './components/NewUser';
 import AddNew from './components/pages/AddNew';
 import NewKitItem from './components/NewKitItem';
 import AddItemToKit from './components/AddItemToKit';
+import { AuthContext } from './components/auth/AuthContext';
 
 
 
 
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState();
-  const [user, setUser] = useState(null);
-  const [tokenExpiration, setTokenExpiration] = useState(null);
-  const navigate = useNavigate();
-
-    // Method handles login state and token, checking for existence or expiration
-  useEffect(() => {
-    const token = localStorage.getItem('jwt');
-
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        const now = Date.now() / 1000; // Current time in seconds
-
-        if (decoded.exp > now) {
-          setLoggedIn(true); // Token is valid
-          setUser(decoded.user ? decoded.user : null); // Set user data
-
-          // Calculate remaining time until token expiration
-          const timeUntilExpiration = (decoded.exp - now) * 1000;
-
-          // Notify 5 minutes before expiration
-          if (timeUntilExpiration < 300000) {
-            alert("Your session will expire soon.");
-          }
-
-          // Set token expiration time in state
-          setTokenExpiration(timeUntilExpiration);
-
-        } else {
-          // Token is expired, clear it
-          console.log("Token has expired, clearing JWT.");
-          localStorage.removeItem('jwt');
-          setLoggedIn(false);
-          setUser(null);
-          alert("Your session has expired. Please log in again.");
-          navigate('/login')
-          
-        }
-      } catch (error) {
-        console.error('Token decoding failed:', error);
-        localStorage.removeItem('jwt');
-        setLoggedIn(false);
-        setUser(null);
-        navigate('/');
-
-      }
-    } else {
-      // No token, set to logged out state
-      setLoggedIn(false);
-      setUser(null);
-      navigate('/')
-      alert("A network error occurred. You have been logged out.")
-    }
-  }, []);
-
-  // Logs out the user when the token expires
-  useEffect(() => {
-    if (tokenExpiration) {
-      const timer = setTimeout(() => {
-        console.log("Token has expired, logging out.");
-        localStorage.removeItem('jwt');
-        setLoggedIn(false);
-        setUser(null);
-        alert("Your session has expired. Please log in again.");
-        navigate('/login');
-      }, tokenExpiration); 
-
-      return () => clearTimeout(timer); 
-    }
-  }, [tokenExpiration]);
-
-  const checkToken = async () => {
-    try {
-      const response = await fetch(userUrl, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        },
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data);
-      } else {
-        console.log("No user logged in.");
-        setUser(null);
-        setLoggedIn(false);
-        localStorage.removeItem('jwt');
-        const error = await response.json();
-        console.log(error);
-      }
-    } catch (error) {
-      console.error("Error fetching current user");
-      setUser(null);
-      setLoggedIn(false);
-      localStorage.removeItem('jwt');
-    }
-  };
+  const { loggedIn, user } = useContext(AuthContext);
 
   return (
     // Sets routes for app navigation and passes props to the necessary components
     <>    
     <div className="App">
-        <PageWrapper loggedIn={loggedIn} setLoggedIn={setLoggedIn} setUser={setUser} user={user}>                   
+        <PageWrapper>                   
           <ScrollToHash/>
            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact user={user} />} />
-            <Route path="/kits" element={<Kits user={user} />} />
-            <Route path="/orders" element={<RequestKit user={user} setUser={setUser} />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/kits" element={<Kits />} />
+            <Route path="/orders" element={<RequestKit />} />
             <Route path="/registration" element={<Registration />} />
-            <Route path="/login" element={<Login setLoggedIn={setLoggedIn} />}/>
+            <Route path="/login" element={<Login />}/>
             <Route path="/confirmation" element={<Confirmation user={user}/> } />
-            <Route path="/donation" element={<Donation user={user} setLoggedIn={setLoggedIn} setUser={setUser} />} />
+            <Route path="/donation" element={<Donation />} />
             <Route path="/speaker" element={<RequestSpeaker/>}/>
-            <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard user={user} setLoggedIn={setLoggedIn} setUser={setUser}/> : <Navigate to="/" />} />
+            <Route path="/admin" element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/" />} />
             <Route path="/new_forms" element={<NewForms/>} >
               <Route path="add_user" element={<AddNew header="Add New User"><NewUser /></AddNew>} />
               <Route path="add_kit" element={<AddNew header="Add New Kit"><NewKit /></AddNew>} />
