@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { API_URL } from "../../constants";
 import { useLocation, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+
 
 function RequestKit({ user }) {
+
+  const validationSchema = Yup.object().shape({
+    phone: Yup.string().required('Phone is required'),
+    schoolAddress: Yup.string().required('School address is required'),
+    schoolName: Yup.string().required('School name is required'),
+    schoolYear: Yup.string().required('School year is required'),
+    comments: Yup.string()
+    .notRequired()
+    .max(500, 'Comments cannot exceed 500 characters'),
+  });
+
   const location = useLocation();
   const kitId = location.state?.kitId || "";
   const kitName = location.state?.kitName || "";
@@ -41,17 +54,11 @@ function RequestKit({ user }) {
         comments: orderForm.comments,
       },
     };
-    
-    if (!jwt) {
-      console.log("No user logged in. Please log in to continue.");
-      // Redirect to login
-      navigate("/login");
-      return;
-    }
 
 
     try {
       // Send POST request to registration endpoint
+      await validationSchema.validate(orderForm, { abortEarly: false });
       const response = await fetch(ordersUrl, {
         method: "POST",
         headers: {
@@ -76,9 +83,18 @@ function RequestKit({ user }) {
         setOrderMessages(errorMessages.join(", ") || "Order failed");
       }
     } catch (error) {
-      // Handle network or other errors
-      setOrderMessages("An error occurred: " + error.message);
-      console.log(error);
+      if (error instanceof Yup.ValidationError) {
+        // Handle validation errors
+        const newErrors = {};
+        error.inner.forEach((validationError) => {
+          newErrors[validationError.path] = validationError.message;
+        });
+        setOrderMessages(newErrors);
+      } else {
+        // Handle network or other errors
+        setOrderMessages({general: "Network error: " + error.message});
+      }
+      console.error(error);
     }
   };
 
@@ -105,26 +121,25 @@ function RequestKit({ user }) {
 
             <div
               className={
-                orderMessages
-                  ? "text-center text-dark text-bold mb-3"
+                orderMessages.general
+                  ? "text-center text-danger text-bold mb-3"
                   : "d-none"
               }
               id="submitErrorMessage"
             >
-              {orderMessages && <p>{orderMessages}</p>}
+              {orderMessages.general && <p>{orderMessages.general}</p>}
             </div>
 
             <form
               id="registerForm"
-              data-sb-form-api-token="API_TOKEN"
               onSubmit={handleSubmit}
             >
               <div className="container text-dark">
                 <div className="mb-5">
                   <div>
-                    <div className="form-group">
+                    <div className="form-group mb-3">
                       {/* Added input fields for first name and last name*/}
-                      <label for="firstName">First Name:</label>
+                      <label htmlFor="firstName">First Name:</label>
                       <input
                         type="text"
                         className="form-control shadow"
@@ -134,8 +149,8 @@ function RequestKit({ user }) {
                         readOnly
                       />
                     </div>
-                    <div className="form-group">
-                      <label for="lastName">Last Name:</label>
+                    <div className="form-group mb-3">
+                      <label htmlFor="lastName">Last Name:</label>
                       <input
                         type="text"
                         className="form-control shadow"
@@ -145,7 +160,7 @@ function RequestKit({ user }) {
                         readOnly
                       />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group mb-3">
                       <label htmlFor="email">Email:</label>
                       <input
                         className="form-control shadow"
@@ -156,91 +171,66 @@ function RequestKit({ user }) {
                         readOnly
                       />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group mb-3">
                       <label htmlFor="phone">Phone:</label>
                       <input
-                        className="form-control shadow mb-5"
+                        className="form-control shadow"
                         id="phone"
                         type="tel"
                         name="phone"
                         value={orderForm.phone}
                         onChange={(e) => setOrderForm({...orderForm, phone:e.target.value})}
                         placeholder="123-456-7890*"
-                        data-sb-validations="required"
-                        required
+                        
                       />
+                      {orderMessages.phone && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.phone}</div>}
                     </div>
-                    <div
-                      className="invalid-feedback"
-                      data-sb-feedback="phone:required"
-                    >
-                      A phone number is required.
-                    </div>
-                    <div className="form-group">
+                    <div className="form-group mb-3">
                       <label htmlFor="schoolName">School Name:</label>
                       <input
-                        className="form-control shadow mb-5"
+                        className="form-control"
                         id="schoolName"
                         type="text"
                         name="schoolName"
                         value={orderForm.schoolName}
                         onChange={(e) => setOrderForm({...orderForm, schoolName:e.target.value})}
                         placeholder="City High School*"
-                        data-sb-validations="required"
-                        required
+                        
                       />
-                      <div
-                        className="invalid-feedback"
-                        data-sb-feedback="schoolName:required"
-                      >
-                        A school name is required.
-                      </div>
+                      {orderMessages.schoolName && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.schoolName}</div>}
                     </div>
-                    {/* Stretch Goal: Integrate API with US schools? */}
-                    <div className="form-group">
+                    <div className="form-group mb-3">
                       <label htmlFor="schoolAddress">School Address:</label>
                       <input
-                        className="form-control shadow mb-5"
+                        className="form-control shadow"
                         id="schoolAddress"
                         type="text"
                         name="schoolAddress"
                         value={orderForm.schoolAddress}
                         onChange={(e) => setOrderForm({...orderForm, schoolAddress:e.target.value})}
                         placeholder="123 Example Street, City, ST 12345*"
-                        data-sb-validations="required"
-                        required
+                        
                       />
-                      <div
-                        className="invalid-feedback"
-                        data-sb-feedback="schoolAddress:required"
-                      >
-                        A school address is required.
-                      </div>
+                      {orderMessages.schoolAddress && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.schoolAddress}</div>}
                     </div>
                   </div>
-                  <div className="form-group">
+                  <div className="form-group mb-3">
                     <label htmlFor="schoolYear">School Year:</label>
                     <input
-                      className="form-control shadow mb-5"
+                      className="form-control shadow"
                       id="schoolYear"
                       type="text"
                       name="schoolYear"
                       value={orderForm.schoolYear}
                       onChange={(e) => setOrderForm({...orderForm, schoolYear:e.target.value})}
                       placeholder="YYYY-YYYY*"
-                      data-sb-validations="required"
-                      required
+                      
                     />
-                    <div
-                      className="invalid-feedback"
-                      data-sb-feedback="schoolYear:required"
-                    >
-                      A school year is required.
-                    </div>
-                    <div className="form-group">
+                    {orderMessages.schoolYear && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.schoolYear}</div>}
+                    <div className="form-group mb-3">
                       <label htmlFor="kitName">Kit Name:</label>
                       <input
-                        className="form-control shadow mb-5"
+                        className="form-control shadow"
                         id="kitName"
                         type="text"
                         name="kitName"
@@ -259,6 +249,7 @@ function RequestKit({ user }) {
                         onChange={(e) => setOrderForm({...orderForm, comments:e.target.value})}
                         placeholder="Your Message *"
                       ></textarea>
+                      {orderMessages.comments && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.comments}</div>}
                     </div>
                   </div>
                 </div>
