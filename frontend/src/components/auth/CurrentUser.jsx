@@ -1,42 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { API_URL2 } from '../../constants';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from './AuthContext';
 
-const CurrentUser = ({ setLoggedIn, setUser, user }) => {
+const CurrentUser = () => {
+    const { user } = useContext(AuthContext);
     
-    const userUrl = `${API_URL2}/current_user`
-    // Fetches the current user whenever someone logs in
-    useEffect(() => {
-        const fetchUser = async () => {
-            if(!user) {
-            try {
-                const response = await fetch(userUrl, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-                    },
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setUser(data);
-                } else {
-                    console.log("No user logged in.")
-                    setUser(null);
-                    setLoggedIn(false);
-                    localStorage.removeItem('jwt');
-                    const error = await response.json();
-                    console.log(error)
-                }
-            } catch (error) {
-                console.error("Error fetching current user");
-                setUser(null);
-                setLoggedIn(false);
-                localStorage.removeItem('jwt');
-            }
-        }};
-
-        fetchUser();
-    }, [setLoggedIn, user, setUser ]);
-    // Stretch Goal: Add admin dashboard
     if (!user) return null;
 
     return (

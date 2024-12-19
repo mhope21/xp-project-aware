@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { API_URL } from "../../constants";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../auth/AuthContext";
 
-
-
-function Kits({user}) {
+function Kits() {
+  const { user } = useContext(AuthContext);
   const [kits, setKits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,9 +28,6 @@ function Kits({user}) {
       } catch (e) {
         setError("An error occurred.");
         console.log("An error occurred", e);
-        setLoggedIn(false);
-        setUser(null);
-        localStorage.removeItem('jwt');
       } finally {
         setLoading(false);
       }
