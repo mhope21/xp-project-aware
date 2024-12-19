@@ -1,6 +1,6 @@
 import './App.css';
 import { useContext } from 'react';
-import {BrowserRouter as Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import PageWrapper from './components/PageWrapper';
 import Home from './components/pages/Home';
 import About from './components/pages/About';
