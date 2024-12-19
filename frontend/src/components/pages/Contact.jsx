@@ -49,7 +49,6 @@ function Contact({ user }) {
             } else {
                 alert("Contact submitted successfully!");
                 navigate("/");
-
             }
         } catch (error) {
             setErrorMessages("An error occurred. Please try again.");
