@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       post "kit_items_only", to: "kit_items#create_kit_items_only"
       patch "kit_items_only/:id", to: "kit_items#update_kit_items_only"
       get "profile", to: "users#profile"
-      get "users/profile", to: "users#profile"
+      
       resources :users
       resources :donations
       resources :contacts
