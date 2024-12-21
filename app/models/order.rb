@@ -8,9 +8,6 @@ class Order < ApplicationRecord
   # Validates that phone number is in the right 10 digit format
   validates :phone, presence: true, format: { with: /\A\d{10}\z/, message: "must be a valid 10-digit phone number" }
 
-  validates :school_name, presence: true, length: { minimum: 5, message: "must be at least 5 characters long" }
-  validates :school_address, presence: true
-
   # validates school year with more flexibility
   validates :school_year, presence: true, format: {
     with: /\A\d{4}(-\d{2,4})?\z/,

@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.describe Order, type: :model do
   let(:kit) { create(:kit) }
   let(:regular_user) { create(:user, :regular_user) }
-  let(:order) { create(:order, user: regular_user, kit: kit) }
+  let(:address) { create(:address, addressable: regular_user) }
+  let(:order) { create(:order, user: regular_user, kit: kit, address: address) }
 
   it "is valid with valid attributes" do
     expect(order).to be_valid
