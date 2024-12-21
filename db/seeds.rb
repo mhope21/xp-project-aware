@@ -20,7 +20,6 @@ Kit.destroy_all
 
 
 
-
 # Seeding Kits
 kits = Kit.create([
   { name: 'Discovery Kit', description: 'The Discovery Kit emphasizes exploration and learning about differences from an early age. It contains books appropriate for Pre-K through 2nd grade, as well as lesson plans and activities to complement each book. As a bonus, it includes two books for eduators to learn more about neurodiversity in the classroom.', grade_level: 'PK-2' },
@@ -286,26 +285,34 @@ classroom_book.image.attach(
   identify: false
 )
 
-
 # Now associating KitItems with Kits
 discovery_kit.kit_items << henry_book << charlie_book << benji_book << no_words_book << wiggles_book << classroom_book << neurotribes_book
 empowerment_kit.kit_items << boy_bat_book << temple_book << see_me_book << vivy_book << someday_book << not_if_book << spark_book << classroom_book << neurotribes_book
 perspectives_kit.kit_items << goldfish_boy_book << sevens_book << frankie_book << earth_blue_book << same_book << awesome_guide_book << mockingbird_book << classroom_book << neurotribes_book
 impact_kit.kit_items << curious_dog_book << rosie_book << different_book << classroom_book << neurotribes_book
 
+# Seeding user
+user = User.find_or_create_by!(email: "test@example3.com") do |u|
+  u.first_name = "Test"
+  u.last_name = "User"
+  u.password = "password123"
+  u.role = "teacher"
+end
+
+# Seeding Address
+address = Address.create!(
+  street_address: Faker::Address.street_address,
+  city: Faker::Address.city,
+  state: Faker::Address.state_abbr,
+  postal_code: Faker::Address.zip_code,
+  addressable: user
+)
+
 # Seeding Order
 order = Order.create!(
   school_year: '2024-2025',
   kit: discovery_kit,
   phone: "#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 4)}",
-  user_id: 1
-)
-
-# Seeding Address
-Address.create!(
-  street_address: Faker::Address.street_address,
-  city: Faker::Address.city,
-  state: Faker::Address.state_abbr,
-  postal_code: Faker::Address.zip_code,
-  addressable: order
+  user: user,
+  address: address
 )

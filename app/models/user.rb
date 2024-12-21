@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :orders
   has_many :donations, -> { where(canceled: false) }
   has_many :contacts
+  has_many :addresses, as: :addressable
 
   before_create :set_default_role
 

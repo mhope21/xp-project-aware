@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_11_144401) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_18_050622) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -104,8 +104,15 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_11_144401) do
     t.string "phone"
     t.text "comments"
     t.integer "user_id"
+    t.integer "address_id"
     t.index ["kit_id"], name: "index_orders_on_kit_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "recurring_availabilities", force: :cascade do |t|
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -129,6 +136,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_11_144401) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "contacts", "users"
   add_foreign_key "donations", "users"
+  add_foreign_key "orders", "addresses"
   add_foreign_key "orders", "kits"
   add_foreign_key "orders", "users"
 end
