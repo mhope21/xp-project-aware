@@ -33,7 +33,7 @@ RSpec.describe "Orders", type: :request do
       sign_in teacher
 
       expect {
-        post api_v1_orders_path, params: { order: { school_year: "2025-2026", phone: "1234567890", comments: "This is wonderful", kit_id: kit.id} }, headers: { 'Authorization': "Bearer #{@auth_token}" }
+        post api_v1_orders_path, params: { order: { school_year: "2025-2026", phone: "1234567890", comments: "This is wonderful", kit_id: kit.id } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
       }.to change(Order, :count).by(1)
       expect(response).to have_http_status(:created)
     end

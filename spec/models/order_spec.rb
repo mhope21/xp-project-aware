@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe Order, type: :model do
-
   let(:user) { create(:user) }
   let(:admin) { create(:user, :admin) }
   let(:teacher) { create(:user, :teacher) }
