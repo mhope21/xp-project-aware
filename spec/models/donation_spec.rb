@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Donation, type: :model do
-  let(:regular_user) { create(:user, :regular_user) }
-  let (:donation) { create(:donation, user: regular_user) }
+  let(:user) { create(:user) }
+  let (:donation) { create(:donation, user: user) }
 
 
   it "is valid with valid attributes" do

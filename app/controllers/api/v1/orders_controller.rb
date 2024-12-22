@@ -8,17 +8,23 @@ class Api::V1::OrdersController < ApplicationController
 
   # POST /api/v1/orders
   def create
-    @order.user = current_user # Automatically associate user
+    @order = Order.new(order_params)
 
-    if @order.save
+    # Associate user and check if role is teacher
+    if current_user.role == "teacher" && @order.save
       render json: @order, status: :created
     else
-      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      if current_user.role != "teacher"
+        render json: { error: "Only teachers can create orders" }, status: :forbidden
+      else
+        render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      end
     end
   end
 
   # GET /api/v1/orders/:id
   def show
+    @order = Order.includes(:address).find(params[:id]) # Preload address
     render json: @order, status: :ok
   end
 
