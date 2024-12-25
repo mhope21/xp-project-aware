@@ -313,6 +313,7 @@ order = Order.create!(
   school_year: '2024-2025',
   kit: discovery_kit,
   phone: "#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 4)}",
+  comments { "This is wonderful" }
   user: user,
   address: address
 )
