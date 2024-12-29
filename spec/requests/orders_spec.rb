@@ -9,7 +9,7 @@ RSpec.describe "Orders", type: :request do
 
   describe "GET /index" do
     it "returns a success response" do
-      sign_in user
+      sign_in admin
       get api_v1_orders_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
       expect(response).to have_http_status(:ok)
     end
@@ -17,7 +17,7 @@ RSpec.describe "Orders", type: :request do
 
   describe "GET /show" do
     it "returns a success response" do
-      sign_in user
+      sign_in admin
       get api_v1_order_path(order), headers: { 'Authorization': "Bearer #{@auth_token}" }
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body)["school_year"]).to eq(order.school_year)

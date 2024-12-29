@@ -19,7 +19,6 @@ class Api::V1::OrdersController < ApplicationController
 
   # GET /api/v1/orders/:id
   def show
-    @order = Order.includes(:address).find(params[:id]) # Preload address
     render json: @order, status: :ok
   end
 
