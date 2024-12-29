@@ -1,5 +1,5 @@
 class Event < ApplicationRecord
-  belongs_to :speaker, -> { where(role: 'speaker') }, class_name: 'User'
+  belongs_to :speaker, -> { where(role: "speaker") }, class_name: "User"
   has_many :bookings, dependent: :destroy
 
   validates :title, presence: true
