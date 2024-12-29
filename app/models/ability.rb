@@ -17,9 +17,9 @@ class Ability
     else
       can :update, User, id: user.id
       can :profile, User, id: user.id
-      can [ :update ], Order, user_id: user.id # Users can update their own kit requests
+      can :read, Order, user_id: user.id # Users can read their own kit requests
       can :create, Order # Users can create new kit requests
-      can :update, Order, user_id: user.id # Users can update their own kit requests
+      can [ :update ], Order, user_id: user.id # Users can update their own kit requests
       can :read, Kit
       can :read, KitItem
       can :create, Donation

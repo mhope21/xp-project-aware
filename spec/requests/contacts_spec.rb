@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Contacts", type: :request do
   let(:admin_user) { create(:user, :admin) }
-  let(:user) { create(:user) }
+  let(:regular_user) { create(:user, :regular_user) }
   let(:contact) { create(:contact) }
 
   describe "GET /index" do
@@ -15,7 +15,7 @@ RSpec.describe "Contacts", type: :request do
     end
     context "when user role is not admin" do
       it "returns http response forbidden" do
-        sign_in user
+        sign_in regular_user
         get api_v1_contacts_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:forbidden)
       end
@@ -32,7 +32,7 @@ RSpec.describe "Contacts", type: :request do
     end
     context "when user role is not admin" do
       it "returns http response forbidden" do
-        sign_in user
+        sign_in regular_user
         get api_v1_contacts_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:forbidden)
       end
@@ -59,7 +59,7 @@ RSpec.describe "Contacts", type: :request do
     end
     context "when user role is not admin" do
       it "does not allow contact to be updated" do
-        sign_in user
+        sign_in regular_user
         patch api_v1_contact_path(contact), params: { contact: { message: "I have a new phone number." } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:forbidden)
         expect(contact.reload.message).to_not eq("I have a new phone number.")
@@ -79,7 +79,7 @@ RSpec.describe "Contacts", type: :request do
 
     context "when user is not an admin" do
       it "denies access" do
-        sign_in user
+        sign_in regular_user
         delete api_v1_contact_path(contact), headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:forbidden)
       end

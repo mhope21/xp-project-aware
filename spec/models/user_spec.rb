@@ -2,29 +2,29 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   # Create a user with the default role
-  let(:user) { create(:user) }
+  let(:regular_user) { create(:user, :regular_user) }
 
   it "is valid with valid attributes" do
-    expect(user).to be_valid
+    expect(regular_user).to be_valid
   end
 
   it "is not valid without a name" do
-    user.first_name = nil
-    expect(user).to_not be_valid
+    regular_user.first_name = nil
+    expect(regular_user).to_not be_valid
   end
 
   it "is not valid without a valid role" do
-    user.role = "Not valid"
-    expect(user).to_not be_valid
+    regular_user.role = "Not valid"
+    expect(regular_user).to_not be_valid
   end
 
   it "is not valid without a valid email" do
-    user.email = "abc.com"
-    expect(user).to_not be_valid
+    regular_user.email = "abc.com"
+    expect(regular_user).to_not be_valid
   end
 
   it "is not valid without an email" do
-    user.email = nil
-    expect(user).to_not be_valid
+    regular_user.email = nil
+    expect(regular_user).to_not be_valid
   end
 end

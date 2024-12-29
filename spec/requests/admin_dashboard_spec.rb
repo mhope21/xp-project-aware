@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "AdminDashboards", type: :request do
   let(:admin_user) { create(:user, :admin) }
-  let(:user) { create(:user) }
+  let(:regular_user) { create(:user, :regular_user) }
 
   describe "GET /index" do
     context "when user role is admin" do
@@ -14,7 +14,7 @@ RSpec.describe "AdminDashboards", type: :request do
     end
     context "when user role is not admin" do
       it "returns http unauthorized" do
-        sign_in user
+        sign_in regular_user
         get api_v1_admin_dashboard_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:unauthorized)
       end

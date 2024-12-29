@@ -11,17 +11,8 @@ FactoryBot.define do
       role { "admin" }
     end
 
-    trait :teacher do
-      role { "teacher" }
-    end
-
-    trait :speaker do
-      role { "speaker" }
-    end
-
-    # Trait for invalid user (optional for testing validations)
-    trait :invalid_role do
-      role { "invalid_role" }
+    trait :regular_user do
+      role { "user" }
     end
 
     # To include address-user associations
