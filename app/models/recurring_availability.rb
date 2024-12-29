@@ -1,6 +1,5 @@
 class RecurringAvailability < ApplicationRecord
     has_many :availabilities, dependent: :destroy
-    have_one :speaker, through: :availabilities
 
     validates :end_date, presence: true
     validate :end_date_cannot_be_in_the_past
