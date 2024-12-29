@@ -1,6 +1,6 @@
 class RecurringAvailability < ApplicationRecord
     has_many :availabilities, dependent: :destroy
-    has_one :speaker, -> { where(role: 'speaker') }, through: :availabilities, source: :user
+    has_one :speaker, -> { where(role: "speaker") }, through: :availabilities, source: :user
 
     validates :end_date, presence: true
     validate :end_date_cannot_be_in_the_past
