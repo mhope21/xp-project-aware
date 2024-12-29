@@ -48,6 +48,7 @@ export default function Logout({ setLoggedIn, setUser }) {
         localStorage.removeItem('jwt');
         setLoggedIn(false);
         setUser(null);
+        navigate("/");
         
         console.log("Logout successful.")
 

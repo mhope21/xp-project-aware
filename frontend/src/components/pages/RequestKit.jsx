@@ -54,13 +54,6 @@ function RequestKit({ user }) {
         comments: orderForm.comments,
       },
     };
-    
-    if (!jwt) {
-      console.log("No user logged in. Please log in to continue.");
-      // Redirect to login
-      navigate("/login");
-      return;
-    }
 
 
     try {
