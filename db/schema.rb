@@ -86,6 +86,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_29_043345) do
 
   create_table "orders", force: :cascade do |t|
     t.string "school_year"
+    t.integer "kit_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
