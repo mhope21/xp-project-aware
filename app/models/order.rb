@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  belongs_to :kit
+  #belongs_to :kit
   belongs_to :user
   belongs_to :product, polymorphic: true
 
@@ -16,4 +16,5 @@ class Order < ApplicationRecord
 
   # Validates that the product is present
   validates :product, presence: true
+
 end
