@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { API_URL } from "../../constants";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 
 
 function Kits({user}) {
@@ -8,7 +9,6 @@ function Kits({user}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const kitsUrl = `${API_URL}/kits`;
-  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -35,20 +35,6 @@ function Kits({user}) {
     }
     loadKits();
   }, [kitsUrl]);
-
-  // Stretch Goal: Send user back to the resource they requested after login
-  const handleOrderKit = (kitId, kitName) => {
-    if (!user) {
-      // Alert the user that they must log in first
-      alert('You must log in to request a kit.');
-  
-      navigate('/login');
-    } else {
-      // If the user exists, navigate to the RequestKit page and pass kitId as state to ensure they request the correct kit selection
-      navigate('/orders', { state: { kitId, kitName } });
-    }
-  };
-  
 
   return (
     // Displays kit page
@@ -111,9 +97,18 @@ function Kits({user}) {
                             {kit.description}
                           </div>
                           
-                            <button className="btn btn-primary btn-small" onClick= {() => handleOrderKit(kit.id, kit.name)}>
+                          {user ? (
+                            <Link 
+                              to="/orders" 
+                              state={{ kitId: kit.id, kitName: kit.name }}
+                              className="btn btn-primary btn-small"
+                            >
                               Order {kit.name}
-                            </button>
+                            </Link>
+                          ) : (
+                            <p><em>Please log in to place an order.</em></p>
+                          )}
+
                           
                         </div>
                         <div>
