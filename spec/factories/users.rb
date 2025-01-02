@@ -13,5 +13,9 @@ FactoryBot.define do
     trait :regular_user do
       role { "user" }
     end
+
+    trait :speaker_user do
+      role { "speaker" }
+    end
   end
 end
