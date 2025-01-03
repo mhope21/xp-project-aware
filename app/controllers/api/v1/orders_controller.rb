@@ -8,7 +8,7 @@ class Api::V1::OrdersController < ApplicationController
 
   # POST /api/v1/orders
   def create
-    @order.user = @current_user # Automatically associate user
+    @order.user = current_user # Automatically associate user
 
     if @order.save
       render json: @order, status: :created
