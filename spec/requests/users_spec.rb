@@ -67,7 +67,7 @@ RSpec.describe "Users", type: :request do
       end
     end
 
-    it "update the user's bio" do
+    it "updates the user's bio" do
       sign_in regular_user
       patch api_v1_user_path(regular_user), params: { user: { bio: "This is my bio" } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
       expect(response).to have_http_status(:success)
