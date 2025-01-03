@@ -18,11 +18,10 @@ FactoryBot.define do
     trait :speaker_user do
       role { "speaker" }
     end
-    
+
     # To include address-user associations
     after(:build) do |user|
       user.addresses << build(:address, addressable: user)
-
     end
   end
 end
