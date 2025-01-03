@@ -5,6 +5,7 @@ FactoryBot.define do
     last_name { Faker::Name.unique.last_name }
     email { Faker::Internet.unique.email }
     password { Faker::Internet.password(min_length: 8) }
+    role { "user" } # Default role
 
     trait :admin do
       role { "admin" }
@@ -16,6 +17,12 @@ FactoryBot.define do
 
     trait :speaker_user do
       role { "speaker" }
+    end
+    
+    # To include address-user associations
+    after(:build) do |user|
+      user.addresses << build(:address, addressable: user)
+
     end
   end
 end
