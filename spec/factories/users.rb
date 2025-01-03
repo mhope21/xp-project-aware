@@ -10,6 +10,10 @@ FactoryBot.define do
       role { "admin" }
     end
 
+    trait :speaker do
+      role { "speaker" }
+    end
+
     trait :regular_user do
       role { "user" }
     end
