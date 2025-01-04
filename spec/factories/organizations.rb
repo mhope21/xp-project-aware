@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :organization do
-    name { "MyString" }
-    org_type { 1 }
+    name { Faker::Educator.secondary_school }
+    org_type { :school }
   end
 end
