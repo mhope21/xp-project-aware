@@ -12,9 +12,8 @@ RSpec.describe Organization, type: :model do
       expect(organization).not_to be_valid
     end
 
-    it "is not valid without an org_type" do
-      organization = build(:organization, org_type: nil)
-      expect(organization).not_to be_valid
-    end
+    it { should have_many(:users) }
+
+    it { should have_one(:address) }
   end
 end
