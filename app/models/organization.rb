@@ -2,7 +2,7 @@ class Organization < ApplicationRecord
   has_many :users
   has_one :address, as: :addressable
 
-  validates :name, presence: true
+ validates :name, :org_type, presence: true
 
   enum org_type: {
     school: 0,
