@@ -49,6 +49,18 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_03_100137) do
     t.index ["recurring_availability_id"], name: "index_availabilities_on_recurring_availability_id"
     t.index ["speaker_id"], name: "index_availabilities_on_speaker_id"
   end
+    
+  create_table "addresses", force: :cascade do |t|
+    t.string "street_address", null: false
+    t.string "city", null: false
+    t.string "state", null: false
+    t.string "postal_code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "addressable_type", null: false
+    t.integer "addressable_id", null: false
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+  end
 
   create_table "contacts", force: :cascade do |t|
     t.integer "user_id"
@@ -70,8 +82,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_03_100137) do
     t.datetime "updated_at", null: false
     t.string "payment_token"
     t.boolean "canceled", default: false
-    t.string "stripe_checkout_session_id"
-    t.string "stripe_payment_intent_id"
     t.index ["user_id"], name: "index_donations_on_user_id"
   end
 
@@ -115,6 +125,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_03_100137) do
     t.string "school_address"
     t.text "comments"
     t.integer "user_id"
+    t.integer "address_id"
+    t.index ["kit_id"], name: "index_orders_on_kit_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -147,6 +159,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_03_100137) do
   add_foreign_key "availabilities", "users", column: "speaker_id"
   add_foreign_key "contacts", "users"
   add_foreign_key "donations", "users"
+  add_foreign_key "orders", "addresses"
   add_foreign_key "events", "users", column: "speaker_id"
   add_foreign_key "orders", "kits"
   add_foreign_key "orders", "users"
