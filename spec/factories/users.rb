@@ -11,7 +11,7 @@ FactoryBot.define do
       role { "admin" }
     end
 
-    trait :speaker do
+    trait :speaker_user do
       role { "speaker" }
     end
 
