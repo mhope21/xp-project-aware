@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :event do
-    speaker { nil }
     title { "MyString" }
     description { "MyString" }
     duration { 1 }
+    speaker { create(:user, :speaker) }
   end
 end
