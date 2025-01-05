@@ -12,6 +12,7 @@
 
 ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
 
+
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -40,17 +41,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "availabilities", force: :cascade do |t|
-    t.datetime "start_time", null: false
-    t.datetime "end_time", null: false
-    t.integer "speaker_id", null: false
-    t.integer "recurring_availability_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["recurring_availability_id"], name: "index_availabilities_on_recurring_availability_id"
-    t.index ["speaker_id"], name: "index_availabilities_on_speaker_id"
-  end
-    
   create_table "addresses", force: :cascade do |t|
     t.string "street_address", null: false
     t.string "city", null: false
@@ -104,8 +94,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
     t.datetime "updated_at", null: false
     t.string "payment_token"
     t.boolean "canceled", default: false
-    t.string "stripe_checkout_session_id"
-    t.string "stripe_payment_intent_id"
     t.index ["user_id"], name: "index_donations_on_user_id"
   end
 
@@ -177,6 +165,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
     t.string "first_name"
     t.string "last_name"
     t.integer "organization_id"
+    t.text "bio"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
@@ -185,6 +174,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "bookings", "events"
   add_foreign_key "availabilities", "recurring_availabilities"
   add_foreign_key "availabilities", "users", column: "speaker_id"
   add_foreign_key "bookings", "events"
