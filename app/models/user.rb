@@ -17,7 +17,7 @@ class User < ApplicationRecord
 
   belongs_to :organization, optional: true
 
-  #Add profile_image here
+  # Added profile_image here
   has_one_attached :profile_image
 
   before_create :set_default_role
