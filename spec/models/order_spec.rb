@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Order, type: :model do
   let(:kit) { create(:kit) }
   let(:regular_user) { create(:user, :regular_user) }
-  let(:speaker) { create(:user, :speaker) }
+  let(:speaker_user) { create(:user, :speaker_user) }
   let(:address) { create(:address, addressable: regular_user) }
   let(:order) { create(:order, user: speaker, product: event, address: address) }
   let(:order) { create(:order, user: regular_user, product: kit, address: address) }
@@ -40,7 +40,7 @@ RSpec.describe Order, type: :model do
 
   it 'is valid with a user (speaker) and an event' do
     event = create(:event)
-    order = create(:order, user: speaker, product: event)
+    order = create(:order, user: speaker_user, product: event)
     expect(order).to be_valid
   end
 

@@ -29,8 +29,8 @@ RSpec.describe "Orders", type: :request do
     it "creates a new order" do
       sign_in regular_user
       expect {
-        post api_v1_orders_path, params: { order: { school_year: "2025-2026", phone: "1234567890", comments: "This is wonderful", product_id: kit.id, address_id: address.id } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
-      }.to change(Order, :count).by(0)
+        post api_v1_orders_path, params: { order: { school_year: "2025-2026", phone: "1234567890", comments: "This is wonderful", product_id: kit.id, product_type: "Kit", address_id: address.id } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
+      }.to change(Order, :count).by(1)
       expect(response).to have_http_status(:created)
     end
   end
