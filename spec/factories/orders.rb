@@ -5,7 +5,7 @@ FactoryBot.define do
     comments { "This is wonderful" }
     # Define a transient attribute `product` (a `Kit` or `Donation` or 'Event') with a default value of nil.
     transient do
-      product {nil}
+      product { nil }
     end
     # Assign the transient `product` (a `Kit` or `Donation` or 'Event') to the order.
     after(:build) do |order, evaluator|
