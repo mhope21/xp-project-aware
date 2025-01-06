@@ -10,11 +10,14 @@
 #   end
 # Initial seeding of my database
 require 'faker'
+require 'factory_bot_rails'
 
 # Clear tables
 Order.destroy_all
 KitItem.destroy_all
 Kit.destroy_all
+Address.destroy_all
+User.destroy_all
 
 
 
@@ -291,29 +294,17 @@ empowerment_kit.kit_items << boy_bat_book << temple_book << see_me_book << vivy_
 perspectives_kit.kit_items << goldfish_boy_book << sevens_book << frankie_book << earth_blue_book << same_book << awesome_guide_book << mockingbird_book << classroom_book << neurotribes_book
 impact_kit.kit_items << curious_dog_book << rosie_book << different_book << classroom_book << neurotribes_book
 
-# Seeding user
-user = User.find_or_create_by!(email: "test@example3.com") do |u|
-  u.first_name = "Test"
-  u.last_name = "User"
-  u.password = "password123"
-  u.role = "teacher"
+# Seed users
+3.times do
+  FactoryBot.create(:user)
 end
 
-# Seeding Address
-address = Address.create!(
-  street_address: Faker::Address.street_address,
-  city: Faker::Address.city,
-  state: Faker::Address.state_abbr,
-  postal_code: Faker::Address.zip_code,
-  addressable: user
-)
+# Seed addresses
+10.times do
+  FactoryBot.create(:address)
+end
 
-# Seeding Order
-order = Order.create!(
-  school_year: '2024-2025',
-  kit: discovery_kit,
-  phone: "#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 3)}-#{Faker::Number.number(digits: 4)}",
-  comments: 'This is wonderful',
-  user: user,
-  address: address
-)
+# Seed orders
+3.times do
+  FactoryBot.create(:order)
+end
