@@ -8,7 +8,8 @@ class UserProfileSerializer
 
   attribute :orders do |user|
     user.orders ? user.orders.map { |order| OrderSerializer.new(order).serializable_hash } : []
-
+  end 
+  
   # Add the profile_image_url method here 
   def profile_image_url 
     if object.profile_image.attached? 
