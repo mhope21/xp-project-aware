@@ -27,4 +27,16 @@ RSpec.describe User, type: :model do
     regular_user.email = nil
     expect(regular_user).to_not be_valid
   end
+
+  it "allows a user to attach a profile image" do 
+    user = User.create!(name: "Test User", email: "test@example.com") 
+    user.profile_image.attach(io: File.open(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png')), filename: 'test_image.png', content_type: 'image/png') 
+    expect(user.profile_image).to be_attached 
+  end 
+  
+  it "uses the default image if no profile image is attached" do 
+    user = User.create!(name: "Test User", email: "test@example.com") 
+    serializer = UserProfileSerializer.new(user) 
+    expect(serializer.profile_image_url).to include("default_profile_image.png") 
+  end
 end
