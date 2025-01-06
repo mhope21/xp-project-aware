@@ -36,7 +36,6 @@ RSpec.describe User, type: :model do
   it "uses the default image if no profile image is attached" do
     allow(regular_user).to receive(:profile_image).and_return(nil)
     serializer = UserProfileSerializer.new(regular_user)
-    
     expect(serializer.profile_image_url).to include("default_profile_image.png")
   end
 end
