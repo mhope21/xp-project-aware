@@ -10,9 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
-
-
+ActiveRecord::Schema[7.2].define(version: 2025_01_05_230503) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -136,11 +134,12 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
     t.text "comments"
     t.integer "user_id"
     t.integer "address_id"
+    t.index ["kit_id"], name: "index_orders_on_kit_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
   create_table "organizations", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.integer "org_type", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -164,8 +163,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_04_173639) do
     t.string "role"
     t.string "first_name"
     t.string "last_name"
-    t.integer "organization_id"
     t.text "bio"
+    t.integer "organization_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
     t.index ["organization_id"], name: "index_users_on_organization_id"
