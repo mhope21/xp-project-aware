@@ -7,13 +7,6 @@ class Ability
 
     if user.role == "admin"
       can :manage, :all # Admins can manage everything
-      can :manage, User
-      can :update, User
-      can :destroy, User
-      can :manage, KitItem
-      can :create, KitItem
-      can :manage, Order
-      can :manage, Donation
     elsif user.role == "teacher"
       can :read, Booking, order: { user_id: user.id }
       can :create, Booking
