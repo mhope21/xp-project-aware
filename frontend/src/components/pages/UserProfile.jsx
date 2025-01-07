@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../constants';
 import { Link } from 'react-router-dom';
+import UserDetails from '../UserDetails';
+import UserActions from '../UserActions';
+import UserDonations from '../UserDonations';
+import UserOrders from '../UserOrders';
+import UserBookings from '../UserBookings';
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -41,48 +46,33 @@ const UserProfile = () => {
   return (
     <>
       <div className="black-strip"></div>
-      <section className="page-section" id="register">
-      <div>
-        <h1>User Profile</h1>
-        <p><strong>Name:</strong> {profile.name || 'No name provided'}</p>
-        <p><strong>Email:</strong> {profile.email || 'No email provided'}</p>
+      <section className="page-section">
+        <div className='text-center mt-3 mb-5'><h1>User Profile</h1></div>
+      <div className='d-flex'>
         
-        <h2>Donations</h2>
-        {profile.donations && profile.donations.length > 0 ? (
-          <ul>
-            {profile.donations.map((donation, index) => (
-              <li key={index}>
-                <p><strong>Amount:</strong> ${donation.amount}</p>
-                <p><strong>Date:</strong> {new Date(donation.created_at).toLocaleDateString()}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No donations yet.</p>
-        )}
-
-        <h2>Orders</h2>
-        {profile.orders && profile.orders.length > 0 ? (
-          <ul>
-            {profile.orders.map((order, index) => (
-              <li key={index}>
-                <p><strong>Requested Kit:</strong> {order.ordered_kit || 'Not specified'}</p>
-                <p><strong>Address:</strong> {order.address || 'No address provided'}</p>
-                <p><strong>School Year:</strong> {order.school_year || 'No school year specified'}</p>
-                <p><strong>Phone:</strong> {order.phone || 'No phone number provided'}</p>
-                <p><strong>Comments:</strong> {order.comments || 'No comments provided'}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No orders yet.</p>
-        )}
-
-        <div className='mt-5'>
-          <Link to="/donation" className="btn btn-primary btn-small me-2">Make Donations</Link>
-          <Link to="/kits" className='btn btn-primary btn-small me-2'>Order Kits</Link>
-          <Link to="/speaker" className='btn btn-primary btn-small'>Request Speakers</Link>
+      <div className='container fluid ms-4 me-1 w-25'>
+        <div className='profile-card'><UserDetails profile={profile} />
+      <div>
+      <UserActions/>
+      </div>
+      </div>
+      </div>
+      
+        <div className='container ms-1 me-4'>
+          <div className='other-card mb-5'>
+            <div className='other-card-header'><h4>Donations</h4></div>
+            <UserDonations profile={profile} />
         </div>
+        <div className='other-card mb-5'>
+        <div className='text-center'><h4>Kit Orders</h4></div>
+        <UserOrders profile={profile} />
+        </div>
+        <div className='other-card mb-5'>
+        <div className='text-center'><h4>Bookings</h4></div>
+        <UserBookings profile={profile} />
+        </div>
+        </div>
+        
       </div>
       </section>
     </>
