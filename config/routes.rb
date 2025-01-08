@@ -39,6 +39,9 @@ Rails.application.routes.draw do
           end
         end
       end
+
+        # route for availabilities
+        resources :availabilities, only: [ :index, :show, :create, :update, :destroy ]
     end
   end
 
