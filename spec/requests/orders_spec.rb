@@ -15,7 +15,7 @@ RSpec.describe "Orders", type: :request do
   end
 
   describe "GET /show" do
-    let(:order) { create(:order, user: teacher, kit: kit, address: address) }
+    let(:order) { create(:order, user: teacher, product: kit, address: address) }
     it "returns a success response" do
       sign_in admin_user
       get api_v1_order_path(order), headers: { 'Authorization': "Bearer #{@auth_token}" }
@@ -25,18 +25,18 @@ RSpec.describe "Orders", type: :request do
   end
 
   describe "POST /create" do
-    let(:order) { create(:order, user: teacher, kit: kit, address: address) }
+    let(:order) { create(:order, user: teacher, product: kit, address: address) }
     it "creates a new order" do
       sign_in teacher
       expect {
-        post api_v1_orders_path, params: { order: { school_year: "2025-2026", phone: "1234567890", comments: "This is wonderful", kit_id: kit.id, address_id: address.id } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
+        post api_v1_orders_path, params: { order: { school_year: "2025-2026", phone: "1234567890", comments: "This is wonderful", product_id: kit.id, product_type: "Kit", address_id: address.id } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
       }.to change(Order, :count).by(1)
       expect(response).to have_http_status(:created)
     end
   end
 
   describe "PATCH /update" do
-    let(:order) { create(:order, user: teacher, kit: kit, address: address) }
+    let(:order) { create(:order, user: teacher, product: kit, address: address) }
     it "updates the order" do
       sign_in teacher
       patch api_v1_order_path(order), params: { order: { phone: "1234569999" } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
@@ -47,7 +47,7 @@ RSpec.describe "Orders", type: :request do
 
   describe "DELETE /destroy" do
     context "when user is an admin" do
-      let(:order) { create(:order, user: teacher, kit: kit, address: address) }
+      let(:order) { create(:order, user: teacher, product: kit, address: address) }
       it "deletes the kit request" do
         sign_in admin_user
         delete api_v1_order_path(order), headers: { 'Authorization': "Bearer #{@auth_token}" }
@@ -57,7 +57,7 @@ RSpec.describe "Orders", type: :request do
     end
 
     context "when user is not an admin" do
-      let(:order) { create(:order, user: teacher, kit: kit, address: address) }
+      let(:order) { create(:order, user: teacher, product: kit, address: address) }
       it "denies access" do
         sign_in teacher
         delete api_v1_order_path(order), headers: { 'Authorization': "Bearer #{@auth_token}" }

@@ -14,9 +14,7 @@ class UserProfileSerializer
 
   def profile_image_url
     if object.profile_image.attached?
-      Rails.application.routes.url_helpers.rails_blob_url(object.profile_image_url, only_path: true)
-    else
-      ActionController::Base.helpers.asset_path("default_profile_image.png")
+      Rails.application.routes.url_helpers.rails_blob_url(object.profile_image, only_path: true)
     end
   end
 end
