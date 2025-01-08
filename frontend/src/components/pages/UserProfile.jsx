@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../constants';
 import { Link } from 'react-router-dom';
+import default_user_img from "/assets/img/default_user_img.png"
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -44,8 +45,16 @@ const UserProfile = () => {
       <section className="page-section" id="register">
       <div>
         <h1>User Profile</h1>
-        <p><strong>Name:</strong> {profile.name || 'No name provided'}</p>
-        <p><strong>Email:</strong> {profile.email || 'No email provided'}</p>
+        <div>
+            <img
+                src={profile.profile_image_url || default_user_img}
+                alt="Profile"
+                style={{ width: '200px', height: '200px', borderRadius: '50%' }}
+              />
+            <p><strong>Name:</strong> {profile.name || 'No name provided'}</p>
+            <p><strong>Email:</strong> {profile.email || 'No email provided'}</p>
+            <p><strong>Bio:</strong> {profile.bio || "No bio provided"}</p>
+          </div>
         
         <h2>Donations</h2>
         {profile.donations && profile.donations.length > 0 ? (
