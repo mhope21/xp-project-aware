@@ -5,6 +5,7 @@ RSpec.describe Order, type: :model do
   let(:teacher) { create(:user, :teacher) }
   let(:address) { create(:address, addressable: teacher) }
   let(:speaker_user) { create(:user, :speaker_user) }
+  let(:regular_user) { create(:user, :regular_user) }
   let(:order) { create(:order, user: speaker, product: event, address: address) }
   let(:order) { create(:order, user: teacher, product: kit, address: address) }
 
@@ -34,7 +35,7 @@ RSpec.describe Order, type: :model do
 
   it "is valid with user and a kit" do
     kit = create(:kit)
-    order = create(:order, user: regular_user, product: kit)
+    order = create(:order, user: teacher, product: kit)
     expect(order).to be_valid
   end
 

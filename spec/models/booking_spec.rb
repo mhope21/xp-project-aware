@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Booking, type: :model do
+  let(:speaker_user) { create(:user, :speaker_user) }
+  let(:teacher) { create(:user, :teacher) }
   let(:event) { create(:event) }
   let(:order) { create(:order) }
   let(:booking) { create(:booking, event: event, order: order) }
