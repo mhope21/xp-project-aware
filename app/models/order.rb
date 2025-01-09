@@ -1,6 +1,6 @@
 class Order < ApplicationRecord
-  belongs_to :kit
   belongs_to :user
+  belongs_to :product, polymorphic: true
   belongs_to :address
 
   before_validation :normalize_phone_number
@@ -18,6 +18,9 @@ class Order < ApplicationRecord
 
   # Ensure each user can only request one kit per school year
   validates :school_year, uniqueness: { scope: :user_id, message: "You can only request one kit per school year" }
+
+  # Validates that the product is present
+  validates :product, presence: true
 
   def normalize_phone_number
     return if phone.blank?
