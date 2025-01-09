@@ -6,6 +6,7 @@ import UserActions from '../UserActions';
 import UserDonations from '../UserDonations';
 import UserOrders from '../UserOrders';
 import UserBookings from '../UserBookings';
+import default_user_img from "/assets/img/default_user_img.png"
 
 const UserProfile = () => {
   const [profile, setProfile] = useState(null);
