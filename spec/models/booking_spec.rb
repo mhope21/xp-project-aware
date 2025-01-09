@@ -10,8 +10,7 @@ RSpec.describe Booking, type: :model do
   describe 'associations' do
     it { should belong_to(:event) }
     it { should have_one(:speaker).through(:event) }
-    # product not yet finished
-    # it { should have_one(:order) }
+    it { should have_one(:order) }
     it { should have_one(:user).through(:order) }
   end
 
