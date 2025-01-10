@@ -103,6 +103,13 @@
   padding: 10px;
 }
 
+.profile-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .other-card {
   margin: 0 auto;
   min-width: 100%;

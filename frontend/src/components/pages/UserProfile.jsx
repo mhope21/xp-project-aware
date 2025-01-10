@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../constants';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import UserDetails from '../UserDetails';
 import UserActions from '../UserActions';
 import UserDonations from '../UserDonations';
@@ -9,6 +9,7 @@ import UserBookings from '../UserBookings';
 import default_user_img from "/assets/img/default_user_img.png"
 
 const UserProfile = () => {
+  const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const jwt = localStorage.getItem("jwt")
@@ -16,7 +17,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${API_URL}/profile`, {
+        const response = await fetch(`${API_URL}/users/${id}/profile`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -34,7 +35,7 @@ const UserProfile = () => {
     };
   
     fetchProfile();
-  }, []);
+  }, [id]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -54,7 +55,7 @@ const UserProfile = () => {
       <div className='container fluid ms-4 me-1 w-25'>
         <div className='profile-card'><UserDetails profile={profile} />
       <div>
-      <UserActions/>
+      <UserActions profile={profile} />
       </div>
       </div>
       </div>
@@ -65,11 +66,11 @@ const UserProfile = () => {
             <UserDonations profile={profile} />
         </div>
         <div className='other-card mb-5'>
-        <div className='text-center'><h4>Kit Orders</h4></div>
+        <div className='other-card-header'><h4>Kit Orders</h4></div>
         <UserOrders profile={profile} />
         </div>
         <div className='other-card mb-5'>
-        <div className='text-center'><h4>Bookings</h4></div>
+        <div className='other-card-header'><h4>Bookings</h4></div>
         <UserBookings profile={profile} />
         </div>
         </div>

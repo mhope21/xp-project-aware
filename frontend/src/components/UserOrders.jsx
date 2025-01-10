@@ -1,22 +1,37 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const UserOrders = ({ profile }) => (
   <div>
     {profile.orders && profile.orders.length > 0 ? (
-          <ul>
+        <table className='table table-striped' style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th style={{ padding: '10px', marginRight: '10px' }}>Requested Kit</th>
+              <th style={{ padding: '10px', marginRight: '10px' }}>Address</th>
+              <th style={{ padding: '10px', marginRight: '10px' }}>School Year</th>
+              <th style={{ padding: '10px', marginRight: '10px' }}>Phone</th>
+              <th style={{ padding: '10px' }}>Comments</th>
+            </tr>
+          </thead>
+          <tbody>
             {profile.orders.map((order, index) => (
-              <li key={index}>
-                <p><strong>Requested Kit:</strong> {order.ordered_kit || 'Not specified'}</p>
-                <p><strong>Address:</strong> {order.address || 'No address provided'}</p>
-                <p><strong>School Year:</strong> {order.school_year || 'No school year specified'}</p>
-                <p><strong>Phone:</strong> {order.phone || 'No phone number provided'}</p>
-                <p><strong>Comments:</strong> {order.comments || 'No comments provided'}</p>
-              </li>
+              <tr key={index}>
+                <td style={{ padding: '10px', marginRight: '10px' }}>{order.ordered_kit || 'Not specified'}</td>
+                <td style={{ padding: '10px', marginRight: '10px' }}>{order.address || 'No address provided'}</td>
+                <td style={{ padding: '10px', marginRight: '10px' }}>{order.school_year || 'No school year specified'}</td>
+                <td style={{ padding: '10px', marginRight: '10px' }}>{order.phone || 'No phone number provided'}</td>
+                <td style={{ padding: '10px' }}>{order.comments || 'No comments provided'}</td>
+              </tr>
             ))}
-          </ul>
-        ) : (
-          <p>No orders yet.</p>
-        )}
+          </tbody>
+        </table>
+      ) : (
+        <p>No orders yet.</p>
+      )}
+        <div className='d-flex flex-column align-items-center mt-5'>
+            <Link to="/kits" className='btn btn-primary btn-small mb-2'>Order Kits</Link>
+        </div>
   </div>
 );
 
