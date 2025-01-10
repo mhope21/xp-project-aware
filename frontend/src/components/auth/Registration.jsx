@@ -7,6 +7,7 @@ export default function Registration() {
   const [password, setPassword] = useState("");
 
   const [isTeacher, setIsTeacher] = useState(false);
+  const [isSpeaker, setIsSpeaker] = useState(false);
   // Removed useState for name and added for firstName, lastName
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -19,6 +20,7 @@ export default function Registration() {
   const handleClick = () => {
 
     setIsTeacher((prevIsTeacher) => !prevIsTeacher);
+    setIsSpeaker((prevIsSpeaker) => !prevIsSpeaker);
 
   };
   // Handles initial signup, sets default role as user since only admin can assign a user as admin. Uses a POST action to sign up new user.
@@ -32,7 +34,7 @@ export default function Registration() {
         email,
         password,
         // if isTeacher is true, then role set as teacher, otherwise, user
-        role: isTeacher ? "teacher" : "user",
+        role: isTeacher ? "teacher" : isSpeaker ? "speaker" : "user",
         // Removed name, and added firstName and lastName, mapped name details to column names
         first_name: firstName,
         last_name: lastName,
@@ -187,6 +189,7 @@ export default function Registration() {
                         A password is required.
                       </div>
                       {/* Added checkbox for teacher role */}
+                      <div className="d-flex">
                       <div className="form-check">
                         <input
                           className="form-check-input mt-3 me-3"
@@ -196,13 +199,28 @@ export default function Registration() {
                           onChange={handleClick}
                         />
                         <label
-                          className="form-check-label mt-4 text-muted"
+                          className="form-check-label mt-4 text-muted me-5"
                           htmlFor="isTeacher"
                         >
                           <strong>I am a teacher</strong>
                         </label>
                       </div>
-
+                      <div className="form-check">
+                        <input
+                          className="form-check-input mt-3 me-3"
+                          type="checkbox"
+                          id="isSpeaker"
+                          checked={isSpeaker}
+                          onChange={handleClick}
+                        />
+                        <label
+                          className="form-check-label mt-4 text-muted"
+                          htmlFor="isSpeaker"
+                        >
+                          <strong>I am a speaker</strong>
+                        </label>
+                      </div>
+                      </div>
                     </div>
                   </div>
                 </div>

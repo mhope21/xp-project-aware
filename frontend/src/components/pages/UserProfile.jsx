@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { API_URL } from '../../constants';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import default_user_img from "/assets/img/default_user_img.png"
 
 const UserProfile = () => {
+  const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const jwt = localStorage.getItem("jwt")
@@ -11,7 +12,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`${API_URL}/profile`, {
+        const response = await fetch(`${API_URL}/profile/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -29,7 +30,7 @@ const UserProfile = () => {
     };
   
     fetchProfile();
-  }, []);
+  }, [id]);
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -45,11 +46,11 @@ const UserProfile = () => {
       <section className="page-section" id="register">
       <div>
         <h1>User Profile</h1>
-        <div>
+        <div className='team-member'>
             <img
+                className='profile-image'
                 src={profile.profile_image_url || default_user_img}
-                alt="Profile"
-                style={{ width: '200px', height: '200px', borderRadius: '50%' }}
+                alt="Profile Image"
               />
             <p><strong>Name:</strong> {profile.name || 'No name provided'}</p>
             <p><strong>Email:</strong> {profile.email || 'No email provided'}</p>

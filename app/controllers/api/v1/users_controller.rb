@@ -6,7 +6,7 @@ load_and_authorize_resource
   # GET /api/v1/users
   def index
     @users = User.all
-    render json: @users
+    render json: UserSerializer.new(@users).serializable_hash.to_json
   end
 
   # GET /api/v1/users/1
@@ -31,7 +31,8 @@ load_and_authorize_resource
 
   # Add profile action and pass current_user as params
   def profile
-    render json: UserProfileSerializer.new(current_user)
+    @user = User.find(params[:id])
+    render json: UserProfileSerializer.new(@user)
   end
 
   private

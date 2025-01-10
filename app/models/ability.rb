@@ -23,7 +23,8 @@ class Ability
       can :manage, Availability, speaker_id: user.id
     else
       can :update, User, id: user.id
-      can :profile, User, id: user.id
+      can :profile, User
+      can :read, User
       can :read, Kit
       can :read, KitItem
       can :create, Donation
