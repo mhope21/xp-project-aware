@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Orders", type: :request do
-  let(:admin_user) { create(:user, :admin) }
+  let(:admin_user) { create(:user, :admin_user) }
   let(:regular_user) { create(:user, :regular_user) }
   let(:address) { create(:address, addressable: regular_user) }
   let(:kit) { create(:kit) }
