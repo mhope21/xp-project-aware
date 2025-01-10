@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       resources :donations
       resources :contacts
       resources :events
+      resources :bookings, only: [ :create, :update, :index, :show ]
       resources :orders, only: [ :index, :create, :show, :update, :destroy ] do
         collection do
           get "current", to: "orders#current"
