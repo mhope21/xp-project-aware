@@ -26,7 +26,7 @@ FactoryBot.define do
     trait :regular_user do
       role { "user" }
     end
-      
+
     trait :guest_user do
       role { "guest" }
     end
