@@ -3,6 +3,7 @@ FactoryBot.define do
     school_year { "2025-2026" }
     phone { "#{rand(100..999)}-#{rand(100..999)}-#{rand(1000..9999)}" }
     comments { "This is wonderful" }
+
     # Define a transient attribute `product` (a `Kit` or `Donation` or 'Event') with a default value of nil.
     transient do
       product { nil }
