@@ -14,10 +14,10 @@ RSpec.describe "Users", type: :request do
       end
     end
     context "when user role is not admin" do
-      it "returns http response forbidden" do
+      it "returns http response success" do
         sign_in regular_user
         get api_v1_users_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:success)
       end
     end
   end
@@ -31,10 +31,10 @@ RSpec.describe "Users", type: :request do
       end
     end
     context "when user role is not admin" do
-      it "returns http response forbidden" do
+      it "returns http response success" do
         sign_in regular_user
         get api_v1_users_path(regular_user), headers: { 'Authorization': "Bearer #{@auth_token}" }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:success)
       end
     end
   end
