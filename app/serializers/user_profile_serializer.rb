@@ -6,8 +6,26 @@ class UserProfileSerializer
     user.donations ? user.donations.map { |donation| DonationSerializer.new(donation).serializable_hash } : []
   end
 
+  # attribute :orders do |user|
+  #   user.orders ? user.orders.map { |order| OrderSerializer.new(order).serializable_hash } : []
+  # end
+
   attribute :orders do |user|
-    user.orders ? user.orders.map { |order| OrderSerializer.new(order).serializable_hash } : []
+    if user.orders
+      kit_orders = user.orders.select { |order| order.product.is_a?(Kit) }
+      kit_orders.map { |order| OrderSerializer.new(order).serializable_hash }
+    else
+      []
+    end
+  end
+
+  attribute :bookings do |user|
+    if user.orders.present?
+      booking_orders = user.orders.select { |order| order.product.is_a?(Booking) }
+      booking_orders.map { |order| OrderSerializer.new(order).serializable_hash }
+    else
+      []
+    end
   end
 
   attribute :organization do |user|

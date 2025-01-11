@@ -17,8 +17,8 @@ const UserOrders = ({ profile }) => (
           <tbody>
             {profile.orders.map((order, index) => (
               <tr key={index}>
-                <td style={{ padding: '10px', marginRight: '10px' }}>{order.ordered_kit || 'Not specified'}</td>
-                <td style={{ padding: '10px', marginRight: '10px' }}>{order.address || 'No address provided'}</td>
+                <td style={{ padding: '10px', marginRight: '10px' }}>{order.ordered_product || 'Not specified'}</td>
+                <td style={{ padding: '10px', marginRight: '10px' }}>{order.order_address || 'No address provided'}</td>
                 <td style={{ padding: '10px', marginRight: '10px' }}>{order.school_year || 'No school year specified'}</td>
                 <td style={{ padding: '10px', marginRight: '10px' }}>{order.phone || 'No phone number provided'}</td>
                 <td style={{ padding: '10px' }}>{order.comments || 'No comments provided'}</td>
