@@ -1,16 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe "Bookings", type: :request do
-  let(:admin) { create(:user, :admin) }
-  let(:teacher) { create(:user, :teacher) }
-  let(:speaker) { create(:user, :speaker_user) }
-  let(:event) { create(:event, speaker: speaker) }
+  let(:admin_user) { create(:user, :admin_user) }
+  let(:teacher_user) { create(:user, :teacher_user) }
+  let(:speaker_user) { create(:user, :speaker_user) }
+  let(:event) { create(:event, speaker: speaker_user) }
   let(:booking) { create(:booking, event: event) }
 
   subject(:ability) { Ability.new(teacher) }
 
   before do
-    sign_in teacher
+    sign_in teacher_user
   end
 
   describe "GET /bookings" do

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
-  let(:admin_user) { create(:user, :admin) }
+  let(:admin_user) { create(:user, :admin_user) }
   let(:regular_user) { create(:user, :regular_user) }
 
 
@@ -18,6 +18,7 @@ RSpec.describe "Users", type: :request do
         # changed permissions to view speaker index
         sign_in regular_user
         get api_v1_users_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
+        expect(response).to have_http_status(:success)
         expect(response).to have_http_status(:success)
       end
     end
@@ -36,6 +37,7 @@ RSpec.describe "Users", type: :request do
         # Changed permissions to view speakers
         sign_in regular_user
         get api_v1_users_path(regular_user), headers: { 'Authorization': "Bearer #{@auth_token}" }
+        expect(response).to have_http_status(:success)
         expect(response).to have_http_status(:success)
       end
     end

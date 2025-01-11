@@ -3,35 +3,64 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    user ||= User.new # Guest user (not logged in)
+    user ||= User.new
 
-    if user.role == "admin"
-      can :manage, :all # Admins can manage everything
-    elsif user.role == "teacher"
-      can :read, Booking, order: { user_id: user.id }
-      can :create, Booking
-      can :update, Booking, order: { user_id: user.id }
-      can :read, Event
-      can :read, Availability
-      can :read, Order, user_id: user.id
-      can :create, Order # Users can create new kit requests
-      can [ :update ], Order, user_id: user.id # Users can update their own kit requests
-    elsif user.role == "speaker"
-      can :read, Booking, event: { speaker_id: user.id }
-      can :manage, Event, speaker_id: user.id
-      can :update, Booking, event: { speaker_id: user.id }
-      can :manage, Availability, speaker_id: user.id
-    else
-      can :update, User, id: user.id
-      can :profile, User
-      can :read, User
-      can :read, Kit
-      can :read, KitItem
-      can :create, Donation
-      can :read, Donation, user_id: user.id
-      cannot :update, Donation
-      can :create, Contact
-
+    case user.role
+    when "admin"
+      admin_abilities
+    when "teacher"
+      teacher_abilities(user)
+    when "speaker"
+      speaker_abilities(user)
+    else # Default abilities for guest or regular users
+      user_abilities(user)
     end
+  end
+
+  private
+
+  # Abilities shared across all users (guest and logged-in)
+  def shared_abilities
+    can :read, Kit
+    can :read, KitItem
+    can :create, Contact
+  end
+
+  # Abilities for regular users (non-guest)
+  def user_abilities(user)
+    shared_abilities
+    can :read, User
+    can :update, User, id: user.id
+    can :profile, User
+    can :create, Donation, user_id: user.id
+    can :read, Donation, user_id: user.id
+    cannot :update, Donation
+  end
+
+  # Abilities for teachers
+  def teacher_abilities(user)
+    user_abilities(user)
+    can :create, Order
+    can :read, Order, user_id: user.id
+    can :update, Order, user_id: user.id
+    can :read, Event
+    can :read, Availability
+    can :read, Booking, order: { user_id: user.id }
+    can :create, Booking
+    can :update, Booking, order: { user_id: user.id }
+  end
+
+  # Abilities for speakers
+  def speaker_abilities(user)
+    user_abilities(user)
+    can :read, Booking, event: { speaker_id: user.id }
+    can :manage, Event, speaker_id: user.id
+    can :update, Booking, event: { speaker_id: user.id }
+    can :manage, Availability, speaker_id: user.id
+  end
+
+  # Abilities for admin
+  def admin_abilities
+    can :manage, :all
   end
 end
