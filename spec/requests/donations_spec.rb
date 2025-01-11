@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Donations", type: :request do
-  let(:admin_user) { create(:user, :admin) }
+  let(:admin_user) { create(:user, :admin_user) }
   let(:regular_user) { create(:user, :regular_user) }
   let(:admin_donation) { create(:donation, user: admin_user, canceled: false) }
   let(:user_donation) { create(:donation, user: regular_user, canceled: false) }
