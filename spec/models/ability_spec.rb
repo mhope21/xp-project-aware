@@ -24,6 +24,34 @@ RSpec.describe Ability, type: :model do
   context 'when user is a teacher' do
     let(:user) { teacher_user }
 
+    it 'can read their own profile' do
+      expect(ability).to be_able_to(:read, User, id: user.id)
+    end
+
+    it 'can update their own profile' do
+      expect(ability).to be_able_to(:update, User, id: user.id)
+    end
+
+    it 'can profile their own profile' do
+      expect(ability).to be_able_to(:profile, User, id: user.id)
+    end
+
+    it 'can read kits' do
+      expect(ability).to be_able_to(:read, Kit)
+    end
+
+    it 'can create donations' do
+      expect(ability).to be_able_to(:create, Donation)
+    end
+
+    it 'can read their own donations' do
+      expect(ability).to be_able_to(:read, Donation, user_id: user.id)
+    end
+
+    it 'cannot update donations' do
+      expect(ability).not_to be_able_to(:update, Donation)
+    end
+
     it 'can read their own bookings' do
       expect(ability).to be_able_to(:read, booking, order: { user_id: user.id })
     end
@@ -52,6 +80,34 @@ RSpec.describe Ability, type: :model do
   context 'when user is a speaker' do
     let(:user) { speaker_user }
 
+    it 'can read their own profile' do
+      expect(ability).to be_able_to(:read, User, id: user.id)
+    end
+
+    it 'can update their own profile' do
+      expect(ability).to be_able_to(:update, User, id: user.id)
+    end
+
+    it 'can profile their own profile' do
+      expect(ability).to be_able_to(:profile, User, id: user.id)
+    end
+
+    it 'can read kits' do
+      expect(ability).to be_able_to(:read, Kit)
+    end
+
+    it 'can create donations' do
+      expect(ability).to be_able_to(:create, Donation)
+    end
+
+    it 'can read their own donations' do
+      expect(ability).to be_able_to(:read, Donation, user_id: user.id)
+    end
+
+    it 'cannot update donations' do
+      expect(ability).not_to be_able_to(:update, Donation)
+    end
+
     it 'can read bookings for their events' do
       expect(ability).to be_able_to(:read, booking, event: { speaker_id: user.id })
     end
@@ -72,8 +128,16 @@ RSpec.describe Ability, type: :model do
   context 'when user is a guest' do
     let(:user) { User.new }
 
+    it 'can read their own profile' do
+      expect(ability).to be_able_to(:read, User, id: user.id)
+    end
+
     it 'can update their own profile' do
       expect(ability).to be_able_to(:update, User, id: user.id)
+    end
+
+    it 'can profile their own profile' do
+      expect(ability).to be_able_to(:profile, User, id: user.id)
     end
 
     it 'can read kits' do
