@@ -17,7 +17,7 @@ class Order < ApplicationRecord
   validates :comments, allow_blank: true, length: { maximum: 500, message: "cannot exceed 500 characters" }
 
   # Ensure each user can only request one kit per school year
-  validates :school_year, uniqueness: { scope: :user_id, message: "You can only request one kit per school year" }
+  # validates :school_year, uniqueness: { scope: :user_id, message: "You can only request one kit per school year" }
 
   # Validates that the product is present
   validates :product, presence: true
