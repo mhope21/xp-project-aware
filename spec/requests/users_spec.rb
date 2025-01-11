@@ -16,6 +16,7 @@ RSpec.describe "Users", type: :request do
     # Changed user permission to allow viewing speakers
     context "when user role is not admin" do
       it "returns http response success" do
+        # changed permissions to view speaker index
         sign_in regular_user
         get api_v1_users_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:success)
@@ -34,6 +35,7 @@ RSpec.describe "Users", type: :request do
     # Changed user permission to allow viewing speaker profile
     context "when user role is not admin" do
       it "returns http response success" do
+        # Changed permissions to view speakers
         sign_in regular_user
         get api_v1_users_path(regular_user), headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:success)
