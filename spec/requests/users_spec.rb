@@ -19,7 +19,6 @@ RSpec.describe "Users", type: :request do
         sign_in regular_user
         get api_v1_users_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:success)
-        expect(response).to have_http_status(:success)
       end
     end
   end
@@ -37,7 +36,6 @@ RSpec.describe "Users", type: :request do
         # Changed permissions to view speakers
         sign_in regular_user
         get api_v1_users_path(regular_user), headers: { 'Authorization': "Bearer #{@auth_token}" }
-        expect(response).to have_http_status(:success)
         expect(response).to have_http_status(:success)
       end
     end
