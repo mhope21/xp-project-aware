@@ -29,7 +29,7 @@ class Ability
   # Abilities for regular users (non-guest)
   def user_abilities(user)
     shared_abilities
-    can :read, User, id: user.id
+    can :read, User
     can :update, User, id: user.id
     can :profile, User
     can :create, Donation, user_id: user.id
