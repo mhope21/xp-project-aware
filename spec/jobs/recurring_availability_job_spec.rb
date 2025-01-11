@@ -10,9 +10,9 @@ RSpec.describe RecurringAvailabilityJob, type: :job do
     before do
       # Create a recurring availability rule
       @recurring_availability = create(
-        :recurring_availability, 
-        start_time: "09:00", 
-        end_time: "10:00", 
+        :recurring_availability,
+        start_time: "09:00",
+        end_time: "10:00",
         speaker_id: 1,
         recurs_on: ->(date) { date.wday == 1 } # Recur every Monday
       )
@@ -34,4 +34,5 @@ RSpec.describe RecurringAvailabilityJob, type: :job do
       }.not_to change(Availability, :count)
     end
   end
+  
 end
