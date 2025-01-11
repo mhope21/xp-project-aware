@@ -34,5 +34,4 @@ RSpec.describe RecurringAvailabilityJob, type: :job do
       }.not_to change(Availability, :count)
     end
   end
-  
 end

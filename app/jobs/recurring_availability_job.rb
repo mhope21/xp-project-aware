@@ -10,7 +10,7 @@ class RecurringAvailabilityJob < ApplicationJob
     return if existing_availabilities.exists?
 
     # Find all recurring availabilities that need to be created for the next month
-    recurring_availabilities = RecurringAvailability.where('end_date IS NULL OR end_date >= ?', start_date)
+    recurring_availabilities = RecurringAvailability.where("end_date IS NULL OR end_date >= ?", start_date)
 
     recurring_availabilities.each do |recurring|
       (start_date..end_date).each do |date|

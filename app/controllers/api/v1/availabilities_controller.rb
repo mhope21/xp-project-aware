@@ -89,7 +89,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
     next_month_date = Date.new(viewing_year, viewing_month, 1).next_month
     next_month = next_month_date.month
     next_year = next_month_date.year
-  
+
     # Trigger the job for the next month
     RecurringAvailabilityJob.perform_later(next_month, next_year)
   end
