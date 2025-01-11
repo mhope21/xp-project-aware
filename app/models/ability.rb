@@ -40,7 +40,9 @@ class Ability
   # Abilities for teachers
   def teacher_abilities(user)
     user_abilities(user)
-    can :manage, Order, user_id: user.id
+    can :create, Order
+    can :read, Order, user_id: user.id
+    can :update, Order, user_id: user.id
     can :read, Event
     can :read, Availability
     can :read, Booking, order: { user_id: user.id }
