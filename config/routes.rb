@@ -16,13 +16,17 @@ Rails.application.routes.draw do
   # API routes
   namespace :api do
     namespace :v1 do
+      resources :availabilities, only: [ :index, :show, :create, :update, :destroy ]
       # Special routes for the dashboard cards and editing only kit items
       get "admin_dashboard", to: "admin_dashboard#index"
       get "kit_items_only", to: "kit_items#index_kit_items_only"
       post "kit_items_only", to: "kit_items#create_kit_items_only"
       patch "kit_items_only/:id", to: "kit_items#update_kit_items_only"
-      get "profile", to: "users#profile"
-      resources :users
+      resources :users do
+        member do
+          get "profile"
+        end
+      end
       resources :donations
       resources :contacts
       resources :events

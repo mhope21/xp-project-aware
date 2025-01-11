@@ -2,12 +2,12 @@ require "rails_helper"
 
 RSpec.describe Order, type: :model do
   let(:kit) { create(:kit) }
-  let(:teacher) { create(:user, :teacher) }
-  let(:address) { create(:address, addressable: teacher) }
+  let(:teacher_user) { create(:user, :teacher_user) }
+  let(:address) { create(:address, addressable: teacher_user) }
   let(:speaker_user) { create(:user, :speaker_user) }
   let(:regular_user) { create(:user, :regular_user) }
-  let(:order) { create(:order, user: speaker, product: event, address: address) }
-  let(:order) { create(:order, user: teacher, product: kit, address: address) }
+  let(:order) { create(:order, user: speaker_user, product: event, address: address) }
+  let(:order) { create(:order, user: teacher_user, product: kit, address: address) }
 
   it "is valid with valid attributes" do
     expect(order).to be_valid
@@ -35,7 +35,7 @@ RSpec.describe Order, type: :model do
 
   it "is valid with user and a kit" do
     kit = create(:kit)
-    order = create(:order, user: teacher, product: kit)
+    order = create(:order, user: teacher_user, product: kit)
     expect(order).to be_valid
   end
 
