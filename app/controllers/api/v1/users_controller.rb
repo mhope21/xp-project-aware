@@ -31,7 +31,8 @@ load_and_authorize_resource
 
   # Add profile action and pass current_user as params
   def profile
-    render json: UserProfileSerializer.new(current_user)
+    @user = User.find(params[:id])
+    render json: UserProfileSerializer.new(@user).serializable_hash
   end
 
   private
@@ -41,6 +42,6 @@ load_and_authorize_resource
   end
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :bio, :profile_image)
+    params.require(:user).permit(:first_name, :last_name, :bio, :profile_image, :organization_id)
   end
 end
