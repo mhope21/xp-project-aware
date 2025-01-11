@@ -7,7 +7,7 @@ FactoryBot.define do
     password { Faker::Internet.password(min_length: 8) }
     role { "user" } # Default role
 
-    trait :admin do
+    trait :admin_user do
       role { "admin" }
     end
 
@@ -19,8 +19,16 @@ FactoryBot.define do
       role { "speaker" }
     end
 
-    trait :teacher do
+    trait :teacher_user do
       role { "teacher" }
+    end
+
+    trait :regular_user do
+      role { "user" }
+    end
+
+    trait :guest_user do
+      role { "guest" }
     end
 
     # To include address-user associations
