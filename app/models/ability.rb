@@ -31,7 +31,7 @@ class Ability
     shared_abilities
     can :read, User, id: user.id
     can :update, User, id: user.id
-    can :profile, User, id: user.id
+    can :profile, User
     can :create, Donation, user_id: user.id
     can :read, Donation, user_id: user.id
     cannot :update, Donation
