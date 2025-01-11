@@ -93,5 +93,4 @@ class Api::V1::AvailabilitiesController < ApplicationController
     # Trigger the job for the next month
     RecurringAvailabilityJob.perform_later(next_month, next_year)
   end
-
 end
