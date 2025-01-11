@@ -16,12 +16,20 @@ export default function Registration() {
   const [userData, setUserData] = useState({});
   const registrationUrl = `${API_URL2}/signup`;
 
-  // Toggles the isTeacher state and logs to console
-  const handleClick = () => {
-
-    setIsTeacher((prevIsTeacher) => !prevIsTeacher);
-    setIsSpeaker((prevIsSpeaker) => !prevIsSpeaker);
-
+  // Toggles the isTeacher and isSpeaker. Behaves like radio button.
+  const handleClick = (event) => {
+    const { id } = event.target;
+    if (id === 'isTeacher') {
+      setIsTeacher((prevIsTeacher) => !prevIsTeacher);
+      if (!isTeacher) {
+        setIsSpeaker(false);
+      }
+    } else if (id === 'isSpeaker') {
+      setIsSpeaker((prevIsSpeaker) => !prevIsSpeaker);
+      if (!isSpeaker) {
+        setIsTeacher(false);
+      }
+    }
   };
   // Handles initial signup, sets default role as user since only admin can assign a user as admin. Uses a POST action to sign up new user.
   const handleSubmit = async (event) => {
@@ -188,7 +196,7 @@ export default function Registration() {
                       >
                         A password is required.
                       </div>
-                      {/* Added checkbox for teacher role */}
+                      {/* Added checkbox for teacher role and speaker role*/}
                       <div className="d-flex">
                       <div className="form-check">
                         <input
