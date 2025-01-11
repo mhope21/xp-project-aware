@@ -2,6 +2,7 @@ class Availability < ApplicationRecord
   # Associations
   belongs_to :speaker, -> { where(role: "speaker") }, class_name: "User"
   belongs_to :recurring_availability, optional: true
+  has_many :bookings
 
   # Validations
   validates :start_time, :end_time, :speaker, presence: true

@@ -8,8 +8,9 @@ RSpec.describe Ability, type: :model do
   let(:address) { create(:address, addressable: teacher_user) }
   let(:kit) { create(:kit) }
   let(:event) { create(:event, speaker: speaker_user) }
+  let(:availability) { create(:availability, start_time: Time.now, end_time: Time.now + 2.hours) }
   let(:order) { create(:order, user: teacher_user, product: event, product_type: 'Event', product_id: event.id, address: address) }
-  let(:booking) { create(:booking, event: event, order: order, start_time: Time.now, end_time: Time.now + 1.hour, status: :pending) }
+  let(:booking) { create(:booking, event: event, order: order, availability: availability, start_time: Time.now + 30.minutes, end_time: Time.now + 1.hour, status: :pending) }
 
   subject(:ability) { Ability.new(user) }
 
