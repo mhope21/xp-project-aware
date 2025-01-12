@@ -97,7 +97,7 @@ function Kits({user}) {
                             {kit.description}
                           </div>
                           
-                          {user ? (
+                          {user.role == "teacher" ? (
                             <Link 
                               to="/orders" 
                               state={{ kitId: kit.id, kitName: kit.name }}
@@ -106,7 +106,10 @@ function Kits({user}) {
                               Order {kit.name}
                             </Link>
                           ) : (
-                            <p><em>Please log in to place an order.</em></p>
+                            <>
+                            <p><em>Please log in to place an order.
+                            Only teachers may order kits.</em></p>
+                            </>
                           )}
 
                           

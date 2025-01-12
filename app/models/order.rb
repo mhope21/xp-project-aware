@@ -3,6 +3,8 @@ class Order < ApplicationRecord
   belongs_to :product, polymorphic: true
   belongs_to :address
 
+  accepts_nested_attributes_for :address, allow_destroy: true
+
   before_validation :normalize_phone_number
 
   # Validates that phone number is in the right 10 digit format
@@ -17,7 +19,7 @@ class Order < ApplicationRecord
   validates :comments, allow_blank: true, length: { maximum: 500, message: "cannot exceed 500 characters" }
 
   # Ensure each user can only request one kit per school year
-  # validates :school_year, uniqueness: { scope: :user_id, message: "You can only request one kit per school year" }
+  validates :school_year, uniqueness: { scope: :user_id, message: "You can only request one kit per school year" }
 
   # Validates that the product is present
   validates :product, presence: true

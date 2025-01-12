@@ -1,10 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { API_URL } from '../constants';
+import React, { useState } from 'react';
 
-const Address = ({ onAddressSelect }) => {
-  const [userAddresses, setUserAddresses] = useState([]);
-  const [organizationAddress, setOrganizationAddress] = useState(null);
-  const [error, setError] = useState(null);
+const Address = ({ user, onAddressSelect }) => {
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({
     street_address: '',
@@ -14,34 +10,9 @@ const Address = ({ onAddressSelect }) => {
     save_to_user: false,
   });
 
-  const addressUrl = `${API_URL}/addresses`;
-  const jwt = localStorage.getItem('jwt');
-
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        const response = await fetch(addressUrl, {
-          headers: {
-            'Authorization': `Bearer ${jwt}`
-          }
-        });
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setUserAddresses(data.user_addresses);
-        setOrganizationAddress(data.organization_address);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
-    fetchAddresses();
-  }, []);
-
   const handleAddressChange = (event) => {
-    const selectedAddressId = event.target.value;
-    const selectedAddress = userAddresses.find(address => address.id === selectedAddressId) || organizationAddress;
+    const selectedAddressId = parseInt(event.target.value, 10);
+    const selectedAddress = user?.addresses?.find(address => address.id === selectedAddressId) || user?.organization?.address;
     onAddressSelect(selectedAddress);
   };
 
@@ -51,35 +22,35 @@ const Address = ({ onAddressSelect }) => {
       ...prevAddress,
       [name]: type === 'checkbox' ? checked : value
     }));
-    onAddressSelect({
-      ...newAddress,
-      [name]: type === 'checkbox' ? checked : value
-    });
   };
 
   const toggleUseNewAddress = () => {
     setUseNewAddress(!useNewAddress);
     if (!useNewAddress) {
       onAddressSelect(newAddress);
+    } else {
+      onAddressSelect(null); // Clear the selected address when toggling back
     }
   };
 
-  if (error) {
-    return <div>Error: {error}</div>;
+  if (!user || !user.addresses) {
+    return <p>Loading...</p>;
   }
 
   return (
     <div>
-      <h2>Select an Address</h2>
-      <select onChange={handleAddressChange} disabled={useNewAddress}>
-        {userAddresses.map(address => (
+        <form>
+      <label>Select an Address</label>
+      <select className="select-container mt-3" onChange={handleAddressChange} disabled={useNewAddress}>
+        <option value="">Select an address</option>
+        {user.addresses?.map(address => (
           <option key={address.id} value={address.id}>
             {address.street_address}, {address.city}, {address.state}, {address.postal_code}
           </option>
         ))}
-        {organizationAddress && (
-          <option key={organizationAddress.id} value={organizationAddress.id}>
-            {organizationAddress.street_address}, {organizationAddress.city}, {organizationAddress.state}, {organizationAddress.postal_code} (Organization)
+        {user.organization?.address && (
+          <option key={user.organization.address.id} value={user.organization.address.id}>
+            {user.organization.address.street_address}, {user.organization.address.city}, {user.organization.address.state}, {user.organization.address.postal_code} (Organization)
           </option>
         )}
       </select>
@@ -89,13 +60,17 @@ const Address = ({ onAddressSelect }) => {
             type="checkbox"
             checked={useNewAddress}
             onChange={toggleUseNewAddress}
+            className='mt-3'
           />
           Use a new address
         </label>
       </div>
       {useNewAddress && (
         <div>
+            <form>
+            <div className='form-group mb-3'>
           <input
+            className='form-control shadow mb-3'
             type="text"
             name="street_address"
             value={newAddress.street_address}
@@ -103,6 +78,7 @@ const Address = ({ onAddressSelect }) => {
             placeholder="Street Address"
           />
           <input
+            className='form-control shadow mb-3'
             type="text"
             name="city"
             value={newAddress.city}
@@ -110,6 +86,7 @@ const Address = ({ onAddressSelect }) => {
             placeholder="City"
           />
           <input
+            className='form-control shadow mb-3'
             type="text"
             name="state"
             value={newAddress.state}
@@ -117,6 +94,7 @@ const Address = ({ onAddressSelect }) => {
             placeholder="State"
           />
           <input
+            className='form-control shadow mb-3'
             type="text"
             name="postal_code"
             value={newAddress.postal_code}
@@ -132,8 +110,11 @@ const Address = ({ onAddressSelect }) => {
             />
             Save to User
           </label>
+          </div>
+          </form>
         </div>
       )}
+      </form>
     </div>
   );
 };

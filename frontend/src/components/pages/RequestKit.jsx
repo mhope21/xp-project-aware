@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import Address from "../Address";
 
 
-function RequestKit({ user }) {
+function RequestKit({ user, setUser }) {
 
   const validationSchema = Yup.object().shape({
     phone: Yup.string().required('Phone is required'),
@@ -21,11 +21,24 @@ function RequestKit({ user }) {
   
 
   const [orderMessages, setOrderMessages] = useState("");  
-  const [productType, setProductType] = useState('kit'); // Default to 'kit'
+  const [productType, setProductType] = useState('Kit'); // Default to 'kit'
   const [productId, setProductId] = useState(null);
   const ordersUrl = `${API_URL}/orders`;
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (kitId) {
+      setProductId(kitId);
+    }
+  }, [kitId]);
+
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  },
+  [user]);
 
   const [address, setAddress] = useState({
     street_address: '',
@@ -49,12 +62,13 @@ function RequestKit({ user }) {
   }, []);
 
   const handleAddressSelect = (selectedAddress) => {
-    setAddress({
-      street_address: selectedAddress.street_address,
+    setOrderForm({
+      ...orderForm,
+      streetAddress: selectedAddress.street_address,
       city: selectedAddress.city,
       state: selectedAddress.state,
-      postal_code: selectedAddress.postal_code,
-      save_to_user: false,
+      postalCode: selectedAddress.postal_code,
+      save_to_user: false
     });
   };
 
@@ -62,18 +76,29 @@ function RequestKit({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
+    // Find the address based on the street address entered in the form
+    const selectedAddress = user.addresses.find(
+      (address) => address.street_address === orderForm.streetAddress
+    );
+    const addressId = selectedAddress ? selectedAddress.id : null;
+
     const data = {
       order: {
+        user_id: user.id,
+        address_id: addressId,
         phone: orderForm.phone,
-        street_address: orderForm.streetAddress,
-        city: orderForm.city,
-        state: orderForm.state,
-        postal_code: orderForm.postalCode,
         school_year: orderForm.schoolYear,
         product_id: productId,
         product_type: productType,
         comments: orderForm.comments,
+        address_attributes: {
+          street_address: orderForm.streetAddress,
+          city: orderForm.city,
+          state: orderForm.state,
+          postal_code: orderForm.postalCode,
+          addressable_type: "User",
+          addressable_id: user.id,
+        },
       },
     };
 
@@ -114,7 +139,7 @@ function RequestKit({ user }) {
         setOrderMessages(newErrors);
       } else {
         // Handle network or other errors
-        setOrderMessages({general: "Network error: " + error.message});
+        setOrderMessages({general: "Network error: " + error});
       }
       console.error(error);
     }
@@ -208,7 +233,7 @@ function RequestKit({ user }) {
                       {orderMessages.phone && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.phone}</div>}
                     </div>
                     <div className="form-group mb-3">
-                      <Address onAddressSelect={handleAddressSelect} />
+                      <Address user={user} onAddressSelect={handleAddressSelect} />
                     </div>
                   </div>
                   <div className="form-group mb-3">
