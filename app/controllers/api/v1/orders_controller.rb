@@ -30,8 +30,6 @@ class Api::V1::OrdersController < ApplicationController
   # PATCH/PUT /api/v1/orders/:id
   def update
     if @order.update(order_params)
-      # Include any other existing logic
-      associate_address_with_user(@order)
       render json: @order, status: :ok
     else
       render json: @order.errors, status: :unprocessable_entity
@@ -49,17 +47,5 @@ class Api::V1::OrdersController < ApplicationController
 
   def order_params
     params.require(:order).permit(:user_id, :phone, :school_year, :product_id, :product_type, :address_id, :comments, address_attributes: [ :id, :street_address, :city, :state, :postal_code, :save_to_user, :addressable_type, :addressable_id, :_destroy ])
-  end
-
-  def associate_address_with_user(order)
-    if order.address && order.user
-      # Check if the address should be saved to the user
-      if order.address.save_to_user
-        # Ensure the address is not already associated with the user
-        unless order.user.addresses.exists?(order.address.id)
-          order.user.addresses << order.address
-        end
-      end
-    end
   end
 end
