@@ -23,7 +23,7 @@ class User < ApplicationRecord
   include Rails.application.routes.url_helpers
 
   def profile_image_url
-    rails_blob_url(profile_image, only_path: true) if profile_image.attached?
+    rails_blob_url(profile_image, only_path: false) if profile_image.attached?
   end
 
   before_create :set_default_role
