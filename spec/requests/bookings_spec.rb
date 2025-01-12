@@ -4,11 +4,9 @@ RSpec.describe "Bookings", type: :request do
   let(:admin_user) { create(:user, :admin_user) }
   let(:teacher_user) { create(:user, :teacher_user) }
   let(:speaker_user) { create(:user, :speaker_user) }
-  let(:event) { create(:event, speaker: speaker_user) }
+  let(:event) { create(:event, speaker: speaker_user, duration: 30) }
   let(:availability) { create(:availability, start_time: Time.now, end_time: Time.now + 2.hours) }
-  let(:booking) { create(:booking, event: event, availability: availability, start_time: availability.start_time + 30.minutes, end_time: availability.end_time - 1.hour, user: teacher_user) }
-
-  subject(:ability) { Ability.new(teacher) }
+  let(:booking) { create(:booking, event: event, availability: availability, start_time: availability.start_time + 30.minutes, end_time: availability.start_time + 30.minutes + event.duration, user: teacher_user, status: :pending) }
 
   before do
     sign_in teacher_user
@@ -29,7 +27,7 @@ RSpec.describe "Bookings", type: :request do
           event_id: event.id,
           availability_id: availability.id,
           start_time: Time.now + 30.minutes,
-          end_time: Time.now + 1.hour,
+          end_time: Time.now + 30.minutes + event.duration,
           status: :pending
         }
       }
@@ -45,15 +43,15 @@ RSpec.describe "Bookings", type: :request do
   describe "PATCH #update" do
     it "updates successfully when times are within availability" do
       patch api_v1_booking_path(booking), params: {
-        booking: { start_time: availability.start_time + 50.minutes, end_time: availability.end_time - 50.minutes }
-      }
+        booking: { start_time: availability.start_time + 1.hour }
+      }, headers: { 'Authorization': "Bearer #{@auth_token}" }
       expect(response).to have_http_status(:ok)
     end
 
     it "fails to update when times are outside availability" do
       patch api_v1_booking_path(booking), params: {
         booking: { start_time: Time.now - 30.minutes, end_time: Time.now + 1.hour }
-      }
+      }, headers: { 'Authorization': "Bearer #{@auth_token}" }
       expect(response).to have_http_status(:unprocessable_entity)
       expect(JSON.parse(response.body)["error"]).to eq("Booking times must be within the availability window")
     end

@@ -5,14 +5,14 @@ RSpec.describe Booking, type: :model do
   let(:teacher) { create(:user, :teacher) }
   let(:availability) { create(:availability) }
   let(:event) { create(:event) }
-  let(:order) { create(:order) }
-  let(:booking) { create(:booking, event: event, order: order, availability: availability) }
+  let(:booking) { create(:booking, event: event, availability: availability) }
 
   describe 'associations' do
     it { should belong_to(:event) }
     it { should have_one(:speaker).through(:event) }
     it { should have_one(:order) }
-    it { should have_one(:user).through(:order) }
+    it { should belong_to(:user) }
+    it { should belong_to(:availability) }
   end
 
   describe 'validations' do

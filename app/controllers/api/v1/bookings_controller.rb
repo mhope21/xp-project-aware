@@ -11,16 +11,27 @@ class Api::V1::BookingsController < ApplicationController
   end
 
   def create
+    unless current_user.teacher?
+      render json: { error: "Only teachers are allowed to create bookings" }, status: :forbidden
+      return
+    end
+
     @booking = Booking.new(booking_params)
     @booking.user = current_user
-      if @booking.save
-        render json: @booking, status: :created
-      else
-        render json: @booking.errors, status: :unprocessable_entity
-      end
+
+    if @booking.save
+      render json: @booking, status: :created
+    else
+      render json: @booking.errors, status: :unprocessable_entity
+    end
   end
 
   def update
+    unless current_user.teacher? || current_user.speaker?
+      render json: { error: "Only teachers are allowed to create bookings" }, status: :forbidden
+      return
+    end
+
     availability = @booking.availability
 
     if booking_params[:start_time].present? && booking_params[:end_time].present?
@@ -42,6 +53,6 @@ class Api::V1::BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:event_id, :start_time, :end_time, :status, :availability_id)
+    params.require(:booking).permit(:event_id, :user_id, :start_time, :end_time, :status, :availability_id)
   end
 end

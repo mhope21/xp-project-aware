@@ -2,9 +2,8 @@ class Booking < ApplicationRecord
   belongs_to :event
   belongs_to :availability
   has_one :order, as: :product
-
+  belongs_to :user, -> { where(role: "teacher") }, class_name: "User"
   has_one :speaker, through: :event
-  has_one :user, through: :order
 
   enum status: { pending: 0, confirmed: 1, denied: 2 }
 
