@@ -22,6 +22,7 @@ import AddNew from './components/pages/AddNew';
 import NewKitItem from './components/NewKitItem';
 import AddItemToKit from './components/AddItemToKit';
 import UserProfile from './components/pages/UserProfile';
+import SpeakerCalendar from './components/SpeakerCalendar';
 
 
 
@@ -118,6 +119,7 @@ function App() {
               <Route path="add_item_to_kit" element={<AddNew header="Add New Kit Item To Kit"><AddItemToKit /></AddNew>} />
             </Route>
             <Route path="/profile/:id" element={<UserProfile/>}/>
+            <Route path="/availability" element={<SpeakerCalendar user={user}/>} />
           </Routes>
         </PageWrapper>
       </Router>

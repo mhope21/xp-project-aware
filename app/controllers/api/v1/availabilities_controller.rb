@@ -2,27 +2,15 @@ class Api::V1::AvailabilitiesController < ApplicationController
   before_action :set_availability, only: [ :show, :update, :destroy ]
 
   def index
-    # This shows the availabilities including recurring availabilities for the month
-    # and year sent in the request from the frontend or a default month and year.
-
     viewing_month = params[:month].to_i || Date.today.month
     viewing_year = params[:year].to_i || Date.today.year
-
-    puts "Received Year: #{params[:year]}, Month: #{params[:month]}"  # Debugging the incoming params
-
-
-    # Debugging the parsed values of year and month
-    puts "Parsed Year: #{viewing_year}, Month: #{viewing_month}"
+    speaker_id = params[:speaker_id]
 
     # Handling cases where the month or year might be invalid (e.g., 0 or nil)
     if viewing_month == 0 || viewing_year == 0
-      puts "Invalid date parameters, setting to current date."  # Debugging invalid date handling
       viewing_month = Date.today.month
       viewing_year = Date.today.year
     end
-
-    # Debugging the final year and month values used for date calculation
-    puts "Final Year: #{viewing_year}, Month: #{viewing_month}"
 
     begin
       # Create start and end date for the requested month and year
@@ -36,6 +24,8 @@ class Api::V1::AvailabilitiesController < ApplicationController
 
     # Fetch the availabilities within the specified date range
     @availabilities = Availability.where(start_time: start_date..end_date)
+    @availabilities = @availabilities.where(speaker_id: speaker_id) if speaker_id.present?
+
     render json: @availabilities
   end
 
@@ -45,12 +35,13 @@ class Api::V1::AvailabilitiesController < ApplicationController
   end
 
   def create
-    @availability = Availability.new(availability_params)
+    speaker = Speaker.find(params[:speaker_id])
+    new_availability = speaker.availabilities.create(availability_params)
 
-    if @availability.save
-      render json: @availability, status: :created
+    if new_availability.save
+      render json: new_availability, status: :created
     else
-      render json: { errors: @availability.errors.full_messages }, status: :unprocessable_entity
+      render json: { error: new_availability.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
