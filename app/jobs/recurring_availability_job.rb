@@ -5,6 +5,14 @@ class RecurringAvailabilityJob < ApplicationJob
     start_date = DateTime.new(viewing_year, viewing_month, 1)
     end_date = start_date.end_of_month
 
+      # Wrap in a rescue block to handle unexpected errors
+    begin
+      # Job logic
+    rescue => e
+      Rails.logger.error("RecurringAvailabilityJob failed: #{e.message}")
+      raise e
+    end
+
     # Check if availabilities for the specified month already exist
     existing_availabilities = Availability.where(start_time: start_date..end_date)
     return if existing_availabilities.exists?
