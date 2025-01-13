@@ -29,10 +29,10 @@ class Api::V1::AddressesController < ApplicationController
 
   def set_addressable
     @addressable = if params[:user_id]
-                     User.find(params[:user_id])
-                   elsif params[:organization_id]
-                     Organization.find(params[:organization_id])
-                   end
+      User.find(params[:user_id])
+    elsif params[:organization_id]
+      Organization.find(params[:organization_id])
+    end
   end
 
   def address_params
