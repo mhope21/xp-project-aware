@@ -1,14 +1,32 @@
 require 'rails_helper'
 
 RSpec.describe Availability, type: :model do
-  let(:speaker_user) { create(:user, :speaker_user) }
+  let(:speaker_user) { create(:user, :speaker_user) } # :speaker_user is a trait from users factory
+  let(:recurring_availability) { create(:recurring_availability) }
 
   describe "associations" do
-    it { should belong_to(:speaker).class_name("User") }
-    it { should belong_to(:recurring_availability).optional }
+    it "belongs to a speaker" do
+      availability = create(:availability, speaker: speaker_user)
+      expect(availability.speaker).to eq(speaker_user)
+    end
+
+    it "can optionally belong to a recurring availability" do
+      availability = create(:availability, recurring_availability: recurring_availability)
+      expect(availability.recurring_availability).to eq(recurring_availability)
+    end
+
+    it "is valid without a recurring availability" do
+      availability = build(:availability, recurring_availability: nil)
+      expect(availability).to be_valid
+    end
   end
 
   describe "validations" do
+    it "is valid with all required attributes" do
+      availability = FactoryBot.build(:availability, speaker: speaker_user)
+      expect(availability).to be_valid
+    end
+
     it { should validate_presence_of(:start_time) }
     it { should validate_presence_of(:end_time) }
     it { should validate_presence_of(:speaker) }

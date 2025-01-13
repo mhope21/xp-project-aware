@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Events", type: :request do
   let(:speaker_user) { create(:user, :speaker_user) }
-  let(:admin_user) { create(:user, :admin) }
+  let(:admin_user) { create(:user, :admin_user) }
   let(:regular_user) { create(:user, :regular_user) }
 
   describe "GET /index" do
