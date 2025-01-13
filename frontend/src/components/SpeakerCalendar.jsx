@@ -33,10 +33,10 @@ const SpeakerCalendar = ({ user }) => {
       const data = await response.json();
       const formattedEvents = data.map((avail) => ({
         id: avail.id,
-        title: "Available",
+        title: "Speaker Availability",
         start: avail.start_time,
         end: avail.end_time,
-        backgroundColor: avail.color || "#4CAF50", // Default to green if no color
+        backgroundColor: avail.color || "#4CAF50",
       }));
 
       setEvents(formattedEvents);
@@ -87,6 +87,24 @@ const SpeakerCalendar = ({ user }) => {
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="dayGridMonth"
             events={events}
+            eventMouseEnter={(info) => {
+              const tooltip = document.createElement("div");
+              tooltip.innerHTML = `
+                <div style="padding: 8px; background: white; border: 1px solid black; z-index: 1000;">
+                   ${info.event.title}<br/>
+                  <strong>Start:</strong> ${info.event.start}<br/>
+                  <strong>End:</strong> ${info.event.end}
+                </div>`;
+              tooltip.style.position = "absolute";
+              tooltip.style.top = `${info.jsEvent.pageY + 10}px`;
+              tooltip.style.left = `${info.jsEvent.pageX + 10}px`;
+              tooltip.id = "calendar-tooltip";
+              document.body.appendChild(tooltip);
+            }}
+            eventMouseLeave={() => {
+              const tooltip = document.getElementById("calendar-tooltip");
+              if (tooltip) tooltip.remove();
+            }}
             datesSet={handleDateChange}
             dateClick={handleDateClick}
             headerToolbar={{
@@ -100,6 +118,7 @@ const SpeakerCalendar = ({ user }) => {
             isOpen={modalIsOpen}
             onClose={() => setModalIsOpen(false)}
             selectedDate={selectedDate}
+            setEvents={setEvents}
           />
         </div>
       </div>

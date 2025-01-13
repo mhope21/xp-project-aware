@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import 'react-datepicker/dist/react-datepicker.css'; // If using a time picker like react-datepicker
-import DatePicker from 'react-datepicker'; // For time picker
-import { SketchPicker } from 'react-color'; // For color picker
+import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
+import { API_URL } from '../constants';
 
-const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate }) => {
+const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents }) => {
   const [startTime, setStartTime] = useState(new Date(selectedDate));
   const [endTime, setEndTime] = useState(new Date(selectedDate));
-  const [color, setColor] = useState("#4CAF50"); // Default color red
+  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurringEndDate, setRecurringEndDate] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async () => {
     if (!startTime || !endTime) {
@@ -16,10 +18,13 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate }) => {
       }
 
     const newAvailability = {
+      availability: {
       speaker_id: speakerId,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString(),
-      color: color, // Pass the selected color
+      is_recurring: isRecurring,
+      recurring_end_date: isRecurring ? recurringEndDate : null,
+      }
     };
 
     try {
@@ -37,22 +42,40 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate }) => {
         
         const newEvent = {
             id: data.id,
-            title: "Available",
             start: data.start_time,
             end: data.end_time,
-            backgroundColor: data.color,
+            title: "Speaker Availability"
           };
       
           setEvents((prevEvents) => [...prevEvents, newEvent]);
-
+          resetFormFields();
           onClose(); // Close the modal after creation
       } else {
-        console.error("Error creating availability");
+        const errorData = await response.json();
+        setErrorMessage(errorData.errors.join(', '));
       }
     } catch (error) {
-      console.error("Error creating availability:", error);
+      console.error('Error creating availability:', error);
+      setErrorMessage('An error occurred while creating availability.');
     }
   };
+
+  const resetFormFields = () => {
+    setIsRecurring(false);
+    setRecurringEndDate(null);
+    setErrorMessage("");
+  };
+
+  const onCloseHandler = () => {
+    resetFormFields();
+    onClose();
+  }
+
+  useEffect(() => {
+    const localStartTime = new Date(selectedDate).toLocaleString(); // Convert to local time
+    setStartTime(new Date(localStartTime));
+    setEndTime(new Date(localStartTime)); // Adjust if you need a different start/end time logic
+  }, [selectedDate]);
 
   return (
     <Modal show={isOpen} onHide={onClose}>
@@ -60,12 +83,13 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate }) => {
         <Modal.Title>Create New Availability</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+      {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
         <Form>
           <Form.Group>
             <Form.Label>Start Time</Form.Label>
             <DatePicker
-              selected={new Date(selectedDate)}
-              onChange={date => setStartTime(date)}
+              selected={startTime} // Bind to startTime state
+              onChange={(date) => setStartTime(date)}
               showTimeSelect
               dateFormat="Pp"
               timeIntervals={15} // Time intervals for the time picker
@@ -75,8 +99,8 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate }) => {
           <Form.Group>
             <Form.Label>End Time</Form.Label>
             <DatePicker
-              selected={new Date(selectedDate)}
-              onChange={date => setEndTime(date)}
+              selected={endTime} // Bind to endTime state
+              onChange={(date) => setEndTime(date)}
               showTimeSelect
               dateFormat="Pp"
               timeIntervals={15}
@@ -84,16 +108,33 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate }) => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label>Event Color</Form.Label>
-            <SketchPicker
-              color={color}
-              onChangeComplete={(color) => setColor(color.hex)}
-            />
-          </Form.Group>
+  <Form.Label>
+    <Form.Check
+      type="checkbox"
+      label="Recurring Availability"
+      checked={isRecurring}
+      onChange={(e) => setIsRecurring(e.target.checked)}
+    />
+  </Form.Label>
+</Form.Group>
+
+{isRecurring && (
+  <Form.Group>
+    <Form.Label>Recurring End Date</Form.Label>
+    <DatePicker
+      selected={recurringEndDate}
+      onChange={(date) => setRecurringEndDate(date)}
+      dateFormat="yyyy-MM-dd"
+      minDate={new Date()} // Prevent past dates
+      placeholderText="Select end date"
+      isClearable
+    />
+  </Form.Group>
+)}
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>Cancel</Button>
+        <Button variant="secondary" onClick={onCloseHandler}>Cancel</Button>
         <Button variant="primary" onClick={handleSubmit}>Save Availability</Button>
       </Modal.Footer>
     </Modal>

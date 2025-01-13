@@ -1,4 +1,5 @@
 class Api::V1::AvailabilitiesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_availability, only: [ :show, :update, :destroy ]
 
   def index
@@ -35,39 +36,69 @@ class Api::V1::AvailabilitiesController < ApplicationController
   end
 
   def create
-    speaker = Speaker.find(params[:speaker_id])
-    new_availability = speaker.availabilities.create(availability_params)
+    speaker_id = availability_params[:speaker_id]
+    @speaker = User.find_by(id: speaker_id, role: "speaker")
 
-    if new_availability.save
-      render json: new_availability, status: :created
-    else
-      render json: { error: new_availability.errors.full_messages }, status: :unprocessable_entity
+    if @speaker.nil?
+      return render json: { error: "Speaker not found" }, status: :not_found
     end
-  end
 
-  def update
-    if @availability.update(availability_params)
-      render json: @availability, status: :ok
+    availability_attributes = availability_params.except(:is_recurring, :recurring_end_date)
+    @availability = @speaker.availabilities.create!(availability_attributes)
+
+    is_recurring = params[:availability][:is_recurring]
+
+    if is_recurring
+      recurring_end_date = params[:availability][:recurring_end_date]
+      create_recurring_availability(@availability, recurring_end_date)
+    end
+
+    if @availability.persisted?
+      render json: @availability, status: :created
     else
-      puts @availability.errors.full_messages  # Add this line to log validation errors
       render json: { errors: @availability.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
+  # PUT /availabilities/:id
+  def update
+    availability = Availability.find(params[:id])
+
+    if availability.update(availability_params)
+      render json: availability, status: :ok
+    else
+      render json: { errors: availability.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  # DELETE /availabilities/:id
   def destroy
+    if @availability.recurring_availability_id.present?
+      recurring_availability = RecurringAvailability.find(@availability.recurring_availability_id)
+
+      # Only delete recurring availability if there are no other associated availabilities
+      recurring_availability.destroy if recurring_availability.availabilities.empty?
+    end
+
     @availability.destroy
     head :no_content
   end
 
   private
 
-  def set_availability
-    @availability = Availability.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Availability not found" }, status: :not_found
+  def create_recurring_availability(availability, recurring_end_date)
+    recurring_end_date = recurring_end_date&.to_date
+    recurring_availability = RecurringAvailability.create!(end_date: recurring_end_date)
+
+    availability.update!(recurring_availability_id: recurring_availability.id)
   end
 
   def availability_params
-    params.require(:availability).permit(:start_time, :end_time, :speaker_id, :recurring_availability_id)
+    params.require(:availability).permit(:speaker_id, :start_time, :end_time, :is_recurring, :recurring_end_date)
+  end
+
+  def set_availability
+    @availability = Availability.find_by(id: params[:id])
+    render json: { error: "Availability not found" }, status: :not_found if @availability.nil?
   end
 end
