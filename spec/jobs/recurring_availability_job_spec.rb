@@ -6,7 +6,7 @@ RSpec.describe RecurringAvailabilityJob, type: :job do
   #   let(:viewing_year) { 2025 }
   #   let(:start_date) { Date.new(viewing_year, viewing_month, 1) }
   #   let(:end_date) { start_date.end_of_month }
-    
+  
   #   before do
   #     # Create a recurring availability rule
   #     @recurring_availability = create(
