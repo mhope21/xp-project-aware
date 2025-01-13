@@ -46,14 +46,21 @@ const SpeakerCalendar = ({ user }) => {
   };
 
   const handleDateClick = (info) => {
-    console.log("Date clicked:", info.dateStr);
+    if (user?.role === "teacher") {
+      const calendarApi = info.view.calendar;
+      calendarApi.changeView("timeGridDay", info.dateStr);
+    } else if (user?.role === "speaker") {
+      const localDate = new Date(info.dateStr);
+      setSelectedDate(localDate);
+      setModalIsOpen(true);
+    }
+  };
   
-    // Parse the date and force local time
-    const localDate = new Date(info.dateStr);
-    
-    console.log("Local Date:", localDate);
-    setSelectedDate(localDate);
-    setModalIsOpen(true);
+  const handleEventClick = (info) => {
+    if (user?.role === "teacher") {
+      setSelectedEvent(info.event);
+      setModalIsOpen(true);
+    }
   };
 
   useEffect(() => {
@@ -107,19 +114,39 @@ const SpeakerCalendar = ({ user }) => {
             }}
             datesSet={handleDateChange}
             dateClick={handleDateClick}
+            eventClick={handleEventClick}
             headerToolbar={{
               left: "prev,next today",
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
           />
-          <AvailabilityModal
-            speakerId={user?.id}
-            isOpen={modalIsOpen}
-            onClose={() => setModalIsOpen(false)}
-            selectedDate={selectedDate}
-            setEvents={setEvents}
-          />
+         {user?.role === "speaker" && (
+            <AvailabilityModal
+              speakerId={user.id}
+              isOpen={modalIsOpen}
+              onClose={() => setModalIsOpen(false)}
+              selectedDate={selectedDate}
+              setEvents={setEvents}
+            />
+          )}
+          {user?.role === "teacher" && (
+            <BookingModal
+              isOpen={modalIsOpen}
+              user={user}
+              onClose={() => setModalIsOpen(false)}
+              selectedEvent={selectedEvent}
+              onBookingSuccess={(updatedEvent) => {
+                setEvents((prevEvents) =>
+                  prevEvents.map((event) =>
+                    event.id === updatedEvent.id
+                      ? { ...event, isBooked: true, backgroundColor: "#FF0000" } // Red for booked
+                      : event
+                  )
+                );
+              }}
+            />
+          )}
         </div>
       </div>
     </div>

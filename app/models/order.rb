@@ -3,6 +3,8 @@ class Order < ApplicationRecord
   belongs_to :product, polymorphic: true
   belongs_to :address
 
+  attr_accessor :event_id, :start_time, :end_time, :status
+
   before_validation :normalize_phone_number
 
   # Validates that phone number is in the right 10 digit format

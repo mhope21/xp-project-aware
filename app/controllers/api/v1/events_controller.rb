@@ -1,8 +1,16 @@
 class Api::V1::EventsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_event, only: [ :show, :update, :destroy ]
 
   def index
-    @events = Event.all
+    # Check if speaker_id is passed in query parameters
+    if params[:speaker_id]
+      # Find events that belong to the speaker with the specified speaker_id
+      @events = Event.where(speaker_id: params[:speaker_id])
+    else
+      # If no speaker_id is provided, return all events
+      @events = Event.all
+    end
     render json: @events
   end
 
