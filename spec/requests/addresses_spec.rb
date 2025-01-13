@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Addresses", type: :request do
   let(:regular_user) { create(:user, :regular_user) }
-  let(:admin_user) { create(:user, :admin) }
+  let(:admin_user) { create(:user, :admin_user) }
   let(:address) { create(:address, addressable: regular_user) }
 
   describe "POST /create" do

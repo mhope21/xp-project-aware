@@ -12,11 +12,11 @@ class Api::V1::AddressesController < ApplicationController
 
   def update
     @address = @addressable.addresses.find(params[:id])
-	  if @address.update(address_params)
-	    render json: @address, status: :ok
-	  else
-	    render json: @address.errors, status: :unprocessable_entity
-	  end
+    if @address.update(address_params)
+      render json: @address, status: :ok
+    else
+      render json: @address.errors, status: :unprocessable_entity
+    end
   end
 
   def destroy
@@ -32,11 +32,10 @@ class Api::V1::AddressesController < ApplicationController
                      User.find(params[:user_id])
                    elsif params[:organization_id]
                      Organization.find(params[:organization_id])
-	                 end
+                   end
   end
 
   def address_params
     params.require(:address).permit(:street_address, :city, :state, :postal_code, :save_to_user)
   end
-
 end
