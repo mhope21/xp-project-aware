@@ -25,7 +25,7 @@ class Api::V1::BookingsController < ApplicationController
     if @booking.update(booking_params)
       render json: @booking
     else
-      render json: @booking.errors, status: :uprocessable_entity
+      render json: @booking.errors, status: :unprocessable_entity
     end
   end
 
