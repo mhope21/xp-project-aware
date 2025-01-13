@@ -45,9 +45,9 @@ class Ability
     can :update, Order, user_id: user.id
     can :read, Event
     can :read, Availability
-    can :read, Booking, user_id: user.id
+    can :read, Booking, order: { user_id: user.id }
     can :create, Booking
-    can :update, Booking, user_id: user.id
+    can :update, Booking, order: { user_id: user.id }
   end
 
   # Abilities for speakers

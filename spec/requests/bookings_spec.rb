@@ -4,8 +4,10 @@ RSpec.describe "Bookings", type: :request do
   let(:admin_user) { create(:user, :admin_user) }
   let(:teacher_user) { create(:user, :teacher_user) }
   let(:speaker_user) { create(:user, :speaker_user) }
+  let(:availability) { create(:availability, start_time: Time.now, end_time: Time.now + 2.hours) }
   let(:event) { create(:event, speaker: speaker_user) }
-  let(:booking) { create(:booking, event: event) }
+  let(:order) { create(:order) }
+  let(:booking) { create(:booking, event: event, order: order) }
 
   subject(:ability) { Ability.new(teacher) }
 
@@ -26,7 +28,8 @@ RSpec.describe "Bookings", type: :request do
       booking_params = {
         booking: {
           event_id: event.id,
-          start_time: Time.now,
+          availability_id: availability.id,
+          start_time: Time.now + 30.minutes,
           end_time: Time.now + 1.hour,
           status: :pending
         }

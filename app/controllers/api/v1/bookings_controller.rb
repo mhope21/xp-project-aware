@@ -11,11 +11,6 @@ class Api::V1::BookingsController < ApplicationController
   end
 
   def create
-    unless current_user.teacher?
-      render json: { error: "Only teachers are allowed to create bookings" }, status: :forbidden
-      return
-    end
-
     @booking = Booking.new(booking_params)
     @booking.user = current_user
 
@@ -37,6 +32,6 @@ class Api::V1::BookingsController < ApplicationController
   private
 
   def booking_params
-    params.require(:booking).permit(:event_id, :start_time, :end_time, :status)
+    params.require(:booking).permit(:event_id, :availability_id, :start_time, :end_time, :status)
   end
 end
