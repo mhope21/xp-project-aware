@@ -12,4 +12,16 @@ class UserSerializer
       Rails.application.routes.url_helpers.rails_blob_url(object.profile_image, only_path: false)
     end
   end
+
+  attribute :organization do |user|
+    if user.organization
+      OrganizationSerializer.new(user.organization).serializable_hash[:data][:attributes]
+    else
+      {}
+    end
+  end
+
+  attribute :addresses do |user|
+    user.addresses.map { |address| AddressSerializer.new(address).serializable_hash[:data][:attributes] }
+  end
 end

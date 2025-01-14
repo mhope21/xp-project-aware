@@ -91,6 +91,26 @@
   }
 }
 
+.select-container {
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.select-container select {
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+@media (max-width: 600px) {
+  .select-container {
+    width: 100%;
+  }
+}
+
 .profile-card {
   margin: 0 auto;
   max-width: 100%;
