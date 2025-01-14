@@ -13,6 +13,7 @@ RSpec.describe "Users", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
+    # Changed user permission to allow viewing speakers
     context "when user role is not admin" do
       it "returns http response success" do
         # changed permissions to view speaker index
@@ -31,6 +32,7 @@ RSpec.describe "Users", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
+    # Changed user permission to allow viewing speaker profile
     context "when user role is not admin" do
       it "returns http response success" do
         # Changed permissions to view speakers
