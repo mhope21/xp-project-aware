@@ -52,7 +52,7 @@ class Api::V1::OrdersController < ApplicationController
 
   def associate_address_with_user(order)
     if order.address && order.user
-  # Add a condition to check if the address should be saved to user
+      # Add a condition to check if the address should be saved to user
       if order.address.save_to_user
         unless order.user.addresses.exists?(order.address.id)
           order.user.addresses << order.address
