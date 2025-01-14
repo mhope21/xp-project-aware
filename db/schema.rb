@@ -48,6 +48,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_11_165839) do
     t.datetime "updated_at", null: false
     t.string "addressable_type", null: false
     t.integer "addressable_id", null: false
+    t.boolean "save_to_user"
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
   end
 
@@ -94,6 +95,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_11_165839) do
     t.datetime "updated_at", null: false
     t.string "payment_token"
     t.boolean "canceled", default: false
+    t.string "stripe_checkout_session_id"
+    t.string "stripe_payment_intent_id"
     t.index ["user_id"], name: "index_donations_on_user_id"
   end
 
@@ -134,9 +137,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_11_165839) do
     t.string "phone"
     t.text "comments"
     t.integer "user_id"
+    t.string "product_type", null: false
+    t.integer "product_id", null: false
     t.integer "address_id"
-    t.string "product_type"
-    t.integer "product_id"
     t.index ["product_type", "product_id"], name: "index_orders_on_product"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end

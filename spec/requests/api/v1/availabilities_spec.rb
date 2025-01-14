@@ -87,7 +87,6 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
         expect(JSON.parse(response.body)['end_time']).to eq(update_attributes[:end_time])
       end
     end
-
     context 'when the record does not exist' do
       it 'returns a 404 status with an error message' do
         put "/api/v1/availabilities/0", params: { availability: update_attributes }, headers: { 'Authorization': "Bearer #{@auth_token}" }

@@ -4,6 +4,7 @@ FactoryBot.define do
     city { Faker::Address.city }
     state { Faker::Address.state_abbr }
     postal_code { Faker::Address.zip_code }
+    save_to_user { true }
     association :addressable, factory: :user  # Default polymorphic association
   end
 end

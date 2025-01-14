@@ -5,6 +5,11 @@ class RecurringAvailability < ApplicationRecord
     validates :end_date, presence: true
     validate :end_date_cannot_be_in_the_past
 
+    def recurs_on?(date)
+      # Example logic: Recurs weekly on the same day of the week
+      (start_date.wday == date.wday) && (end_date.nil? || date <= end_date)
+    end
+
   private
 
   def end_date_cannot_be_in_the_past
