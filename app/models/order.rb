@@ -3,6 +3,7 @@ class Order < ApplicationRecord
   belongs_to :product, polymorphic: true
   belongs_to :address
 
+  accepts_nested_attributes_for :address, allow_destroy: true
   before_validation :normalize_phone_number
 
   # Validates that phone number is in the right 10 digit format
