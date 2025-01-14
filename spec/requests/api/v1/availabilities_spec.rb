@@ -81,7 +81,7 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
   describe 'PUT /api/v1/availabilities/:id' do
     context 'when the record exists' do
       it 'updates the availability' do
-        put "/api/v1/availabilities/#{availability_id}", params: { availability: update_attributes }, as: :json
+        put "/api/v1/availabilities/#{availability_id}", params: { availability: update_attributes }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)['end_time']).to eq(update_attributes[:end_time].utc.iso8601(3))
       end
@@ -89,7 +89,7 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
 
     context 'when the record does not exist' do
       it 'returns a 404 status with an error message' do
-        put "/api/v1/availabilities/0", params: { availability: update_attributes }, as: :json
+        put "/api/v1/availabilities/0", params: { availability: update_attributes }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)['error']).to eq('Availability not found')
       end
