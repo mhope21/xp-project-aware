@@ -50,6 +50,7 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
           setEvents((prevEvents) => [...prevEvents, newEvent]);
           resetFormFields();
           onClose(); // Close the modal after creation
+          alert("Your availability has been created.")
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.errors.join(', '));

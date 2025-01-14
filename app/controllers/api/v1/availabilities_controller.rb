@@ -3,9 +3,9 @@ class Api::V1::AvailabilitiesController < ApplicationController
   before_action :set_availability, only: [ :show, :update, :destroy ]
 
   def index
+    speaker_id = params[:speaker_id] || 2
     viewing_month = params[:month].to_i || Date.today.month
     viewing_year = params[:year].to_i || Date.today.year
-    speaker_id = params[:speaker_id]
 
     # Handling cases where the month or year might be invalid (e.g., 0 or nil)
     if viewing_month == 0 || viewing_year == 0
@@ -26,6 +26,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
     # Fetch the availabilities within the specified date range
     @availabilities = Availability.where(start_time: start_date..end_date)
     @availabilities = @availabilities.where(speaker_id: speaker_id) if speaker_id.present?
+    Rails.logger.debug "SpeakerId: #{speaker_id.inspect}"
 
     render json: @availabilities
   end

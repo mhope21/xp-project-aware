@@ -5,16 +5,23 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { API_URL } from "../constants";
 import AvailabilityModal from "./AvailabilityModal";
+import { useLocation } from "react-router-dom";
+import BookingModal from "./BookingModal";
 
 const SpeakerCalendar = ({ user }) => {
+  // Ensure speakerId falls back to 2 if not provided
+  const [speakerId, setSpeakerId] = useState(2); 
   const [events, setEvents] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedAvailability, setSelectedAvailability] = useState(null);
+  
 
   const jwt = localStorage.getItem('jwt');
 
   const fetchAvailabilities = async (month, year, speakerId) => {
     try {
+      console.log("API Request Speaker ID:", speakerId);
       const response = await fetch(
         `${API_URL}/availabilities?month=${month}&year=${year}&speaker_id=${speakerId}`,
         {
@@ -58,32 +65,30 @@ const SpeakerCalendar = ({ user }) => {
   
   const handleEventClick = (info) => {
     if (user?.role === "teacher") {
-      setSelectedEvent(info.event);
+      setSelectedAvailability(info.event);
+      console.log(selectedAvailability)
+      console.log("Selected Availability Start:", selectedAvailability?.start);
+console.log("Selected Availability End:", selectedAvailability?.end);
       setModalIsOpen(true);
     }
   };
 
   useEffect(() => {
     const currentDate = new Date();
-    const month = currentDate.getMonth();
+    const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
-    const speakerId = user?.id;
 
-    if (speakerId) {
-      fetchAvailabilities(month, year, speakerId);
-    }
-  }, [user]);
+    fetchAvailabilities(month, year, speakerId);
+  }, [speakerId]);
 
   const handleDateChange = (info) => {
     const calendarApi = info.view.calendar;
     const currentDate = calendarApi.getDate();
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
-    const speakerId = user?.id;
 
-    if (speakerId) {
-      fetchAvailabilities(month, year, speakerId);
-    }
+    fetchAvailabilities(month, year, speakerId);
+    
   };
 
   return (
@@ -123,7 +128,7 @@ const SpeakerCalendar = ({ user }) => {
           />
          {user?.role === "speaker" && (
             <AvailabilityModal
-              speakerId={user.id}
+              speakerId={speakerId}
               isOpen={modalIsOpen}
               onClose={() => setModalIsOpen(false)}
               selectedDate={selectedDate}
@@ -134,8 +139,9 @@ const SpeakerCalendar = ({ user }) => {
             <BookingModal
               isOpen={modalIsOpen}
               user={user}
+              speakerId={speakerId}
               onClose={() => setModalIsOpen(false)}
-              selectedEvent={selectedEvent}
+              selectedAvailability={selectedAvailability}
               onBookingSuccess={(updatedEvent) => {
                 setEvents((prevEvents) =>
                   prevEvents.map((event) =>

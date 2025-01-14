@@ -22,7 +22,9 @@ class Order < ApplicationRecord
   # validates :school_year, uniqueness: { scope: :user_id, message: "You can only request one kit per school year" }
 
   # Validates that the product is present
-  validates :product, presence: true
+  validates :product_id, presence: true, unless: -> { product_type == "Booking" }
+  validates :product_type, presence: true
+
 
   def normalize_phone_number
     return if phone.blank?
