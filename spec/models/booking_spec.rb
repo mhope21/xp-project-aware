@@ -12,6 +12,7 @@ RSpec.describe Booking, type: :model do
     it { should have_one(:speaker).through(:event) }
     it { should have_one(:order) }
     it { should have_one(:user).through(:order) }
+    it { should belong_to(:availability) }
   end
 
   describe 'validations' do
