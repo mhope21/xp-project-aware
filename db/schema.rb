@@ -11,6 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.2].define(version: 2025_01_10_130617) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_11_165839) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -70,6 +71,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_10_130617) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "availability_id"
+    t.index ["availability_id"], name: "index_bookings_on_availability_id"
     t.index ["event_id"], name: "index_bookings_on_event_id"
   end
 
@@ -177,6 +180,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_10_130617) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "availabilities", "recurring_availabilities"
   add_foreign_key "availabilities", "users", column: "speaker_id"
+  add_foreign_key "bookings", "availabilities"
   add_foreign_key "bookings", "events"
   add_foreign_key "contacts", "users"
   add_foreign_key "donations", "users"
