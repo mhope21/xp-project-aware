@@ -9,6 +9,7 @@ class Api::V1::OrdersController < ApplicationController
   # POST /api/v1/orders
   def create
     @order = Order.new(order_params)
+
     @order.user = current_user
     if @order.save
       associate_address_with_user(@order)
@@ -47,7 +48,17 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def order_params
-    params.require(:order).permit(:phone, :address_id, :school_year, :comments, :product_id, :product_type)
+    params.require(:order).permit(:phone, :address_id, :school_year, :comments, :product_id, :product_type, address_attributes: [ :id, :street_address, :city, :state, :postal_code, :save_to_user, :_destroy ])
+  end
+
+  def associate_address_with_user(order)
+    if order.address && order.user
+        # commenting out until address controller is updated
+        # if order.address.save_to_user
+        unless order.user.addresses.exists?(order.address.id)
+          order.user.addresses << order.address
+        end
+    end
   end
 
   def associate_address_with_user(order)
@@ -61,3 +72,4 @@ class Api::V1::OrdersController < ApplicationController
     end
   end
 end
+# end
