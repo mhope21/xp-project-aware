@@ -48,16 +48,17 @@ class Api::V1::OrdersController < ApplicationController
   end
 
   def order_params
-    params.require(:order).permit(:phone, :address_id, :school_year, :comments, :product_id, :product_type, address_attributes: [:id, :street_address, :city, :state, :postal_code, :save_to_user, :_destroy])
+    params.require(:order).permit(:phone, :address_id, :school_year, :comments, :product_id, :product_type, address_attributes: [ :id, :street_address, :city, :state, :postal_code, :save_to_user, :_destroy ])
   end
 
   def associate_address_with_user(order)
     if order.address && order.user
-      if order.address.save_to_user
+        # commenting out until address controller is updated
+        # if order.address.save_to_user
         unless order.user.addresses.exists?(order.address.id)
           order.user.addresses << order.address
-        end   
-      end
+        end
     end
+  end
 end
-end
+# end
