@@ -24,13 +24,13 @@ class Api::V1::BookingsController < ApplicationController
     if @booking.update(booking_params)
       render json: @booking
     else
-      render json: @booking.errors, status: :uprocessable_entity
+      render json: @booking.errors, status: :unprocessable_entity
     end
   end
 
   private
 
   def booking_params
-    params.require(:booking).permit(:event_id, :start_time, :end_time, :status)
+    params.require(:booking).permit(:event_id, :availability_id, :start_time, :end_time, :status)
   end
 end

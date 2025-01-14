@@ -53,7 +53,7 @@ RSpec.describe Ability, type: :model do
     end
 
     it 'can read their own bookings' do
-      expect(ability).to be_able_to(:read, booking, order: { user_id: user.id })
+      expect(ability).to be_able_to(:read, Booking, user_id: user.id)
     end
 
     it 'can create bookings' do
@@ -61,11 +61,11 @@ RSpec.describe Ability, type: :model do
     end
 
     it 'can update their own bookings' do
-      expect(ability).to be_able_to(:update, booking, order: { user_id: user.id })
+      expect(ability).to be_able_to(:update, Booking, user_id: user.id)
     end
 
     it 'can read their own orders' do
-      expect(ability).to be_able_to(:read, order, user_id: user.id)
+      expect(ability).to be_able_to(:read, Order, user_id: user.id)
     end
 
     it 'can create orders' do
@@ -73,7 +73,7 @@ RSpec.describe Ability, type: :model do
     end
 
     it 'can update their own orders' do
-      expect(ability).to be_able_to(:update, order, user_id: user.id)
+      expect(ability).to be_able_to(:update, Order, user_id: user.id)
     end
   end
 
@@ -109,15 +109,15 @@ RSpec.describe Ability, type: :model do
     end
 
     it 'can read bookings for their events' do
-      expect(ability).to be_able_to(:read, booking, event: { speaker_id: user.id })
+      expect(ability).to be_able_to(:read, Booking, event: { speaker_id: user.id })
     end
 
     it 'can manage their own events' do
-      expect(ability).to be_able_to(:manage, event, speaker_id: user.id)
+      expect(ability).to be_able_to(:manage, Event, speaker_id: user.id)
     end
 
     it 'can update bookings for their events' do
-      expect(ability).to be_able_to(:update, booking, event: { speaker_id: user.id })
+      expect(ability).to be_able_to(:update, Booking, event: { speaker_id: user.id })
     end
 
     it 'can manage their own availability' do

@@ -23,6 +23,9 @@ class Api::V1::AvailabilitiesController < ApplicationController
       puts "Error creating start or end date: #{e.message}"
     end
 
+    # Trigger the job to create next month's availabilities if needed
+    trigger_recurring_availability_job(viewing_month, viewing_year)
+
     # Fetch the availabilities within the specified date range
     @availabilities = Availability.where(start_time: start_date..end_date)
     @availabilities = @availabilities.where(speaker_id: speaker_id) if speaker_id.present?
@@ -101,5 +104,16 @@ class Api::V1::AvailabilitiesController < ApplicationController
   def set_availability
     @availability = Availability.find_by(id: params[:id])
     render json: { error: "Availability not found" }, status: :not_found if @availability.nil?
+  end
+
+
+  def trigger_recurring_availability_job(viewing_month, viewing_year)
+    # Calculate the next month and year based on the viewing month and year
+    next_month_date = Date.new(viewing_year, viewing_month, 1).next_month
+    next_month = next_month_date.month
+    next_year = next_month_date.year
+
+    # Trigger the job for the next month
+    RecurringAvailabilityJob.perform_later(next_month, next_year)
   end
 end

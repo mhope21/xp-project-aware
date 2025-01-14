@@ -1,5 +1,6 @@
 class Api::V1::OrdersController < ApplicationController
   load_and_authorize_resource
+  before_action :authenticate_user!
 
   # GET /api/v1/orders
   def index
@@ -71,9 +72,10 @@ class Api::V1::OrdersController < ApplicationController
   # PATCH/PUT /api/v1/orders/:id
   def update
     if @order.update(order_params)
+      associate_address_with_user(@order)
       render json: @order, status: :ok
     else
-      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      render json: @order.errors, status: :unprocessable_entity
     end
   end
 
@@ -86,7 +88,22 @@ class Api::V1::OrdersController < ApplicationController
 
   private
 
+  def set_order
+    @order = Order.find(params[:id])
+  end
+
   def order_params
-    params.require(:order).permit(:user_id, :phone, :school_year, :product_id, :product_type, :address_id, :comments, :start_time, :event_id, :end_time, :status, address_attributes: [ :id, :street_address, :city, :state, :postal_code, :save_to_user, :addressable_type, :addressable_id, :_destroy ])
+    params.require(:order).permit(:user_id, :phone, :school_year, :product_id, :product_type, :address_id, :comments, address_attributes: [ :id, :street_address, :city, :state, :postal_code, :save_to_user, :addressable_type, :addressable_id, :_destroy ])
+  end
+
+  def associate_address_with_user(order)
+    if order.address && order.user
+      # Add a condition to check if the address should be saved to user
+      if order.address.save_to_user
+        unless order.user.addresses.exists?(order.address.id)
+          order.user.addresses << order.address
+        end
+      end
+    end
   end
 end

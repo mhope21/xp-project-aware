@@ -101,6 +101,26 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.select-container {
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.select-container select {
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+@media (max-width: 600px) {
+  .select-container {
+    width: 100%;
+  }
+}
+
 .profile-card {
   margin: 0 auto;
   max-width: 100%;
@@ -118,6 +138,43 @@
   height: 100px;
   object-fit: cover;
   border-radius: 50%;
+}
+
+.speaker-background {
+  background-color: white;
+}
+
+.speaker-card {
+  margin: 0 auto;
+  max-width: 100%;
+  width: 350px;
+  box-shadow: 0 15px 25px rgba(58, 57, 57, 0.2);
+  height: 550px;
+  border-radius: 5px;
+  backdrop-filter: blur(14px);
+  background-color: rgba(163, 159, 159, 0.2);
+  padding: 20px;
+  text-align: center;
+}
+.speaker-card img {
+  transition: transform 0.2s ease;
+}  
+
+.speaker-card:hover img {
+  transform: scale(1.1);
+}
+
+.card-content {
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.card-bio {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
 }
 
 .other-card {
@@ -140,8 +197,6 @@
   border-bottom: 1px solid #ddd;
   border-radius: 5px 5px 0 0;
 }
-
-
 
 body {
   margin: 0;
