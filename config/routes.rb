@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       post "kit_items_only", to: "kit_items#create_kit_items_only"
       patch "kit_items_only/:id", to: "kit_items#update_kit_items_only"
       resources :users do
+        resources :addresses, only: [ :create, :update, :destroy ]
         member do
           get "profile"
         end
