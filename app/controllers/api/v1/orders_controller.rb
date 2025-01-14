@@ -10,58 +10,45 @@ class Api::V1::OrdersController < ApplicationController
   # POST /api/v1/orders
   def create
     # Validate required fields
-    if params[:event_id].blank? || params[:start_time].blank? || params[:end_time].blank?
+    if params[:product_type].blank?
       return render json: { error: "Missing required fields" }, status: :unprocessable_entity
     end
 
-    ActiveRecord::Base.transaction do
-      if params[:product_type] == "Booking"
-        # Create the booking for a speaker event
-        @booking = Booking.new(
-          event_id: params[:event_id],
-          start_time: params[:start_time],
-          end_time: params[:end_time],
-          status: "pending"  # Default status
-        )
-
-        unless @booking.save
-          logger.error "Booking creation failed: #{@booking.errors.full_messages.join(', ')}"
-          raise ActiveRecord::Rollback, "Failed to create booking"
-        end
-
-        # Now that the booking is saved, create the order with the booking's product_id
-        booking_order_params = order_params.except(:start_time, :end_time, :event_id, :status)
-        @order = Order.new(booking_order_params.merge(product_id: @booking.id))
-
-        unless @order.save
-          logger.error "Order creation failed: #{@order.errors.full_messages.join(', ')}"
-          raise ActiveRecord::Rollback, "Failed to create order for booking"
-        end
-
-      elsif params[:product_type] == "Kit"
-        # Handle kit order creation
-        kit_order_params = order_params.except(:start_time, :end_time, :event_id, :status)
-        @order = Order.new(kit_order_params)
-
-        unless @order.save
-          logger.error "Kit order creation failed: #{@order.errors.full_messages.join(', ')}"
-          raise ActiveRecord::Rollback, "Failed to create kit order"
-        end
-      else
-        logger.error "Invalid product type: #{params[:product_type]}"
-        raise ActiveRecord::Rollback, "Invalid product type"
+    # Handle order creation for different product types
+    case params[:product_type]
+    when "Booking"
+      # Booking-specific logic
+      booking = Booking.find_by(id: params[:product_id])
+      unless booking
+        return render json: { error: "Booking not found" }, status: :not_found
       end
-    end
 
-    # If everything is successfully created, respond with the created order (and booking if it's a booking)
-    if params[:product_type] == "Booking"
-      render json: { booking: @booking, order: @order, message: "Booking and order created successfully" }, status: :created
-    else
+      # Create the order associated with the booking
+      @order = Order.new(order_params.merge(product_id: booking.id))
+      unless @order.save
+        return render json: { error: @order.errors.full_messages }, status: :unprocessable_entity
+      end
+
+      render json: { order: @order, message: "Booking order created successfully" }, status: :created
+
+    when "Kit"
+      # Kit-specific logic
+      kit = Kit.find_by(id: params[:product_id])
+      unless kit
+        return render json: { error: "Kit not found" }, status: :not_found
+      end
+
+      # Create the order associated with the kit
+      @order = Order.new(order_params.merge(product_id: kit.id))
+      unless @order.save
+        return render json: { error: @order.errors.full_messages }, status: :unprocessable_entity
+      end
+
       render json: { order: @order, message: "Kit order created successfully" }, status: :created
-    end
 
-  rescue ActiveRecord::Rollback => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    else
+      render json: { error: "Invalid product type" }, status: :unprocessable_entity
+    end
   end
 
   # GET /api/v1/orders/:id

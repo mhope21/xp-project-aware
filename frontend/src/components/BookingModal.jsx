@@ -11,20 +11,13 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [startTime, setStartTime] = useState(null); 
   const [endTime, setEndTime] = useState(null);
-  const [comments, setComments] = useState(null);
-  const [phone, setPhone] = useState(null);
-  const [schoolYear, setSchoolYear] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [comments, setComments] = useState("");
+  const [phone, setPhone] = useState("");
+  const [schoolYear, setSchoolYear] = useState("");
+  const [loading, setLoading] = useState("");
+  const [error, setError] = useState("");
   const [productType] = useState("Booking");
   const navigate = useNavigate()
-  const [updatedBooking, setUpdatedBooking] = useState(null);
-  const [bookingDetails, setBookingDetails] = useState({
-    name: "",
-    speaker: "",
-    organization: "",
-    address: "",
-  });
 
   useEffect(() => {
     if (selectedAvailability) {
@@ -38,33 +31,13 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
   const validateTimeRange = (selectedStart, selectedEnd, availabilityStart, availabilityEnd) => {
     if (selectedStart < availabilityStart || selectedEnd > availabilityEnd) {
       setError("Selected time range is outside the availability.");
-      return false; // Validation failed
+      return false;
     }
 
     // Clear error if validation passes
     setError("");
-    return true; // Validation passed
+    return true;
   };
-
-  useEffect(() => {
-    if (user) {
-      setBookingDetails({
-        name: user?.name || "",
-        speaker: speakerId || "",
-        organization: user?.organization || "",
-        address: user?.organizationAddress || "",
-        event: selectedEvent ? { id: selectedEvent.id, title: selectedEvent.title } : "",
-      startTime: updatedBooking?.startTime || startTime || "",
-      endTime: updatedBooking?.endTime || endTime || "",
-      status: updatedBooking?.status || "pending",
-      });
-    }
-  }, [user, speakerId, updatedBooking]);
-
-  const validationSchema = Yup.object().shape({
-    phone: Yup.string().required("Phone is required"),
-    comments: Yup.string().notRequired(),
-  });
 
   const jwt = localStorage.getItem("jwt");
 
@@ -94,12 +67,13 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
     }, [speakerId]);
 
     // Handle booking creation
-  const createBooking = async (values) => {
+  const createBooking = async () => {
     const data = {
       start_time: startTime,
       end_time: endTime,
       event_id: selectedEvent?.id,
       status: 0,
+      availability_id: selectedAvailability?.id,
     };
 
     try {
@@ -142,82 +116,79 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
       });
       if (!response.ok) throw new Error("Failed to create the order.");
       const order = await response.json();
-      setUpdatedBooking(order);
+      return order;
     } catch (err) {
       throw new Error(err.message);
     }
   };
 
-  const handleBooking = async (values) => {
-    console.log(user)
-
-    if (!selectedEvent || !startTime || !endTime) {
+  const handleBooking = async () => {
+    setLoading(true);
+    setError("");
+  
+    // Validate input fields
+    if (!selectedEvent || !startTime || !endTime || !phone || !schoolYear) {
       setError("All fields are required.");
+      setLoading(false);
       return;
     }
-
-    if (!user.address || !user.organization) {
-        setError("You must complete your profile with Organization and Address.")
-    }
-
+  
+    // Parse and validate time range
     const availabilityStart = new Date(selectedAvailability.start);
     const availabilityEnd = new Date(selectedAvailability.end);
     const selectedStart = new Date(startTime);
     const selectedEnd = new Date(endTime);
-    console.log(availabilityStart, selectedStart)
-    console.log(availabilityEnd, selectedEnd)
-
+  
     if (!validateTimeRange(selectedStart, selectedEnd, availabilityStart, availabilityEnd)) {
-        console.error("Invalid time range selected.");
-        return;
-    }
-
-    const data = {
-        order: {
-            user_id: user.id,
-            phone: values.phone,
-            product_id: '', // No booking.id available yet
-            product_type: productType,
-            comments: values.comments,
-            address_id: user.organization?.address?.id,
-            school_year: schoolYear,
-            event_id: selectedEvent.id,
-            start_time: startTime,
-            end_time: endTime,
-            status: 0,
-        }
-    };
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`${API_URL}/orders`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${jwt}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create the booking.");
-      }
-
-      const updatedBookingData = await response.json();
-      setUpdatedBooking(updatedBookingData); // Update the state with the response
-      console.log("Booking and Order created: ", updatedBooking)
-      onBookingSuccess(updatedBookingData);
-      onClose();
-      navigate("/confirmation", {
-        state: { user, bookingDetails, productType },
-      });
-    } catch (err) {
-      setError(err.message);
-    } finally {
       setLoading(false);
+      return;
     }
-  };
+  
+    try {
+        // Create booking and order in one flow
+        const booking = await createBooking();
+        const order = await createOrder(booking.id);
+
+        console.log("Booking:", booking);
+        console.log("Order:", order);
+      
+        onBookingSuccess(booking); 
+        onClose();
+
+        const bookingDetails = {
+            name: user?.name,
+            organization: user?.organization?.name,
+            address: {
+              street_address: user?.organization?.address?.street_address,
+              city: user?.organization?.address?.city,
+              state: user?.organization?.address?.state,
+              postal_code: user?.organization?.address?.postal_code,
+            },
+            event: {
+              id: booking.event.id,
+              title: booking.event.title,
+              speaker_id: booking.event.speaker_id,
+              description: booking.event.description,
+              duration: booking.event.duration,
+            },
+            startTime: booking.start_time,
+            endTime: booking.end_time,
+            phone: order.order.phone,
+            comments: order.order.comments,
+            schoolYear: order.order.school_year,
+            productType: order.order.product_type,
+          };
+
+          navigate("/confirmation", { state: { bookingDetails } });
+
+          
+          
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   return (
     <Modal
@@ -226,8 +197,8 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
       contentLabel="Booking Modal"
       style={{
         overlay: {
-            backgroundColor: "rgba(0, 0, 0, 0.75)", // Faded black background
-            zIndex: 1000, // Ensure it appears above other elements
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            zIndex: 1000,
           },
         content: {
           width: "400px",
@@ -270,7 +241,7 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
         onChange={(date) => setStartTime(date)}
         showTimeSelect
         dateFormat="Pp"
-        timeIntervals={15} // You can adjust time intervals
+        timeIntervals={15}
         timeCaption="Time"
       />
         </label>
@@ -283,7 +254,7 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
         onChange={(date) => setEndTime(date)}
         showTimeSelect
         dateFormat="Pp"
-        timeIntervals={15} // Adjust intervals
+        timeIntervals={15}
         timeCaption="Time"
       />
         </label>

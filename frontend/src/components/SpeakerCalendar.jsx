@@ -9,13 +9,12 @@ import { useLocation } from "react-router-dom";
 import BookingModal from "./BookingModal";
 
 const SpeakerCalendar = ({ user }) => {
-  // Ensure speakerId falls back to 2 if not provided
+  // Ensure speakerId falls back to 2 if not provided for testing
   const [speakerId, setSpeakerId] = useState(2); 
   const [events, setEvents] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedAvailability, setSelectedAvailability] = useState(null);
-  
 
   const jwt = localStorage.getItem('jwt');
 
@@ -66,9 +65,6 @@ const SpeakerCalendar = ({ user }) => {
   const handleEventClick = (info) => {
     if (user?.role === "teacher") {
       setSelectedAvailability(info.event);
-      console.log(selectedAvailability)
-      console.log("Selected Availability Start:", selectedAvailability?.start);
-console.log("Selected Availability End:", selectedAvailability?.end);
       setModalIsOpen(true);
     }
   };
