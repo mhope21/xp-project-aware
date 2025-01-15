@@ -22,6 +22,8 @@ class Api::V1::BookingsController < ApplicationController
   end
 
   def update
+    availability = booking.availability
+
     if @booking.update(booking_params)
       render json: @booking
     else
