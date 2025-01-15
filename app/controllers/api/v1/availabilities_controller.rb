@@ -29,7 +29,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
     # Fetch the availabilities within the specified date range
     @availabilities = Availability.where(start_time: start_date..end_date)
     @availabilities = @availabilities.where(speaker_id: speaker_id) if speaker_id.present?
-    Rails.logger.debug "SpeakerId: #{speaker_id.inspect}"
+    @availabilities = @availabilities.where(booked: false)
 
     render json: @availabilities
   end
@@ -98,7 +98,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
   end
 
   def availability_params
-    params.require(:availability).permit(:speaker_id, :start_time, :end_time, :is_recurring, :recurring_end_date)
+    params.require(:availability).permit(:speaker_id, :start_time, :end_time, :is_recurring, :recurring_end_date, :booked)
   end
 
   def set_availability

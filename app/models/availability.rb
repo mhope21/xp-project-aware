@@ -4,6 +4,10 @@ class Availability < ApplicationRecord
   belongs_to :recurring_availability, optional: true
   attr_accessor :is_recurring, :recurring_end_date
 
+  # Scope to filter by booked status
+  scope :booked, -> { where(booked: true) }
+  scope :available, -> { where(booked: false) }
+
   # Validations
   validates :start_time, :end_time, :speaker, presence: true
 

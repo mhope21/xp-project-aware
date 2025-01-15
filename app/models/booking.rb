@@ -1,7 +1,7 @@
 class Booking < ApplicationRecord
   belongs_to :event
   belongs_to :availability
-  has_one :order, as: :product
+  has_one :order, as: :product, dependent: :destroy
   has_one :user, through: :order
   has_one :speaker, through: :event
 
