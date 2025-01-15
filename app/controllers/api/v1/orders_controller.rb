@@ -25,6 +25,7 @@ class Api::V1::OrdersController < ApplicationController
 
       # Create the order associated with the booking
       @order = Order.new(order_params.merge(product_id: booking.id))
+      associate_address_with_user(@order)
       unless @order.save
         return render json: { error: @order.errors.full_messages }, status: :unprocessable_entity
       end
