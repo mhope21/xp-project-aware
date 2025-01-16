@@ -11,6 +11,20 @@ class User < ApplicationRecord
   has_many :orders
   has_many :donations, -> { where(canceled: false) }
   has_many :contacts
+  has_many :addresses, as: :addressable
+  has_many :events, foreign_key: :speaker_id, dependent: :nullify
+  has_many :availabilities, foreign_key: :speaker_id, dependent: :destroy
+  has_many :bookings, through: :orders
+  belongs_to :organization, optional: true
+
+  # Added profile_image here
+  has_one_attached :profile_image
+  # Add profile_image_url method for user to facilitate user_profile_serializer
+  include Rails.application.routes.url_helpers
+
+  def profile_image_url
+    rails_blob_url(profile_image, only_path: false) if profile_image.attached?
+  end
 
   before_create :set_default_role
 
@@ -24,5 +38,21 @@ class User < ApplicationRecord
 
   def set_default_role
     self.role ||= "user"
+  end
+
+  def admin?
+    role == "admin"
+  end
+
+  def teacher?
+    role == "teacher"
+  end
+
+  def speaker?
+    role == "speaker"
+  end
+
+  def user?
+    role == "user"
   end
 end

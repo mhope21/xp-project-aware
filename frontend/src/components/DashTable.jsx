@@ -30,7 +30,6 @@ const DashTable = ({ apiEndpoint, headers, handleShow }) => {
       } catch (err) {
         setError(err.message); 
         console.error("Error fetching data:", err);
-        logout();
         alert("A network error occurred.")
       } finally {
         setLoading(false);

@@ -1,3 +1,4 @@
+
 # This file should ensure the existence of records required to run the application in every environment (production,
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
@@ -9,12 +10,15 @@
 #   end
 # Initial seeding of my database
 require 'faker'
+require 'factory_bot_rails'
 
 # Clear tables
 Order.destroy_all
 KitItem.destroy_all
 Kit.destroy_all
-
+Address.destroy_all
+Donation.destroy_all
+User.destroy_all
 
 
 
@@ -285,16 +289,135 @@ classroom_book.image.attach(
   identify: false
 )
 
-
 # Now associating KitItems with Kits
 discovery_kit.kit_items << henry_book << charlie_book << benji_book << no_words_book << wiggles_book << classroom_book << neurotribes_book
 empowerment_kit.kit_items << boy_bat_book << temple_book << see_me_book << vivy_book << someday_book << not_if_book << spark_book << classroom_book << neurotribes_book
 perspectives_kit.kit_items << goldfish_boy_book << sevens_book << frankie_book << earth_blue_book << same_book << awesome_guide_book << mockingbird_book << classroom_book << neurotribes_book
 impact_kit.kit_items << curious_dog_book << rosie_book << different_book << classroom_book << neurotribes_book
 
-# Seeding Orders
+# Seed users
+users = [
+  {
+    id: 1,
+    email: "testuser@example.com",
+    role: "user",
+    first_name: "Test",
+    last_name: "User",
+    bio: "Test User is a dedicated individual who loves exploring new technologies. In their free time, they enjoy hiking and reading science fiction novels.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 2,
+    email: "speaker1@example.com",
+    role: "speaker",
+    first_name: "Speakerone",
+    last_name: "One",
+    bio: "Speaker One is a seasoned public speaker with a passion for motivational talks. They have inspired thousands through their engaging presentations.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 3,
+    email: "admin@example.com",
+    role: "admin",
+    first_name: "Admin",
+    last_name: "Jones",
+    bio: "Admin Jones is an experienced administrator who excels in managing complex systems. They are known for their problem-solving skills and attention to detail.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 4,
+    email: "speaker2@example.com",
+    role: "speaker",
+    first_name: "Speakertwo",
+    last_name: "Two",
+    bio: "Speaker Two is a dynamic presenter with expertise in technology trends. They have a knack for making complex topics accessible to all audiences.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 5,
+    email: "speaker3@example.com",
+    role: "speaker",
+    first_name: "Speakerthree",
+    last_name: "Three",
+    bio: "Speaker Three is a renowned keynote speaker with a background in business strategy. They have helped numerous companies achieve their goals through insightful talks.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 6,
+    email: "speaker4@example.com",
+    role: "speaker",
+    first_name: "Speakerfour",
+    last_name: "Four",
+    bio: "Speaker Four is an expert in digital marketing with a focus on social media strategies. They have successfully led multiple campaigns for top brands.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 7,
+    email: "speaker5@example.com",
+    role: "speaker",
+    first_name: "Speakerfive",
+    last_name: "Five",
+    bio: "Speaker Five is a motivational speaker who specializes in personal development. They have a unique ability to connect with audiences on a deep level.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 8,
+    email: "speaker6@example.com",
+    role: "speaker",
+    first_name: "Speakersix",
+    last_name: "Six",
+    bio: "Speaker Six is a thought leader in the field of innovation and creativity. They have authored several books on how to foster a culture of innovation.",
+    organization_id: nil,
+    password: "password"
+  },
+  {
+    id: 9,
+    email: "speaker7@example.com",
+    role: "speaker",
+    first_name: "Sarah",
+    last_name: "Thompson",
+    bio: "I am a neurodiversity consultant with over 15 years of experience in inclusive education. My work focuses on training teachers and staff to better understand the needs of neurodivergent students, ensuring classrooms are environments of empathy and acceptance.",
+    organization_id: nil,
+    password: "password"
+  }
+]
 
-Order.create([
-  { school_year: '2024-2025', kit: discovery_kit },
-  { school_year: '2024-2025', kit: empowerment_kit }
-])
+users.each do |user_data|
+  user = User.create!(user_data)
+
+  # Retry mechanism for attaching image
+  retries = 3
+  begin
+    user.profile_image.attach(
+      io: File.open("db/seed_img/#{user_data[:first_name].downcase}.jpg"),
+      filename: "#{user_data[:first_name].downcase}.jpg",
+      content_type: "image/jpg",
+      identify: false
+    )
+  rescue => e
+    retries -= 1
+    if retries > 0
+      sleep(1) # Wait for a second before retrying
+      retry
+    else
+      puts "Failed to attach image for #{user_data[:first_name]}: #{e.message}"
+    end
+  end
+end
+
+# Seed addresses
+10.times do
+  FactoryBot.create(:address)
+end
+
+# Seed orders
+3.times do
+  FactoryBot.create(:order)
+end

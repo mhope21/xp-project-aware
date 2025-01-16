@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_24_035858) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_11_165839) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,42 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_24_035858) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "addresses", force: :cascade do |t|
+    t.string "street_address", null: false
+    t.string "city", null: false
+    t.string "state", null: false
+    t.string "postal_code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "addressable_type", null: false
+    t.integer "addressable_id", null: false
+    t.boolean "save_to_user"
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable"
+  end
+
+  create_table "availabilities", force: :cascade do |t|
+    t.datetime "start_time", null: false
+    t.datetime "end_time", null: false
+    t.integer "speaker_id", null: false
+    t.integer "recurring_availability_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["recurring_availability_id"], name: "index_availabilities_on_recurring_availability_id"
+    t.index ["speaker_id"], name: "index_availabilities_on_speaker_id"
+  end
+
+  create_table "bookings", force: :cascade do |t|
+    t.integer "event_id", null: false
+    t.datetime "start_time", null: false
+    t.datetime "end_time", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "availability_id"
+    t.index ["availability_id"], name: "index_bookings_on_availability_id"
+    t.index ["event_id"], name: "index_bookings_on_event_id"
+  end
+
   create_table "contacts", force: :cascade do |t|
     t.integer "user_id"
     t.string "name"
@@ -64,6 +100,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_24_035858) do
     t.index ["user_id"], name: "index_donations_on_user_id"
   end
 
+  create_table "events", force: :cascade do |t|
+    t.integer "speaker_id", null: false
+    t.string "title", null: false
+    t.string "description"
+    t.integer "duration", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["speaker_id"], name: "index_events_on_speaker_id"
+  end
+
   create_table "kit_items", force: :cascade do |t|
     t.string "name"
     t.text "description"
@@ -86,16 +132,29 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_24_035858) do
 
   create_table "orders", force: :cascade do |t|
     t.string "school_year"
-    t.integer "kit_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "phone"
-    t.string "school_name"
-    t.string "school_address"
     t.text "comments"
     t.integer "user_id"
-    t.index ["kit_id"], name: "index_orders_on_kit_id"
+    t.string "product_type", null: false
+    t.integer "product_id", null: false
+    t.integer "address_id"
+    t.index ["product_type", "product_id"], name: "index_orders_on_product"
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "org_type", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "recurring_availabilities", force: :cascade do |t|
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -110,15 +169,24 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_24_035858) do
     t.string "role"
     t.string "first_name"
     t.string "last_name"
+    t.text "bio"
+    t.integer "organization_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
+    t.index ["organization_id"], name: "index_users_on_organization_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "availabilities", "recurring_availabilities"
+  add_foreign_key "availabilities", "users", column: "speaker_id"
+  add_foreign_key "bookings", "availabilities"
+  add_foreign_key "bookings", "events"
   add_foreign_key "contacts", "users"
   add_foreign_key "donations", "users"
-  add_foreign_key "orders", "kits"
+  add_foreign_key "events", "users", column: "speaker_id"
+  add_foreign_key "orders", "addresses"
   add_foreign_key "orders", "users"
+  add_foreign_key "users", "organizations"
 end

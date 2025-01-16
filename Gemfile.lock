@@ -82,7 +82,7 @@ GEM
     bigdecimal (3.1.8)
     bootsnap (1.18.4)
       msgpack (~> 1.2)
-    brakeman (6.2.2)
+    brakeman (7.0.0)
       racc
     builder (3.3.0)
     cancancan (3.6.1)
@@ -305,7 +305,7 @@ GEM
       dry-configurable (>= 0.13, < 2)
       jwt (~> 2.1)
       warden (~> 1.2)
-    webrick (1.8.1)
+    webrick (1.9.1)
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -330,7 +330,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   bootsnap
-  brakeman
+  brakeman (= 7.0.0)
   cancancan
   debug
   devise

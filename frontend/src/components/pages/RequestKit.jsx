@@ -3,14 +3,13 @@ import { API_URL } from "../../constants";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 import * as Yup from "yup";
+import Address from "../Address";
 
 
 function RequestKit() {
-  const { user, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const validationSchema = Yup.object().shape({
     phone: Yup.string().required('Phone is required'),
-    schoolAddress: Yup.string().required('School address is required'),
-    schoolName: Yup.string().required('School name is required'),
     schoolYear: Yup.string().required('School year is required'),
     comments: Yup.string()
     .notRequired()
@@ -20,16 +19,38 @@ function RequestKit() {
   const location = useLocation();
   const kitId = location.state?.kitId || "";
   const kitName = location.state?.kitName || "";
+  
 
   const [orderMessages, setOrderMessages] = useState("");  
+  const [productType, setProductType] = useState('Kit'); // Default to 'kit'
+  const [productId, setProductId] = useState(null);
   const ordersUrl = `${API_URL}/orders`;
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (kitId) {
+      setProductId(kitId);
+    }
+  }, [kitId]);
+
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  },
+  [user]);
+
+  const [address, setAddress] = useState({
+    street_address: '',
+    city: '',
+    state: '',
+    postal_code: '',
+    save_to_user: false,
+  });
+
   const [orderForm, setOrderForm] = useState({
     phone: "",
-    schoolName: "",
-    schoolAddress: "",
     comments: "",
     schoolYear: "",
     email: user ? user.email : "",
@@ -41,18 +62,44 @@ function RequestKit() {
     window.scrollTo(0, 0);
   }, []);
 
+  const handleAddressSelect = (selectedAddress) => {
+    setOrderForm({
+      ...orderForm,
+      streetAddress: selectedAddress.street_address,
+      city: selectedAddress.city,
+      state: selectedAddress.state,
+      postalCode: selectedAddress.postal_code,
+      save_to_user: false
+    });
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
+    // Find the address based on the street address entered in the form
+    const selectedAddress = user.addresses.find(
+      (address) => address.street_address === orderForm.streetAddress
+    );
+    const addressId = selectedAddress ? selectedAddress.id : null;
+
     const data = {
       order: {
+        user_id: user.id,
+        address_id: addressId,
         phone: orderForm.phone,
-        school_address: orderForm.schoolAddress,
-        school_name: orderForm.schoolName,
         school_year: orderForm.schoolYear,
-        kit_id: kitId,
+        product_id: productId,
+        product_type: productType,
         comments: orderForm.comments,
+        address_attributes: {
+          street_address: orderForm.streetAddress,
+          city: orderForm.city,
+          state: orderForm.state,
+          postal_code: orderForm.postalCode,
+          addressable_type: "User",
+          addressable_id: user.id,
+        },
       },
     };
 
@@ -116,7 +163,7 @@ function RequestKit() {
           >
             <div className="text-center mb-5">
               <h4 className="text-center section-heading text-uppercase text-dark">
-                Order A Kit
+                Order Form
               </h4>
             </div>
 
@@ -187,32 +234,7 @@ function RequestKit() {
                       {orderMessages.phone && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.phone}</div>}
                     </div>
                     <div className="form-group mb-3">
-                      <label htmlFor="schoolName">School Name:</label>
-                      <input
-                        className="form-control"
-                        id="schoolName"
-                        type="text"
-                        name="schoolName"
-                        value={orderForm.schoolName}
-                        onChange={(e) => setOrderForm({...orderForm, schoolName:e.target.value})}
-                        placeholder="City High School*"
-                        
-                      />
-                      {orderMessages.schoolName && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.schoolName}</div>}
-                    </div>
-                    <div className="form-group mb-3">
-                      <label htmlFor="schoolAddress">School Address:</label>
-                      <input
-                        className="form-control shadow"
-                        id="schoolAddress"
-                        type="text"
-                        name="schoolAddress"
-                        value={orderForm.schoolAddress}
-                        onChange={(e) => setOrderForm({...orderForm, schoolAddress:e.target.value})}
-                        placeholder="123 Example Street, City, ST 12345*"
-                        
-                      />
-                      {orderMessages.schoolAddress && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.schoolAddress}</div>}
+                      <Address user={user} onAddressSelect={handleAddressSelect} />
                     </div>
                   </div>
                   <div className="form-group mb-3">

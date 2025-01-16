@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "CurrentUsers", type: :request do
-  let(:admin_user) { create(:user, :admin) }
+  let(:admin_user) { create(:user, :admin_user) }
   let(:regular_user) { create(:user, :regular_user) }
 
   describe "GET /index" do
@@ -12,6 +12,7 @@ RSpec.describe "CurrentUsers", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
+
     context "when user is a regular user" do
       it "returns http success" do
         sign_in regular_user

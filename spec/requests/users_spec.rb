@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Users", type: :request do
-  let(:admin_user) { create(:user, :admin) }
+  let(:admin_user) { create(:user, :admin_user) }
   let(:regular_user) { create(:user, :regular_user) }
 
 
@@ -13,11 +13,13 @@ RSpec.describe "Users", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
+    # Changed user permission to allow viewing speakers
     context "when user role is not admin" do
-      it "returns http response forbidden" do
+      it "returns http response success" do
+        # changed permissions to view speaker index
         sign_in regular_user
         get api_v1_users_path, headers: { 'Authorization': "Bearer #{@auth_token}" }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:success)
       end
     end
   end
@@ -30,11 +32,13 @@ RSpec.describe "Users", type: :request do
         expect(response).to have_http_status(:success)
       end
     end
+    # Changed user permission to allow viewing speaker profile
     context "when user role is not admin" do
-      it "returns http response forbidden" do
+      it "returns http response success" do
+        # Changed permissions to view speakers
         sign_in regular_user
         get api_v1_users_path(regular_user), headers: { 'Authorization': "Bearer #{@auth_token}" }
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:success)
       end
     end
   end
@@ -65,6 +69,13 @@ RSpec.describe "Users", type: :request do
         expect(response).to have_http_status(:forbidden)
         expect(regular_user.reload.role).not_to eq("admin")
       end
+    end
+
+    it "updates the user's bio" do
+      sign_in regular_user
+      patch api_v1_user_path(regular_user), params: { user: { bio: "This is my bio" } }, headers: { 'Authorization': "Bearer #{@auth_token}" }
+      expect(response).to have_http_status(:success)
+      expect(regular_user.reload.bio).to eq("This is my bio")
     end
   end
 

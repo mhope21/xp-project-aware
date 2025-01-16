@@ -1,5 +1,6 @@
 class Api::V1::OrdersController < ApplicationController
   load_and_authorize_resource
+  before_action :authenticate_user!
 
   # GET /api/v1/orders
   def index
@@ -8,12 +9,18 @@ class Api::V1::OrdersController < ApplicationController
 
   # POST /api/v1/orders
   def create
-    @order.user = current_user # Automatically associate user
+    @order = Order.new(order_params)
 
+    @order.user = current_user
     if @order.save
-      render json: @order, status: :created
+      @user = current_user
+      @user.reload  # Reload the user to get the updated list of addresses
+      @addresses = @user.addresses  # Get the addresses after reload
+
+      render json: { order: @order, addresses: @addresses }, status: :created
+      associate_address_with_user(@order)
     else
-      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      render json: @order.errors, status: :unprocessable_entity
     end
   end
 
@@ -25,9 +32,10 @@ class Api::V1::OrdersController < ApplicationController
   # PATCH/PUT /api/v1/orders/:id
   def update
     if @order.update(order_params)
+      associate_address_with_user(@order)
       render json: @order, status: :ok
     else
-      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      render json: @order.errors, status: :unprocessable_entity
     end
   end
 
@@ -40,7 +48,22 @@ class Api::V1::OrdersController < ApplicationController
 
   private
 
+  def set_order
+    @order = Order.find(params[:id])
+  end
+
   def order_params
-    params.require(:order).permit(:phone, :school_name, :school_address, :school_year, :kit_id, :comments)
+    params.require(:order).permit(:user_id, :phone, :school_year, :product_id, :product_type, :address_id, :comments, address_attributes: [ :id, :street_address, :city, :state, :postal_code, :save_to_user, :addressable_type, :addressable_id, :_destroy ])
+  end
+
+  def associate_address_with_user(order)
+    if order.address && order.user
+      # Add a condition to check if the address should be saved to user
+      if order.address.save_to_user
+        unless order.user.addresses.exists?(order.address.id)
+          order.user.addresses << order.address
+        end
+      end
+    end
   end
 end

@@ -2,8 +2,12 @@ require "rails_helper"
 
 RSpec.describe Order, type: :model do
   let(:kit) { create(:kit) }
+  let(:teacher_user) { create(:user, :teacher_user) }
+  let(:address) { create(:address, addressable: teacher_user) }
+  let(:speaker_user) { create(:user, :speaker_user) }
   let(:regular_user) { create(:user, :regular_user) }
-  let(:order) { create(:order, user: regular_user, kit: kit) }
+  let(:order) { create(:order, user: speaker_user, product: event, address: address) }
+  let(:order) { create(:order, user: teacher_user, product: kit, address: address) }
 
   it "is valid with valid attributes" do
     expect(order).to be_valid
@@ -29,12 +33,24 @@ RSpec.describe Order, type: :model do
     expect(order).to_not be_valid
   end
 
-  it "is not valid without a school_name" do
-    order = build(:order, school_name: nil)
-    expect(order).to_not be_valid
+  it "is valid with user and a kit" do
+    kit = create(:kit)
+    order = create(:order, user: teacher_user, product: kit)
+    expect(order).to be_valid
+  end
+
+  it 'is valid with a user (speaker) and an event' do
+    event = create(:event)
+    order = create(:order, user: speaker_user, product: event)
+    expect(order).to be_valid
+  end
+
+  it "is valid with user and a donation" do
+    donation = create(:donation, user: regular_user)
+    order = create(:order, user: regular_user, product: donation)
+    expect(order).to be_valid
   end
 
   it { should belong_to(:user) }
-
-  it { should belong_to(:kit) }
+  it { should belong_to(:product) }
 end

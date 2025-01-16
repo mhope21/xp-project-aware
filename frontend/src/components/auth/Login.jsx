@@ -58,14 +58,12 @@ export default function Login() {
           console.log("Login successful!");
           
           setLoggedIn(true);
-          <CurrentUser />
   
           navigate("/")
         } else {
           // Handle registration error
           const errorData = await response.json();
           setLoginMessages('Login failed. Please check your credentials and try again.');
-          logout();
           
 
       // Access the status and message in the JSON response
@@ -75,6 +73,7 @@ export default function Login() {
      } catch (error) {
         // Handle other errors
         console.log("An error occurred:", error)
+        setLoginMessages("An error occurred, please try again.");
         setLoginMessages("An error occurred, please try again.");
         logout();
       }
@@ -166,5 +165,3 @@ export default function Login() {
   
     );
   }
-
-
