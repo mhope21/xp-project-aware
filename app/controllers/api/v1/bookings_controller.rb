@@ -15,6 +15,8 @@ class Api::V1::BookingsController < ApplicationController
     @booking.user = current_user
 
     if @booking.save
+      BookingMailer.booking_confirmation(@booking.user, @booking).deliver_now
+      BookingMailer.new_booking_notification(@booking.speaker, @booking).deliver_now
       render json: @booking, status: :created
     else
       render json: @booking.errors, status: :unprocessable_entity
