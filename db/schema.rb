@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_01_11_165839) do
+ActiveRecord::Schema[7.2].define(version: 2025_01_14_235147) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -59,6 +59,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_11_165839) do
     t.integer "recurring_availability_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "booked", default: false
     t.index ["recurring_availability_id"], name: "index_availabilities_on_recurring_availability_id"
     t.index ["speaker_id"], name: "index_availabilities_on_speaker_id"
   end
