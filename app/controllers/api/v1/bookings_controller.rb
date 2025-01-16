@@ -22,6 +22,7 @@ class Api::V1::BookingsController < ApplicationController
   end
 
   def update
+    booking = Booking.find(params[:id])
     availability = booking.availability
 
     if @booking.update(booking_params)
