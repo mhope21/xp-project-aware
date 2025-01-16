@@ -49,7 +49,7 @@ const NewKitItem = () => {
           setDescription("");
           setImage(null);
               
-          navigate("/admin");
+          navigate("/authenticated/admin");
         } else {
           
           const errorData = await response.json();
