@@ -3,8 +3,12 @@ import { useLocation } from "react-router-dom";
 
 function Confirmation({ user }) {
   const location = useLocation();
-  const { bookingDetails } = location.state || {};
-  const { event, name, organization, address, startTime, endTime, phone, comments, schoolYear, productType } = bookingDetails || {};
+  const { bookingDetails, kitOrderData } = location.state || {};
+  const { event, organization, address, startTime, endTime, phone, comments, schoolYear, productType } = bookingDetails || {};
+
+  const { order } = kitOrderData || {};
+  const { product } = order || {};
+  const { name, description } = product || {};
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,15 +57,30 @@ function Confirmation({ user }) {
                 You will be receiving an email confirmation soon.
               </h5>
             </>
-          ) : (
+          ) : kitOrderData ? (
             <>
               <h5 className="section-subheading mb-5">
-                We hope you and your students enjoy the kit!
+                Your kit order has been successfully placed!
               </h5>
+              <div className="booking-information">
+              <h1 className="booking-title">Kit Information</h1>
+            <div className="booking-details">
+              <p className="detail">
+                <strong className="label">Kit Name:</strong> {name}
+              </p>
+              <p className="detail">
+                <strong className="label">Kit Description:</strong> {description}
+              </p>
+                </div>
+              </div>
               <h5 className="text-muted">
                 You will be receiving an email confirmation soon.
               </h5>
             </>
+          ) : (
+            <h5 className="text-danger">
+              No details available. Please check your email for confirmation.
+            </h5>
           )}
         </div>
       </div>

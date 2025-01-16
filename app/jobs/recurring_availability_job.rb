@@ -2,38 +2,54 @@ class RecurringAvailabilityJob < ApplicationJob
   queue_as :default
 
   def perform(viewing_month, viewing_year)
-    start_date = DateTime.new(viewing_year, viewing_month, 1)
-    end_date = start_date.end_of_month
+    Rails.logger.info "Viewing month and year: #{viewing_month}, #{viewing_year}"
+  # Get the start and end date of the next month
+  start_of_next_month = Date.new(viewing_year, viewing_month).next_month.beginning_of_month
+  end_of_next_month = start_of_next_month.end_of_month
 
-    # Wrap the entire logic in a rescue block to handle unexpected errors
-    begin
-      # Check if availabilities for the specified month already exist
-      existing_availabilities = Availability.where(start_time: start_date..end_date)
-      return if existing_availabilities.exists?
+  # Fetch all recurring availabilities with an end date later than the start of the next month
+  recurring_availabilities = RecurringAvailability.where("end_date >= ?", start_of_next_month)
 
-      # Find all recurring availabilities that need to be created for the next month
-      recurring_availabilities = RecurringAvailability.where("end_date IS NULL OR end_date >= ?", start_date)
+  recurring_availabilities.each do |recurring_availability|
+    # Fetch availabilities linked to the recurring availability
+    availabilities = Availability.where(recurring_availability_id: recurring_availability.id)
 
-      # Use a transaction to ensure atomicity
-      Availability.transaction do
-        recurring_availabilities.each do |recurring|
-          (start_date.to_date..end_date.to_date).each do |date| # Use Date instead of DateTime
-            if recurring.recurs_on?(date)
-              Availability.create!(
-                start_time: DateTime.new(date.year, date.month, date.day, recurring.start_time.hour, recurring.start_time.min, recurring.start_time.sec),
-                end_time: DateTime.new(date.year, date.month, date.day, recurring.end_time.hour, recurring.end_time.min, recurring.end_time.sec),
-                speaker_id: recurring.speaker_id,
-                recurring_availability_id: recurring.id
-              )
-            end
+    availabilities.each do |availability|
+      # Get the start time of the existing availability
+      recurring_start_time = availability.start_time
+
+      # Get the day of the week of the recurring availability (the weekday of the start time)
+      recurring_weekday = recurring_start_time.wday
+
+      # Start from the first day of the next month
+      current_date = start_of_next_month
+
+      # Check if the recurring availability extends past the start of the month
+      while current_date <= end_of_next_month
+        # Check if the current date's weekday matches the recurring availability's weekday
+        if current_date.wday == recurring_weekday
+          # Get the exact time of the current occurrence (same hour, minute, second as the original)
+          new_start_time = current_date.change(hour: recurring_start_time.hour, min: recurring_start_time.min, sec: recurring_start_time.sec)
+          new_end_time = new_start_time + (availability.end_time - availability.start_time)
+
+          # Check if an availability already exists for this exact time
+          unless Availability.exists?(speaker_id: availability.speaker_id, start_time: new_start_time)
+            # Create a new availability for this day with the same exact time
+            Availability.create!(
+              start_time: new_start_time,
+              end_time: new_end_time,
+              speaker_id: availability.speaker_id,
+              recurring_availability_id: recurring_availability.id,
+              booked: false
+            )
+            Rails.logger.info("Created availability for speaker #{availability.speaker_id} on #{new_start_time}")
           end
         end
-      end
 
-    rescue StandardError => e
-      Rails.logger.error("RecurringAvailabilityJob failed for month #{viewing_month}, year #{viewing_year}: #{e.message}")
-      Rails.logger.error(e.backtrace.join("\n"))
-      raise e # Re-raise the error to ensure the job retries or fails properly
+        # Move to the next week
+        current_date += 1.week
+      end
+      end
     end
   end
 end

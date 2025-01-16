@@ -118,7 +118,7 @@ function App() {
               <Route path="add_kit_item" element={<AddNew header="Add New Kit Item"><NewKitItem /></AddNew>} />
               <Route path="add_item_to_kit" element={<AddNew header="Add New Kit Item To Kit"><AddItemToKit /></AddNew>} />
             </Route>
-            <Route path="/profile/:id" element={<UserProfile/>}/>
+            <Route path="/profile/:id" element={<UserProfile user={user}/>}/>
             <Route path="/availability" element={<SpeakerCalendar user={user}/>} />
           </Routes>
         </PageWrapper>

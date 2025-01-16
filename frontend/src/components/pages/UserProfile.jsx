@@ -6,9 +6,12 @@ import UserActions from '../UserActions';
 import UserDonations from '../UserDonations';
 import UserOrders from '../UserOrders';
 import UserBookings from '../UserBookings';
-import default_user_img from "/assets/img/default_user_img.png"
+import SpeakerCalendar from '../SpeakerCalendar';
+import AvailabilityModal from '../AvailabilityModal';
+import BookingModal from '../BookingModal';
 
-const UserProfile = () => {
+
+const UserProfile = ({ user }) => {
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
@@ -61,14 +64,27 @@ const UserProfile = () => {
       </div>
       
         <div className='container ms-1 me-4'>
+          {user?.role == "speaker" && (
+            <div className='other-card mb-5'>
+              <div className='other-card-header'>
+                <h4>Speaker Calendar</h4>
+              </div>
+              <SpeakerCalendar user={user}/>
+              <div><p>To create an availability, please click on a date.</p></div>
+            </div>
+          )}
           <div className='other-card mb-5'>
             <div className='other-card-header'><h4>Donations</h4></div>
             <UserDonations profile={profile} />
         </div>
-        <div className='other-card mb-5'>
-        <div className='other-card-header'><h4>Kit Orders</h4></div>
-        <UserOrders profile={profile} />
-        </div>
+        {user?.role === "teacher" && (
+          <div className="other-card mb-5">
+            <div className="other-card-header">
+              <h4>Kit Orders</h4>
+            </div>
+            <UserOrders profile={profile} />
+          </div>
+        )}
         <div className='other-card mb-5'>
         <div className='other-card-header'><h4>Bookings</h4></div>
         <UserBookings profile={profile} />

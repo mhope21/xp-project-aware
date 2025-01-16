@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Address = ({ user, onAddressSelect }) => {
+const Address = ({ user, onAddressSelect, handleNewAddressSave }) => {
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({
     street_address: '',
@@ -18,11 +18,28 @@ const Address = ({ user, onAddressSelect }) => {
 
   const handleNewAddressChange = (event) => {
     const { name, value, type, checked } = event.target;
-    setNewAddress(prevAddress => ({
+    
+    // Update the state based on the input change (checkbox or text)
+    setNewAddress((prevAddress) => ({
       ...prevAddress,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
+  
+    // If the checkbox for "save_to_user" is checked, save the address
+    if (name === "save_to_user" && checked) {
+      handleSaveAddress(); // Only save if checked
+    }
   };
+  
+  // Use effect to log the state after it's updated
+  useEffect(() => {
+    console.log("New address state after change:", newAddress);
+  }, [newAddress]);  // This will log every time the state changes
+  
+
+  const handleSaveAddress = () => {
+    handleNewAddressSave(newAddress);
+  }
 
   const toggleUseNewAddress = () => {
     setUseNewAddress(!useNewAddress);
@@ -39,7 +56,7 @@ const Address = ({ user, onAddressSelect }) => {
 
   return (
     <div>
-        <form>
+       
       <label>Select an Address</label>
       <select className="select-container mt-3" onChange={handleAddressChange} disabled={useNewAddress}>
         <option value="">Select an address</option>
@@ -67,7 +84,7 @@ const Address = ({ user, onAddressSelect }) => {
       </div>
       {useNewAddress && (
         <div>
-            <form>
+            
             <div className='form-group mb-3'>
           <input
             className='form-control shadow mb-3'
@@ -111,10 +128,9 @@ const Address = ({ user, onAddressSelect }) => {
             Save to User
           </label>
           </div>
-          </form>
         </div>
       )}
-      </form>
+      
     </div>
   );
 };
