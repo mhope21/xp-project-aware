@@ -1,7 +1,11 @@
-import React, { useEffect } from "react";
+import React, {useContext, useEffect} from "react";
+import { AuthContext } from "../auth/AuthContext";
 import { useLocation } from "react-router-dom";
 
-function Confirmation({ user }) {
+function Confirmation() {
+  const { user } = useContext(AuthContext);
+  // Displays confirmation for kit request success
+  const current_user = user?.name || "Guest";
   const location = useLocation();
   const { bookingDetails, kitOrderData } = location.state || {};
   const { event, organization, address, startTime, endTime, phone, comments, schoolYear, productType } = bookingDetails || {};
