@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import CurrentUser from "./auth/CurrentUser";
 import { AuthContext } from "./auth/AuthContext";
 import Logout from "./auth/Logout";
-import { AuthContext } from "./auth/AuthContext";
 
 // Passed in logged in and user state
 function Navigation() {
