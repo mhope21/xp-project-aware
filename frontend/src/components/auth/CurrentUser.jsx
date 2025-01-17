@@ -13,9 +13,9 @@ const CurrentUser = () => {
             <p className='text-white bold' style={{ marginRight: 100 }}>
             <em>Welcome, {user.name ? user.name.split(" ")[0] : "Guest"}!</em>
             </p>
-            {user && user.role === 'admin' && <Link to="/admin"><i className="fas fa-user-shield"></i>
+            {user && user.role === 'admin' && <Link to="/authenticated/admin"><i className="fas fa-user-shield"></i>
                 </Link>}
-            {user.role != 'admin' && <Link to={`/profile/${user.id}`}><i className='fas fa-user'></i></Link>}   
+            {user.role != 'admin' && <Link to={`/authenticated/profile/${user.id}`}><i className='fas fa-user'></i></Link>}   
         </div>
     );
 };

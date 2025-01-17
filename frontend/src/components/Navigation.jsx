@@ -18,7 +18,7 @@ function Navigation() {
         navigate("/login");
     } else {
         // If user is logged in, navigate to the donation page
-        navigate("/donation");
+        navigate("/authenticated/donation");
     }
 };
     return (
