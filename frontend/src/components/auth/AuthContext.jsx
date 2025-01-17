@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { API_URL2 } from '../../constants';
 
@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -51,11 +52,22 @@ export const AuthProvider = ({ children }) => {
     };
 
     const handleUnauthorized = () => {
-      logout();
+      setLoggedIn(false);
+      setUser(null);
+      localStorage.removeItem('jwt');
+      // Redirect only if on a protected route
+      if (isProtectedRoute(location.pathname)) {
+        navigate("/login");
+        }
+    };
+
+    const isProtectedRoute = (path) => { 
+      const protectedRoutes = ["/authenticated"];
+      return protectedRoutes.some(route => path.startsWith(route));
     };
 
     checkAuth();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   const logout = () => {
     setLoggedIn(false);

@@ -148,7 +148,7 @@ if (recordType === 'user') {
   
       if (response.ok) {
         alert('Password reset email sent successfully.');
-        navigate("/admin");
+        navigate("/authenticated/admin");
       } else {
         alert('Error sending password reset email.');
       }

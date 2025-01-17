@@ -53,7 +53,7 @@ const NewKit = () => {
           console.log("New Kit added successfully!");
           alert("New Kit added successfully!");
           // Redirect to admin page
-          navigate("/admin");
+          navigate("/authenticated/admin");
         } else {
           
           const errorData = await response.json();
