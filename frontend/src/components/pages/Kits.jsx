@@ -95,7 +95,7 @@ function Kits() {
                             {kit.description}
                           </div>
                           
-                          {user.role == "teacher" ? (
+                          {user?.role == "teacher" ? (
                             <Link 
                               to="/orders" 
                               state={{ kitId: kit.id, kitName: kit.name }}

@@ -55,7 +55,7 @@ const NewUser = () => {
           setLastName("");
           setRole("");
     
-          navigate("/admin");
+          navigate("/authenticated/admin");
         } else {
           
           const errorData = await response.json();
