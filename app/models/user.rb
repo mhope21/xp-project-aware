@@ -39,4 +39,17 @@ class User < ApplicationRecord
   def set_default_role
     self.role ||= "user"
   end
+
+  # Define methods to access bookings through orders and events
+  def pending_bookings
+    Booking.joins(:order).where(orders: { user_id: id }, status: "pending")
+  end
+
+  def confirmed_bookings
+    Booking.joins(:order).where(orders: { user_id: id }, status: "confirmed")
+  end
+
+  def bookings
+    Booking.joins(:order).where(orders: { user_id: id })
+  end
 end
