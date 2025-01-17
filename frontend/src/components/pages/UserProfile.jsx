@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { API_URL } from '../../constants';
 import { Link, useParams } from 'react-router-dom';
 import UserDetails from '../UserDetails';
@@ -7,11 +7,12 @@ import UserDonations from '../UserDonations';
 import UserOrders from '../UserOrders';
 import UserBookings from '../UserBookings';
 import SpeakerCalendar from '../SpeakerCalendar';
-import AvailabilityModal from '../AvailabilityModal';
-import BookingModal from '../BookingModal';
+import { AuthContext } from '../auth/AuthContext';
+import SpeakerEvents from '../SpeakerEvents';
 
 
-const UserProfile = ({ user }) => {
+const UserProfile = () => {
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
@@ -64,20 +65,34 @@ const UserProfile = ({ user }) => {
       </div>
       
         <div className='container ms-1 me-4'>
-          {user?.role == "speaker" && (
+          {profile?.role == "speaker" && (
             <div className='other-card mb-5'>
               <div className='other-card-header'>
                 <h4>Speaker Calendar</h4>
               </div>
-              <SpeakerCalendar user={user}/>
-              <div><p>To create an availability, please click on a date.</p></div>
+              <SpeakerCalendar user={user} speakerId={id} />
             </div>
           )}
+          {profile?.role == "speaker" && (
+            <div className='other-card mb-5'>
+              <div className='other-card-header'>
+                <h4>Events</h4>
+              </div>
+              <SpeakerEvents user={user} speakerId={id} />
+            </div>
+          )}
+          {(profile?.role === "teacher" || profile?.role === "speaker") && (
+            <div className='other-card mb-5'>
+            <div className='other-card-header'><h4>Bookings</h4></div>
+            <UserBookings profile={profile} />
+            </div>
+            )}
+
           <div className='other-card mb-5'>
             <div className='other-card-header'><h4>Donations</h4></div>
             <UserDonations profile={profile} />
         </div>
-        {user?.role === "teacher" && (
+        {profile?.role === "teacher" && (
           <div className="other-card mb-5">
             <div className="other-card-header">
               <h4>Kit Orders</h4>
@@ -85,10 +100,7 @@ const UserProfile = ({ user }) => {
             <UserOrders profile={profile} />
           </div>
         )}
-        <div className='other-card mb-5'>
-        <div className='other-card-header'><h4>Bookings</h4></div>
-        <UserBookings profile={profile} />
-        </div>
+        
         </div>
         
       </div>

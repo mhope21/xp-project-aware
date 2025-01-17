@@ -4,12 +4,25 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { API_URL } from '../constants';
 
-const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents }) => {
+const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents, availability, setAvailabilities }) => {
   const [startTime, setStartTime] = useState(new Date(selectedDate));
   const [endTime, setEndTime] = useState(new Date(selectedDate));
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringEndDate, setRecurringEndDate] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    if (availability) {
+      setStartTime(new Date(availability.start_time));
+      setEndTime(new Date(availability.end_time));
+      setIsRecurring(availability.is_recurring);
+      setRecurringEndDate(availability.recurring_end_date ? new Date (availability.recurring_end_date) : null);
+    } else {
+      const localStartTime = new Date(selectedDate).toLocaleString();setStartTime(new Date(localStartTime));
+      setEndTime(new Date(localStartTime));
+    }
+  }, [availability, selectedDate]);
+  
 
   const handleSubmit = async () => {
     if (!startTime || !endTime) {
@@ -28,8 +41,9 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
     };
 
     try {
-      const response = await fetch(`${API_URL}/availabilities`, {
-        method: "POST",
+      const response = await fetch(
+        availability ? `${API_URL}/availabilities/${availability.id}` : `${API_URL}/availabilities`, {
+        method: availability ? "PATCH" : "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem('jwt')}`,
           "Content-Type": "application/json",
@@ -47,7 +61,27 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
             title: "Speaker Availability"
           };
       
-          setEvents((prevEvents) => [...prevEvents, newEvent]);
+          setEvents((prevEvents) => {
+            const existingEventIndex = prevEvents.findIndex((event) => event.id === data.id);
+            if (existingEventIndex > -1) { // Edit existing event
+              const updatedEvents = [...prevEvents];
+              updatedEvents[existingEventIndex] = newEvent;
+              return updatedEvents;
+             }
+              // Create new event
+               return [...prevEvents, newEvent];
+             });
+
+             setAvailabilities((prevAvailabilities) => {
+              const existingAvailabilityIndex = prevAvailabilities.findIndex((avail) => avail.id === data.id);
+              if (existingAvailabilityIndex > -1) {
+                const updatedAvailabilities = [...prevAvailabilities];
+                updatedAvailabilities[existingAvailabilityIndex] = data;
+                return updatedAvailabilities;
+             } 
+             return [...prevAvailabilities, data];
+            });
+
           resetFormFields();
           onClose(); // Close the modal after creation
           alert("Your availability has been created.")
@@ -75,13 +109,13 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
   useEffect(() => {
     const localStartTime = new Date(selectedDate).toLocaleString(); // Convert to local time
     setStartTime(new Date(localStartTime));
-    setEndTime(new Date(localStartTime)); // Adjust if you need a different start/end time logic
+    setEndTime(new Date(localStartTime));
   }, [selectedDate]);
 
   return (
     <Modal show={isOpen} onHide={onClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Create New Availability</Modal.Title>
+        <Modal.Title>{availability ? 'Edit Availability' : 'Create New Availability' }</Modal.Title>
       </Modal.Header>
       <Modal.Body>
       {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
@@ -107,7 +141,8 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
               timeIntervals={15}
             />
           </Form.Group>
-
+      {!availability && (
+        <>
           <Form.Group>
   <Form.Label>
     <Form.Check
@@ -131,7 +166,9 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
       isClearable
     />
   </Form.Group>
-)}
+      )}
+    </>
+      )}
         </Form>
       </Modal.Body>
       <Modal.Footer>

@@ -8,13 +8,14 @@ import AvailabilityModal from "./AvailabilityModal";
 import { useLocation } from "react-router-dom";
 import BookingModal from "./BookingModal";
 
-const SpeakerCalendar = ({ user }) => {
-  // Ensure speakerId falls back to 2 if not provided for testing
-  const [speakerId, setSpeakerId] = useState(2); 
+const SpeakerCalendar = ({ user, speakerId }) => { 
   const [events, setEvents] = useState([]);
+  const [availabilities, setAvailabilities] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedAvailability, setSelectedAvailability] = useState(null);
+  const [showTable, setShowTable] = useState(false);
+  const [availabilityToEdit, setAvailabilityToEdit] = useState(null);
 
   const jwt = localStorage.getItem('jwt');
 
@@ -46,10 +47,16 @@ const SpeakerCalendar = ({ user }) => {
       }));
 
       setEvents(formattedEvents);
+      setAvailabilities(data);
     } catch (error) {
       console.error("Error fetching availabilities:", error);
     }
   };
+
+  const handleEdit = (availability) => {
+    setAvailabilityToEdit(availability);
+    setModalIsOpen(true);
+   };
 
   const handleDateClick = (info) => {
     if (user?.role === "teacher") {
@@ -69,6 +76,32 @@ const SpeakerCalendar = ({ user }) => {
     }
   };
 
+  const handleDelete = async (availabilityId) => {
+    try {
+      const response = await fetch(`${API_URL}/availabilities/${availabilityId}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem('jwt')}`, "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        setAvailabilities((prevAvailabilities) => prevAvailabilities.filter((avail) => avail.id !== availabilityId));
+        
+        setEvents((prevEvents) =>
+        prevEvents.filter((event) => event.id !== availabilityId)
+      );
+      alert("The availability has been deleted.")
+
+      } else {
+        const errorData = await response.json();
+        alert(`Error deleting availability: ${errorData.errors.join(',')}`);
+      }
+    } catch (error) {
+      console.error('Error deleting availability:', error);
+      alert("An error occurred while deleting the availability.");
+    }
+  };
+
   useEffect(() => {
     const currentDate = new Date();
     const month = currentDate.getMonth() + 1;
@@ -76,6 +109,22 @@ const SpeakerCalendar = ({ user }) => {
 
     fetchAvailabilities(month, year, speakerId);
   }, [speakerId]);
+
+  const handleToggleTable = () => {
+    setShowTable((prevShowTable) => {
+      const newShowTable = !prevShowTable;
+  
+      // Fetch availabilities only when showing the table
+      if (newShowTable) {
+        const month = new Date().getMonth() + 1; // Current month
+        const year = new Date().getFullYear(); // Current year
+        fetchAvailabilities(month, year, speakerId);
+      }
+  
+      return newShowTable;
+    });
+  };
+  
 
   const handleDateChange = (info) => {
     const calendarApi = info.view.calendar;
@@ -86,6 +135,7 @@ const SpeakerCalendar = ({ user }) => {
     fetchAvailabilities(month, year, speakerId);
     
   };
+
 
   return (
     <div>
@@ -129,6 +179,8 @@ const SpeakerCalendar = ({ user }) => {
               onClose={() => setModalIsOpen(false)}
               selectedDate={selectedDate}
               setEvents={setEvents}
+              availability={availabilityToEdit}
+              setAvailabilities={setAvailabilities}
             />
           )}
           {user?.role === "teacher" && (
@@ -150,8 +202,55 @@ const SpeakerCalendar = ({ user }) => {
             />
           )}
         </div>
+
+        <div style={{  marginLeft: 60, marginRight: 60 }}>
+          {user?.role === "teacher" && ( <p> Click on a date to view the day view of the calendar. Then click on a speaker's availability to create a booking for that date. Note: must be within availability window. </p> )}
+          {user?.role === "speaker" && ( <p> Click on a date to create an availability for that date. </p> )} </div>
+
+        <div className="btn btn-primary text-center d-flex justify-content-center" onClick={handleToggleTable}>
+        {showTable ? 'Hide Table' : 'Show Table'}
       </div>
+
+      {showTable && (
+        <>
+        <div className="other-card-header mt-5" ><h6>Monthly Availabilities</h6></div>
+       <table className="w-100">
+       <thead>
+         <tr>
+           <th>Speaker ID</th>
+           <th>Start Time</th>
+           <th>End Time</th>
+           <th>Is Recurring</th>
+           <th>Recurring End Date</th>
+           <th>Action</th>
+         </tr>
+       </thead>
+       <tbody>
+         {availabilities.map((availability) => (
+           <tr key={availability.id}>
+             <td>{availability.speaker_id}</td>
+             <td>{new Date(availability.start_time).toLocaleString()}</td>
+             <td>{new Date(availability.end_time).toLocaleString()}</td>
+             <td>{availability.recurring_availability_id ? "Yes" : "No"}</td>
+             <td>
+               {availability.recurring_availability?.end_date
+                 ? new Date(availability.recurring_availability?.end_date).toLocaleDateString()
+                 : "N/A"}
+             </td>
+             <td>
+              <div className="btn-group">
+              <div className="btn btn-primary btn-small" onClick={() => handleEdit(availability)}>Edit</div>
+             <div className="btn btn-danger btn-small"onClick={() => handleDelete(availability.id)}>Destroy</div>
+             </div>
+             </td>
+           </tr>
+         ))}
+       </tbody>
+     </table>
+     </>
+      )}
     </div>
+  </div>
   );
 };
 

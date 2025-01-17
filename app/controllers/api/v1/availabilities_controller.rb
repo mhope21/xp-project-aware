@@ -3,7 +3,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
   before_action :set_availability, only: [ :show, :update, :destroy ]
 
   def index
-    speaker_id = params[:speaker_id] || 2
+    speaker_id = params[:speaker_id]
     viewing_month = params[:month].to_i || Date.today.month
     viewing_year = params[:year].to_i || Date.today.year
 
@@ -24,7 +24,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
     end
 
     # Trigger the job to create next month's availabilities if needed
-    trigger_recurring_availability_job(viewing_month, viewing_year)
+    #trigger_recurring_availability_job(viewing_month, viewing_year)
 
     # Fetch the availabilities within the specified date range
     @availabilities = Availability.where(start_time: start_date..end_date)
@@ -109,11 +109,11 @@ class Api::V1::AvailabilitiesController < ApplicationController
 
   def trigger_recurring_availability_job(viewing_month, viewing_year)
     # Calculate the next month and year based on the viewing month and year
-    next_month_date = Date.new(viewing_year, viewing_month, 1).next_month
-    next_month = next_month_date.month
-    next_year = next_month_date.year
+    # next_month_date = Date.new(viewing_year, viewing_month, 1).next_month
+    # next_month = next_month_date.month
+    # next_year = next_month_date.year
 
     # Trigger the job for the next month
-    RecurringAvailabilityJob.perform_later(next_month, next_year)
+    RecurringAvailabilityJob.perform_later(viewing_month, viewing_year)
   end
 end

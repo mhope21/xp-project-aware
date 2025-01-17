@@ -32,6 +32,8 @@ class RecurringAvailabilityJob < ApplicationJob
           new_start_time = current_date.change(hour: recurring_start_time.hour, min: recurring_start_time.min, sec: recurring_start_time.sec)
           new_end_time = new_start_time + (availability.end_time - availability.start_time)
 
+          Rails.logger.info("Checking availability for speaker #{availability.speaker_id} on #{new_start_time}")
+
           # Check if an availability already exists for this exact time
           unless Availability.exists?(speaker_id: availability.speaker_id, start_time: new_start_time)
             # Create a new availability for this day with the same exact time
@@ -43,6 +45,8 @@ class RecurringAvailabilityJob < ApplicationJob
               booked: false
             )
             Rails.logger.info("Created availability for speaker #{availability.speaker_id} on #{new_start_time}")
+          else
+            Rails.logger.info("Availability already exists for speaker #{availability.speaker_id} on #{new_start_time}")
           end
         end
 

@@ -34,12 +34,6 @@ function RequestKit() {
     }
   }, [kitId]);
 
-  useEffect(() => {
-    if (user) {
-      setUser(user);
-    }
-  },
-  [user]);
 
   const [address, setAddress] = useState({
     street_address: '',
@@ -55,7 +49,7 @@ function RequestKit() {
     schoolYear: "",
     email: user ? user.email : "",
     firstName: user ? user.first_name : "",
-    lastName: user ? user.last_name : "",
+    lastName: user ? user?.last_name : "",
   });
 
   useEffect(() => {
