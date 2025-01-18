@@ -14,7 +14,7 @@ class User < ApplicationRecord
   has_many :addresses, as: :addressable
   has_many :events, foreign_key: :speaker_id, dependent: :nullify
   has_many :availabilities, foreign_key: :speaker_id, dependent: :destroy
-
+  has_many :bookings, through: :orders
   belongs_to :organization, optional: true
 
   # Added profile_image here
@@ -51,5 +51,6 @@ class User < ApplicationRecord
 
   def bookings
     Booking.joins(:order).where(orders: { user_id: id })
+
   end
 end

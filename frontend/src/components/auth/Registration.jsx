@@ -7,6 +7,7 @@ export default function Registration() {
   const [password, setPassword] = useState("");
 
   const [isTeacher, setIsTeacher] = useState(false);
+  const [isSpeaker, setIsSpeaker] = useState(false);
   // Removed useState for name and added for firstName, lastName
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -15,11 +16,20 @@ export default function Registration() {
   const [userData, setUserData] = useState({});
   const registrationUrl = `${API_URL2}/signup`;
 
-  // Toggles the isTeacher state and logs to console
-  const handleClick = () => {
-
-    setIsTeacher((prevIsTeacher) => !prevIsTeacher);
-
+  // Toggles the isTeacher and isSpeaker. Behaves like radio button.
+  const handleClick = (event) => {
+    const { id } = event.target;
+    if (id === 'isTeacher') {
+      setIsTeacher((prevIsTeacher) => !prevIsTeacher);
+      if (!isTeacher) {
+        setIsSpeaker(false);
+      }
+    } else if (id === 'isSpeaker') {
+      setIsSpeaker((prevIsSpeaker) => !prevIsSpeaker);
+      if (!isSpeaker) {
+        setIsTeacher(false);
+      }
+    }
   };
   // Handles initial signup, sets default role as user since only admin can assign a user as admin. Uses a POST action to sign up new user.
   const handleSubmit = async (event) => {
@@ -32,7 +42,7 @@ export default function Registration() {
         email,
         password,
         // if isTeacher is true, then role set as teacher, otherwise, user
-        role: isTeacher ? "teacher" : "user",
+        role: isTeacher ? "teacher" : isSpeaker ? "speaker" : "user",
         // Removed name, and added firstName and lastName, mapped name details to column names
         first_name: firstName,
         last_name: lastName,
@@ -57,16 +67,7 @@ export default function Registration() {
         // Handle successful registration (e.g., redirect to another page)
         console.log("Registration successful!");
         setRegistrationMessages("Registration successful!");
-
-
-        // Clear input fields
-        setEmail("");
-        setPassword("");
-        // Removed name field and added firstName and lastName field
-        setFirstName("");
-        setLastName("");
-
-
+        
         navigate("/login");
       } else {
         // Handle registration error
@@ -186,7 +187,8 @@ export default function Registration() {
                       >
                         A password is required.
                       </div>
-                      {/* Added checkbox for teacher role */}
+                      {/* Added checkbox for teacher role and speaker role*/}
+                      <div className="d-flex">
                       <div className="form-check">
                         <input
                           className="form-check-input mt-3 me-3"
@@ -196,13 +198,28 @@ export default function Registration() {
                           onChange={handleClick}
                         />
                         <label
-                          className="form-check-label mt-4 text-muted"
+                          className="form-check-label mt-4 text-muted me-5"
                           htmlFor="isTeacher"
                         >
                           <strong>I am a teacher</strong>
                         </label>
                       </div>
-
+                      <div className="form-check">
+                        <input
+                          className="form-check-input mt-3 me-3"
+                          type="checkbox"
+                          id="isSpeaker"
+                          checked={isSpeaker}
+                          onChange={handleClick}
+                        />
+                        <label
+                          className="form-check-label mt-4 text-muted"
+                          htmlFor="isSpeaker"
+                        >
+                          <strong>I am a speaker</strong>
+                        </label>
+                      </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Availabilities", type: :request do
   let(:speaker) { create(:user, role: "speaker") }
   let!(:availabilities) { create_list(:availability, 3, speaker: speaker) }
+  let(:availability) { availabilities.first }
   let(:availability_id) { availabilities.first.id }
   let(:recurring_availability) { create(:recurring_availability) }
   let(:year) { Time.current.year }
@@ -31,7 +32,7 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
   # Update attributes with a valid end_time
   let(:update_attributes) do
     {
-      end_time: Faker::Time.between_dates(from: Date.new(year, month, 16), to: Date.new(year, month, -1), period: :evening)
+      end_time: (availability.start_time + 1.hour).iso8601(3) # Ensures end_time is 1 hour later than start_time
     }
   end
 
@@ -81,15 +82,14 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
   describe 'PUT /api/v1/availabilities/:id' do
     context 'when the record exists' do
       it 'updates the availability' do
-        put "/api/v1/availabilities/#{availability_id}", params: { availability: update_attributes }, as: :json
+        put "/api/v1/availabilities/#{availability_id}", params: { availability: update_attributes }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)['end_time']).to eq(update_attributes[:end_time].utc.iso8601(3))
+        expect(JSON.parse(response.body)['end_time']).to eq(update_attributes[:end_time])
       end
     end
-
     context 'when the record does not exist' do
       it 'returns a 404 status with an error message' do
-        put "/api/v1/availabilities/0", params: { availability: update_attributes }, as: :json
+        put "/api/v1/availabilities/0", params: { availability: update_attributes }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)['error']).to eq('Availability not found')
       end

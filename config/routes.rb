@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get "/current_user", to: "current_user#index"
+  get "/current_user", to: "current_user#show"
   devise_for :users, path: "", path_names: {
     sign_in: "login",
     sign_out: "logout",
@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       post "kit_items_only", to: "kit_items#create_kit_items_only"
       patch "kit_items_only/:id", to: "kit_items#update_kit_items_only"
       resources :users do
+        resources :addresses, only: [ :create, :update, :destroy ]
         member do
           get "profile"
         end
