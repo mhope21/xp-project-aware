@@ -51,6 +51,5 @@ class User < ApplicationRecord
 
   def bookings
     Booking.joins(:order).where(orders: { user_id: id })
-
   end
 end
