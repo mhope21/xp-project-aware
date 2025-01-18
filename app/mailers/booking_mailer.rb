@@ -19,6 +19,6 @@ class BookingMailer < ApplicationMailer
     @speaker = speaker
     @booking = booking
     @location = @booking.user.organization.address
-    mail(to: @speaker.email, subject: "Booking Request Modified") 
+    mail(to: @speaker.email, subject: "Booking Request Modified")
   end
 end

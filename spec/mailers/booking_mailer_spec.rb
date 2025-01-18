@@ -12,8 +12,8 @@ RSpec.describe BookingMailer, type: :mailer do
 
     it "creates booking request confirmation" do
       expect(mail.subject).to eql("Booking Request Confirmation")
-      expect(mail.to).to eql([user.email])
-      expect(mail.from).to eql(["no-reply@example.com"])
+      expect(mail.to).to eql([ user.email ])
+      expect(mail.from).to eql([ "no-reply@example.com" ])
     end
   end
 
@@ -24,8 +24,8 @@ RSpec.describe BookingMailer, type: :mailer do
 
     it "creates new booking notification" do
       expect(mail.subject).to eql("New Booking Request")
-      expect(mail.to).to eql([speaker.email])
-      expect(mail.from).to eql(["no-reply@example.com"])
+      expect(mail.to).to eql([ speaker.email ])
+      expect(mail.from).to eql([ "no-reply@example.com" ])
     end
   end
 
@@ -37,8 +37,8 @@ RSpec.describe BookingMailer, type: :mailer do
 
     it "creates booking request modified notification" do
       expect(mail.subject).to eql("Booking Request Modified")
-      expect(mail.to).to eql([speaker.email])
-      expect(mail.from).to eql(["no-reply@example.com"])
+      expect(mail.to).to eql([ speaker.email ])
+      expect(mail.from).to eql([ "no-reply@example.com" ])
     end
 
     it "renders an empty body" do

@@ -27,7 +27,7 @@ class Api::V1::BookingsController < ApplicationController
     booking = Booking.find(params[:id])
     availability = booking.availability
 
-    if @booking.status == 'pending'
+    if @booking.status == "pending"
       if @booking.update(booking_params)
         BookingMailer.booking_modified_notification(@booking.speaker, @booking).deliver_now
         render json: @booking
@@ -35,7 +35,7 @@ class Api::V1::BookingsController < ApplicationController
         render json: @booking.errors, status: :unprocessable_entity
       end
     else
-      render json: { error: 'Booking cannot be modified once it is accepted or declined.'}, status: :unprocessable_entity
+      render json: { error: "Booking cannot be modified once it is accepted or declined." }, status: :unprocessable_entity
     end
   end
 
