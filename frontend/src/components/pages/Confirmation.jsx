@@ -23,7 +23,7 @@ function Confirmation() {
       <div className="container border bg-white w-60 h-100 p-5 rounded" style={{ marginTop: 40 }}>
         <div className="text-center">
           <h4 className="section-heading text-uppercase">
-            Thank You, {user?.name || "Guest"}!
+            Thank You, {current_user?.name || "Guest"}!
           </h4>
 
           {productType === "Booking" ? (

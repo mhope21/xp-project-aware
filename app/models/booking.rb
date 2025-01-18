@@ -8,11 +8,9 @@ class Booking < ApplicationRecord
   enum status: { pending: 0, confirmed: 1, denied: 2 }
 
   def availability_window
-    {
-      start_time: object.availability.start_time,
-      end_time: object.availability.end_time
-    }
+    "#{availability.start_time} - #{availability.end_time}" if availability.present?
   end
+
 
   validates :start_time, presence: true
   validates :end_time, presence: true

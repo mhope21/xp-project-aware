@@ -1,13 +1,11 @@
 import React, { useContext, useState } from "react";
 import { API_URL2 } from "../../constants";
 import { jwtDecode } from 'jwt-decode';
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
 
 export default function Logout() {
   const { logout } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate();
 
   // Stretch Goal: Alert user to token expiration and allow auto re-login
   // Handles log out, fetches api with token and logs out of account. If there is no token, it redirects to login page. It also checks for token expiration.

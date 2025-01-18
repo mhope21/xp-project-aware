@@ -8,12 +8,14 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('jwt');
+      console.log("Retrieved token: ", token);
       if (token) {
         try {
           const decoded = jwtDecode(token);
@@ -33,6 +35,7 @@ export const AuthProvider = ({ children }) => {
                   setUser(data);
                   console.log("Current user data: ", data)
                   setLoggedIn(true);
+                  console.log("Logged in: true")
                 } else {
                   throw new Error('Invalid response format');
                 }
@@ -47,29 +50,36 @@ export const AuthProvider = ({ children }) => {
           handleUnauthorized();
         }
       } else {
+        console.log("No token found")
         handleUnauthorized();
       }
+      setLoading(false);
     };
 
     const handleUnauthorized = () => {
+      console.log("Handling unauthorized access")
       setLoggedIn(false);
       setUser(null);
       localStorage.removeItem('jwt');
       // Redirect only if on a protected route
       if (isProtectedRoute(location.pathname)) {
+        console.log("Redirecting to login from: ", location.pathname);
         navigate("/login");
         }
     };
 
     const isProtectedRoute = (path) => { 
       const protectedRoutes = ["/authenticated"];
-      return protectedRoutes.some(route => path.startsWith(route));
+      const isProtected = protectedRoutes.some(route => path.startsWith(route));
+      console.log("Is protected route: ", isProtected, "for path: ", path);
+      return isProtected;
     };
 
     checkAuth();
   }, [navigate, location.pathname]);
 
   const logout = () => {
+    console.log("Logging out")
     setLoggedIn(false);
     setUser(null);
     localStorage.removeItem('jwt');
@@ -77,7 +87,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ loggedIn, user, setLoggedIn, setUser, logout }}>
+    <AuthContext.Provider value={{ loggedIn, user, setLoggedIn, setUser, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

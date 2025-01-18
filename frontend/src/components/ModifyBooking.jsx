@@ -3,30 +3,38 @@ import { API_URL } from '../constants';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Modal } from 'react-bootstrap';
+import moment from 'moment-timezone';
 
-
-const timeZone = 'America/Chicago';
 
 const ModifyBooking = ({ booking, userRole, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [startTime, setStartTime] = useState(new Date(booking.start_time));
   const [endTime, setEndTime] = useState(new Date(booking.end_time));
-  const [status, setStatus] = useState(booking.status);
-  const [availabilityWindow, setAvailabilityWindow] = useState(booking.availability_window);
+  const [status, setStatus] = useState(booking?.status || booking?.data?.attributes?.status);
   const jwt = localStorage.getItem('jwt')
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     if (booking) {
-        setStartTime(new Date(booking.start_time));
-        setEndTime(new Date(booking.end_time));
-        setStatus(booking.status);
-        setAvailabilityWindow(booking.availability_window);
+        setStartTime(new Date(booking.start_time || booking.data.attributes.start_time));
+        setEndTime(new Date(booking.end_time || booking.data.attributes.end_time));
+        setStatus(booking.status || booking.data.attributes.status);
     }
   }, [booking]);
 
+  const convertUTCToCST = (utcDate) => {
+    return moment(utcDate).tz('America/Chicago');
+ };
+
   const handleUpdate = async () => {
-    const params = { start_time: startTime.toISOString(), end_time: endTime.toISOString(), status };
+    const params = {
+        start_time: convertUTCToCST(startTime.toISOString()),
+        end_time: convertUTCToCST(endTime.toISOString()),
+        status,
+      };
+    
+      console.log("Updating Booking - ID:", booking.id);
+      console.log("Update Params:", params);
     try {
       const response = await fetch(`${API_URL}/bookings/${booking.id}`, {
         method: 'PUT',
@@ -43,14 +51,17 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
       }
 
       const data = await response.json();
-      onUpdate(data);
-      setIsEditing(false);
-      setErrorMessage('');
+    console.log("API Response:", data);
+    onUpdate({ ...data.data.attributes, id: data.data.attributes.id });
+    setIsEditing(false);
+    setErrorMessage('');
+    alert("Your booking has been updated.");
     } catch (error) {
         setErrorMessage(error.message)
       console.error('Error updating booking:', error);
     }
   };
+
 
   return (
     <div><div>
@@ -66,8 +77,7 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
             {errorMessage && <p style={{ color: 'red'}}>{errorMessage}</p>}
             </div>
             <div>
-            <p>Availability Start Time: {new Date(availabilityWindow.start_time).toLocaleString()}</p>
-            <p>Availability End Time: {new Date(availabilityWindow.end_time).toLocaleString()}</p>
+            
             </div>
             <div>
           {userRole === 'teacher' && (
@@ -97,7 +107,7 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
           {userRole === 'speaker' && (
             <label>
               Status:
-              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+              <select value={status} onChange={e => setStatus(e.target.value)}>
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
                 <option value="declined">Declined</option>
