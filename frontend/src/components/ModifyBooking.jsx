@@ -62,6 +62,11 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
     }
   };
 
+  function capitalizeFirstLetter(string) {
+    if (!string) return ""; // Handle cases where the string might be null or undefined
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  }
+
 
   return (
     <div><div>
@@ -77,8 +82,8 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
             {errorMessage && <p style={{ color: 'red'}}>{errorMessage}</p>}
             </div>
             <div>
-            <p>Booking status: {booking.status}</p>
-            <p>Booking availability window: {booking.availability_start}</p>
+            <p><strong>Booking status:</strong> {capitalizeFirstLetter(booking.status)}</p>
+            <p><strong>Booking availability window:</strong><br></br> {moment(booking.availability_start).format("MM/DD/YYYY, h:mm A")} - {moment(booking.availability_end).format("MM/DD/YYYY, h:mm A")}</p>
             </div>
             <div>
           {userRole === 'teacher' && (
