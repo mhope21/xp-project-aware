@@ -110,7 +110,7 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
               <select value={status} onChange={e => setStatus(e.target.value)}>
                 <option value="pending">Pending</option>
                 <option value="confirmed">Confirmed</option>
-                <option value="declined">Declined</option>
+                <option value="denied">Denied</option>
               </select>
             </label>
           )}

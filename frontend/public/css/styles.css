@@ -91,6 +91,27 @@
   }
 }
 
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.spinner-border {
+  width: 4rem;
+  height: 4rem;
+}
+
+.spinner-text {
+  margin-top: 1rem;
+  font-size: 1.25rem;
+  color: #0d6efd;
+}
+
+
 #calendar-tooltip {
   position: absolute;
   z-index: 1000;
@@ -120,6 +141,11 @@
     width: 100%;
   }
 }
+
+.update-form label {
+  font-weight: bold;
+}
+
 
 .booking-information {
   margin: 20px;
@@ -6168,8 +6194,8 @@ textarea.form-control-lg {
   }
 }
 .spinner-border {
-  --bs-spinner-width: 2rem;
-  --bs-spinner-height: 2rem;
+  --bs-spinner-width: 4rem;
+  --bs-spinner-height: 4rem;
   --bs-spinner-vertical-align: -0.125em;
   --bs-spinner-border-width: 0.25em;
   --bs-spinner-animation-speed: 0.75s;

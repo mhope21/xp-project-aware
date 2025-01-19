@@ -22,7 +22,7 @@ class Api::V1::BookingsController < ApplicationController
       if @booking.save
         availability = Availability.find(@booking.availability_id)
         availability.update(booked: true)
-        render json: BookingSerializer.new(@booking).serializable_hash.to_json(include: :event), status: :created
+        render json: BookingSerializer.new(@booking).serializable_hash, status: :created
       else
         render json: @booking.errors, status: :unprocessable_entity
       end
@@ -46,7 +46,7 @@ class Api::V1::BookingsController < ApplicationController
         end
       elsif current_user.role == "speaker"
         # Ensure the status update is valid
-        if params[:status] && [ "pending", "confirmed", "declined" ].include?(params[:status])
+        if params[:status] && [ "pending", "confirmed", "denied" ].include?(params[:status])
           @booking.status = params[:status]
           if @booking.save
             render json: BookingSerializer.new(@booking).serializable_hash.to_json

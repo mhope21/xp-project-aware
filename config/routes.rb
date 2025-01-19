@@ -30,6 +30,10 @@ Rails.application.routes.draw do
         end
       end
       resources :donations
+      resources :organizations do
+        post "create_and_assign_to_user", on: :collection
+        resources :addresses, only: [ :create, :update, :destroy ]
+      end
       resources :contacts
       resources :events
       resources :bookings, only: [ :create, :update, :index, :show ]

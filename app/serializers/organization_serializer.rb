@@ -1,4 +1,4 @@
 class OrganizationSerializer
   include JSONAPI::Serializer
-  attributes :name, :org_type, :address
+  attributes :name, :org_type, :addresses
 end

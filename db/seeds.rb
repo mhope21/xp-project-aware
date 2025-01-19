@@ -421,8 +421,3 @@ users.each do |user_data|
     end
   end
 end
-
-# Seed addresses
-10.times do
-  FactoryBot.create(:address)
-end

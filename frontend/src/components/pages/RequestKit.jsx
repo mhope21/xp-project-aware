@@ -95,7 +95,7 @@ function RequestKit() {
     // Find the address based on the street address entered in the form
     const addressId = user.addresses?.find(
       (addr) => addr.street_address === address.street_address
-    )?.id;
+    )?.id || user.organization.addresses?.find((addr) => addr.street_address === address.street_address)?.id;
 
     const data = {
       order: {

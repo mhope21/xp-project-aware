@@ -2,5 +2,5 @@
 class EventSerializer
   include JSONAPI::Serializer
 
-  attributes :id, :title, :description, :start_time, :end_time, :location, :speaker
+  attributes :id, :title, :description, :duration, :speaker_id
 end

@@ -28,14 +28,16 @@ class Api::V1::AddressesController < ApplicationController
   private
 
   def set_addressable
-    @addressable = if params[:user_id]
-      User.find(params[:user_id])
+    if params[:user_id]
+      @addressable = User.find(params[:user_id])
     elsif params[:organization_id]
-      Organization.find(params[:organization_id])
+      @addressable = Organization.find(params[:organization_id])
+    else
+      render json: { error: "User or Organization must be provided" }, status: :unprocessable_entity
     end
   end
 
   def address_params
-    params.require(:address).permit(:street_address, :city, :state, :postal_code, :save_to_user)
+    params.require(:address).permit(:street_address, :city, :state, :postal_code, :save_to_user, :addressable_id, :addressable_type)
   end
 end

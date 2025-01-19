@@ -17,6 +17,7 @@ const UserProfile = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const jwt = localStorage.getItem("jwt")
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -81,17 +82,23 @@ const UserProfile = () => {
               <SpeakerEvents user={user} speakerId={id} />
             </div>
           )}
-          {(profile?.role === "teacher" || profile?.role === "speaker") && (
-            <div className='other-card mb-5'>
-            <div className='other-card-header'><h4>Bookings</h4></div>
-            <UserBookings profile={profile} />
-            </div>
-            )}
+          {(profile?.role === "teacher" || profile?.role === "speaker") && user?.id === profile?.id && (
+  <div className="other-card mb-5">
+    <div className="other-card-header">
+      <h4>Bookings</h4>
+    </div>
+    <UserBookings profile={profile} />
+  </div>
+)}
 
-          <div className='other-card mb-5'>
-            <div className='other-card-header'><h4>Donations</h4></div>
-            <UserDonations profile={profile} />
-        </div>
+{(profile?.role === "teacher" || profile?.role === "speaker") && user?.id === profile?.id && (
+  <div className="other-card mb-5">
+    <div className="other-card-header">
+      <h4>Donations</h4>
+    </div>
+    <UserDonations profile={profile} />
+  </div>
+)}
         {profile?.role === "teacher" && (
           <div className="other-card mb-5">
             <div className="other-card-header">

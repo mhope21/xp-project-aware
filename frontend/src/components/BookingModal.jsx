@@ -99,7 +99,7 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
       user_id: user.id,
       product_id: bookingId,
       product_type: productType,
-      address_id: user.organization?.address?.id,
+      address_id: user.organization?.addresses?.[0]?.id,
       school_year: schoolYear,
       phone: phone,
       comments: comments,
@@ -147,7 +147,12 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
     try {
         // Create booking and order in one flow
         const booking = await createBooking();
-        const order = await createOrder(booking.id);
+if (!booking || !booking.data.id) {
+  throw new Error("Booking creation failed: No booking ID");
+}
+console.log("Booking ID: ", booking.data.id);
+
+        const order = await createOrder(booking.data.id);
 
         console.log("Booking:", booking);
         console.log("Order:", order);
@@ -159,10 +164,10 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
             name: user?.name,
             organization: user?.organization?.name,
             address: {
-              street_address: user?.organization?.address?.street_address,
-              city: user?.organization?.address?.city,
-              state: user?.organization?.address?.state,
-              postal_code: user?.organization?.address?.postal_code,
+              street_address: user?.organization?.addresses?.[0]?.street_address,
+              city: user?.organization?.addresses?.[0]?.city,
+              state: user?.organization?.addresses?.[0]?.state,
+              postal_code: user?.organization?.addresses?.[0]?.postal_code,
             },
             event: {
               id: booking.event.id,
@@ -305,7 +310,7 @@ const BookingModal = ({ isOpen, onClose, selectedAvailability, speakerId, onBook
             cursor: "pointer",
           }}
         >
-          {loading ? "Booking..." : "Confirm Booking"}
+          {loading ? "Booking..." : "Create Booking"}
         </button>
         <button
           onClick={onClose}

@@ -26,8 +26,7 @@ const UserBookings = ({ profile }) => {
                   "Authorization": `Bearer ${jwt}`,
                   "Content-Type": "application/json",
                 },
-              }
-            );
+              });
 
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
@@ -36,6 +35,7 @@ const UserBookings = ({ profile }) => {
             const data = await response.json();
             setSpeakerBookings(data);
             setIsLoading(false);
+
 
           } catch (error) {
             console.error("Error fetching speaker bookings:", error);
@@ -46,10 +46,6 @@ const UserBookings = ({ profile }) => {
       fetchSpeakerBookings();
     }, [userRole, user?.id]);
 
-  const convertUTCToCST = (utcDate) => {
-    return moment(utcDate).tz("America/Chicago").toISOString();
-  };
-
   useEffect(() => {
     if (userRole === "teacher") {
       setBookings(profile?.bookings || []);
@@ -59,8 +55,9 @@ const UserBookings = ({ profile }) => {
   const handleUpdate = (updatedBooking) => {
     const updatedBookingCST = {
       ...updatedBooking,
-      start_time: moment(updatedBooking.start_time).tz,
-      end_time: moment(updatedBooking.end_time).tz,
+      start_time: moment(updatedBooking.start_time).tz("America/Chicago").toISOString(),
+      end_time: moment(updatedBooking.end_time).tz("America/Chicago").toISOString(),
+      
     };
 
     setBookings((prevBookings) =>
@@ -106,12 +103,12 @@ const UserBookings = ({ profile }) => {
                   {booking?.event_speaker
                     ? `${booking.event_speaker.first_name} ${booking.event_speaker.last_name}`
                     : "No speaker name provided"}
+                    </td>
+                <td style={{ padding: "10px" }}>
+                  {moment(booking.start_time).tz("America/Chicago").toISOString()}
                 </td>
                 <td style={{ padding: "10px" }}>
-                  {moment(booking.start_time).tz}
-                </td>
-                <td style={{ padding: "10px" }}>
-                  {moment(booking.end_time).tz}
+                  {moment(booking.end_time).tz("America/Chicago").toISOString()}
                 </td>
                 <td
                   style={{
@@ -119,7 +116,7 @@ const UserBookings = ({ profile }) => {
                     color:
                       booking.status === "confirmed"
                         ? "green"
-                        : booking.status === "declined"
+                        : booking.status === "denied"
                         ? "red"
                         : "blue",
                   }}

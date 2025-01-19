@@ -12,7 +12,7 @@ const Address = ({ user, onAddressSelect, handleNewAddressSave }) => {
 
   const handleAddressChange = (event) => {
     const selectedAddressId = parseInt(event.target.value, 10);
-    const selectedAddress = user?.addresses?.find(address => address.id === selectedAddressId) || user?.organization?.address;
+    const selectedAddress = user?.addresses?.find(address => address.id === selectedAddressId) || user?.organization?.addresses?.find(address => address.id === selectedAddressId);
     onAddressSelect(selectedAddress);
   };
 
@@ -65,11 +65,18 @@ const Address = ({ user, onAddressSelect, handleNewAddressSave }) => {
             {address.street_address}, {address.city}, {address.state}, {address.postal_code}
           </option>
         ))}
-        {user.organization?.address && (
-          <option key={user.organization.address.id} value={user.organization.address.id}>
-            {user.organization.address.street_address}, {user.organization.address.city}, {user.organization.address.state}, {user.organization.address.postal_code} (Organization)
-          </option>
-        )}
+        {user.organization?.addresses?.length > 0 && (
+  <option
+    key={user.organization?.addresses[0]?.id}
+    value={user.organization?.addresses[0]?.id}
+  >
+    {user.organization?.addresses[0]?.street_address}, 
+    {user.organization?.addresses[0]?.city}, 
+    {user.organization?.addresses[0]?.state}, 
+    {user.organization?.addresses[0]?.postal_code} 
+    (Organization)
+  </option>
+)}
       </select>
       <div>
         <label>
