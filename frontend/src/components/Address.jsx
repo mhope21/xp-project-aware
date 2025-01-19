@@ -12,8 +12,10 @@ const Address = ({ user, onAddressSelect, handleNewAddressSave }) => {
 
   const handleAddressChange = (event) => {
     const selectedAddressId = parseInt(event.target.value, 10);
-    const selectedAddress = user?.addresses?.find(address => address.id === selectedAddressId) || user?.organization?.addresses?.find(address => address.id === selectedAddressId);
+    const selectedAddress = user?.addresses?.find((address) => address.id === selectedAddressId) || user?.organization?.addresses?.find((address) => address.id === selectedAddressId);
+    if (selectedAddress) {
     onAddressSelect(selectedAddress);
+    }
   };
 
   const handleNewAddressChange = (event) => {

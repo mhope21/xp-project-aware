@@ -65,7 +65,7 @@ class Api::V1::OrdersController < ApplicationController
       return render json: { error: @order.errors.full_messages }, status: :unprocessable_entity
     end
 
-    associate_address_with_user(@order)
+    # associate_address_with_user(@order)
     render json: { order: @order, message: "Booking order created successfully" }, status: :created
   end
 
@@ -104,7 +104,7 @@ class Api::V1::OrdersController < ApplicationController
     end
     Rails.logger.info("Order created successfully: #{@order.inspect}")
     Rails.logger.info("Associating address with user if save_to_user is true...")
-    associate_address_with_user(@order)
+    # associate_address_with_user(@order)
     Rails.logger.info("Address association complete.")
     Rails.logger.info("Kit order created successfully: #{@order.inspect}")
     render json: {
@@ -139,16 +139,29 @@ class Api::V1::OrdersController < ApplicationController
     end
   end
 
+  # def associate_address_with_user(order)
+  #   return unless order.address && order.user
+
+  #   existing_address = order.user.addresses.find_by(
+  #     street_address: order.address.street_address,
+  #     city: order.address.city,
+  #     state: order.address.state,
+  #     postal_code: order.address.postal_code
+  #   )
+
+  #   order.user.addresses << order.address unless existing_address
+  # end
+
   def associate_address_with_user(order)
-    return unless order.address && order.user
-
-    existing_address = order.user.addresses.find_by(
-      street_address: order.address.street_address,
-      city: order.address.city,
-      state: order.address.state,
-      postal_code: order.address.postal_code
-    )
-
-    order.user.addresses << order.address unless existing_address
+    if order.address && order.user
+      # Check if the address should be saved to the user
+      if order.address.save_to_user
+        # Ensure the address is not already associated with the user or the organization
+        unless order.user.addresses.exists?(id: order.address.id) || 
+               (order.user.organization && order.user.organization.addresses.exists?(id: order.address.id))
+          order.user.addresses << order.address
+        end
+      end
+    end
   end
 end

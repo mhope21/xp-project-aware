@@ -11,6 +11,8 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
   const [startTime, setStartTime] = useState(new Date(booking.start_time));
   const [endTime, setEndTime] = useState(new Date(booking.end_time));
   const [status, setStatus] = useState(booking?.status || booking?.data?.attributes?.status);
+  const [availabilityId, setAvailabilityId] = useState(booking?.availability_id)
+ 
   const jwt = localStorage.getItem('jwt')
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -18,7 +20,6 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
     if (booking) {
         setStartTime(new Date(booking.start_time || booking.data.attributes.start_time));
         setEndTime(new Date(booking.end_time || booking.data.attributes.end_time));
-        setStatus(booking.status || booking.data.attributes.status);
     }
   }, [booking]);
 
@@ -30,7 +31,6 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
     const params = {
         start_time: convertUTCToCST(startTime.toISOString()),
         end_time: convertUTCToCST(endTime.toISOString()),
-        status,
       };
     
       console.log("Updating Booking - ID:", booking.id);
@@ -77,7 +77,8 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
             {errorMessage && <p style={{ color: 'red'}}>{errorMessage}</p>}
             </div>
             <div>
-            
+            <p>Booking status: {booking.status}</p>
+            <p>Booking availability window: {booking.availability_start}</p>
             </div>
             <div>
           {userRole === 'teacher' && (
