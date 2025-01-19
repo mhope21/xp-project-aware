@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe BookingMailer, type: :mailer do
-  let(:organization) { create(:organization, address: address) }
-  let(:address) { create(:address, street_address: "123 St") }
+  let(:organization) { create(:organization, addresses: addresses) }
+  let(:addresses) { create_list(:address, 3, street_address: "123 St") }
   let(:speaker) { create(:user, :speaker_user) }
 
   describe "booking_confirmation" do

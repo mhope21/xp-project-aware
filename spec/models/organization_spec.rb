@@ -14,6 +14,6 @@ RSpec.describe Organization, type: :model do
 
     it { should have_many(:users) }
 
-    it { should have_one(:address) }
+    it { should have_many(:addresses) }
   end
 end
