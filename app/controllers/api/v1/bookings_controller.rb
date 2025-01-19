@@ -22,6 +22,8 @@ class Api::V1::BookingsController < ApplicationController
       if @booking.save
         availability = Availability.find(@booking.availability_id)
         availability.update(booked: true)
+        BookingMailer.booking_confirmation(@booking.user, @booking).deliver_now
+        BookingMailer.new_booking_notification(@booking.speaker, @booking).deliver_now
         render json: BookingSerializer.new(@booking).serializable_hash, status: :created
       else
         render json: @booking.errors, status: :unprocessable_entity
@@ -37,6 +39,7 @@ class Api::V1::BookingsController < ApplicationController
         # Ensure the update is within the original availability times
         if params[:start_time] >= @availability.start_time && params[:end_time] <= @availability.end_time
           if @booking.update(booking_params)
+            BookingMailer.booking_modified_notification(@booking.speaker, @booking).deliver_now
             render json: BookingSerializer.new(@booking).serializable_hash.to_json
           else
             render json: @booking.errors, status: :unprocessable_entity
