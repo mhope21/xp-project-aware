@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { API_URL } from '../../constants';
 import { Link, useParams } from 'react-router-dom';
 import UserDetails from '../UserDetails';
@@ -6,13 +6,18 @@ import UserActions from '../UserActions';
 import UserDonations from '../UserDonations';
 import UserOrders from '../UserOrders';
 import UserBookings from '../UserBookings';
-import default_user_img from "/assets/img/default_user_img.png"
+import SpeakerCalendar from '../SpeakerCalendar';
+import { AuthContext } from '../auth/AuthContext';
+import SpeakerEvents from '../SpeakerEvents';
+
 
 const UserProfile = () => {
+  const { user } = useContext(AuthContext);
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const jwt = localStorage.getItem("jwt")
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -61,18 +66,48 @@ const UserProfile = () => {
       </div>
       
         <div className='container ms-1 me-4'>
-          <div className='other-card mb-5'>
-            <div className='other-card-header'><h4>Donations</h4></div>
-            <UserDonations profile={profile} />
-        </div>
-        <div className='other-card mb-5'>
-        <div className='other-card-header'><h4>Kit Orders</h4></div>
-        <UserOrders profile={profile} />
-        </div>
-        <div className='other-card mb-5'>
-        <div className='other-card-header'><h4>Bookings</h4></div>
-        <UserBookings profile={profile} />
-        </div>
+          {profile?.role == "speaker" && (
+            <div className='other-card mb-5'>
+              <div className='other-card-header'>
+                <h4>Speaker Calendar</h4>
+              </div>
+              <SpeakerCalendar user={user} speakerId={id} />
+            </div>
+          )}
+          {profile?.role == "speaker" && (
+            <div className='other-card mb-5'>
+              <div className='other-card-header'>
+                <h4>Events</h4>
+              </div>
+              <SpeakerEvents user={user} speakerId={id} />
+            </div>
+          )}
+          {(profile?.role === "teacher" || profile?.role === "speaker") && user?.id === profile?.id && (
+  <div className="other-card mb-5">
+    <div className="other-card-header">
+      <h4>Bookings</h4>
+    </div>
+    <UserBookings profile={profile} />
+  </div>
+)}
+
+{(profile?.role === "teacher" || profile?.role === "speaker") && user?.id === profile?.id && (
+  <div className="other-card mb-5">
+    <div className="other-card-header">
+      <h4>Donations</h4>
+    </div>
+    <UserDonations profile={profile} />
+  </div>
+)}
+        {profile?.role === "teacher" && (
+          <div className="other-card mb-5">
+            <div className="other-card-header">
+              <h4>Kit Orders</h4>
+            </div>
+            <UserOrders profile={profile} />
+          </div>
+        )}
+        
         </div>
         
       </div>

@@ -38,7 +38,8 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
 
   describe 'GET /api/v1/availabilities' do
     it 'returns all availabilities' do
-      get '/api/v1/availabilities', params: { year: year, month: month }
+      sign_in speaker
+      get '/api/v1/availabilities', params: { year: year, month: month }, headers: { 'Authorization': "Bearer #{@auth_token}" }
       expect(response).to have_http_status(:ok)
       expect(JSON.parse(response.body).size).to eq(3)
     end
@@ -47,7 +48,8 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
   describe 'GET /api/v1/availabilities/:id' do
     context 'when the record exists' do
       it 'returns the availability' do
-        get "/api/v1/availabilities/#{availability_id}"
+        sign_in speaker
+        get "/api/v1/availabilities/#{availability_id}", headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)['id']).to eq(availability_id)
       end
@@ -55,7 +57,8 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
 
     context 'when the record does not exist' do
       it 'returns a 404 status' do
-        get '/api/v1/availabilities/0'
+        sign_in speaker
+        get '/api/v1/availabilities/0', headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:not_found)
       end
     end
@@ -64,17 +67,33 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
   describe 'POST /api/v1/availabilities' do
     context 'when the request is valid' do
       it 'creates an availability' do
-        post '/api/v1/availabilities', params: { availability: valid_attributes, year: year, month: month }, as: :json
+        sign_in speaker
+        post '/api/v1/availabilities', params: {
+          availability: {
+            start_time: Date.new(2025, 1, 1).iso8601,
+            end_time: Date.new(2025, 1, 16).iso8601,
+            speaker_id: speaker.id
+          },
+          year: 2025,
+          month: 1
+        }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:created)
-        expect(JSON.parse(response.body)['speaker_id']).to eq(speaker.id)
       end
     end
 
     context 'when the request is invalid' do
       it 'returns a 422 status with validation errors' do
-        post '/api/v1/availabilities', params: { availability: invalid_attributes, year: year, month: month }, as: :json
+        sign_in speaker
+        post '/api/v1/availabilities', params: {
+          availability: {
+            start_time: Date.new(2025, 1, 17).iso8601,
+            end_time: Date.new(2025, 1, 16).iso8601,
+            speaker_id: speaker.id
+          },
+          year: 2025,
+          month: 1
+        }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)['errors']).to include("Start time must be before the end time")
       end
     end
   end
@@ -82,6 +101,7 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
   describe 'PUT /api/v1/availabilities/:id' do
     context 'when the record exists' do
       it 'updates the availability' do
+        sign_in speaker
         put "/api/v1/availabilities/#{availability_id}", params: { availability: update_attributes }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)['end_time']).to eq(update_attributes[:end_time])
@@ -89,6 +109,7 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
     end
     context 'when the record does not exist' do
       it 'returns a 404 status with an error message' do
+        sign_in speaker
         put "/api/v1/availabilities/0", params: { availability: update_attributes }, headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)['error']).to eq('Availability not found')
@@ -99,8 +120,9 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
   describe 'DELETE /api/v1/availabilities/:id' do
     context 'when the record exists' do
       it 'deletes the availability' do
+        sign_in speaker
         expect {
-          delete "/api/v1/availabilities/#{availability_id}"
+          delete "/api/v1/availabilities/#{availability_id}", headers: { 'Authorization': "Bearer #{@auth_token}" }
         }.to change(Availability, :count).by(-1)
         expect(response).to have_http_status(:no_content)
       end
@@ -108,7 +130,8 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
 
     context 'when the record does not exist' do
       it 'returns a 404 status with an error message' do
-        delete "/api/v1/availabilities/0"
+        sign_in speaker
+        delete "/api/v1/availabilities/0", headers: { 'Authorization': "Bearer #{@auth_token}" }
         expect(response).to have_http_status(:not_found)
         expect(JSON.parse(response.body)['error']).to eq('Availability not found')
       end

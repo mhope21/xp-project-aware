@@ -47,13 +47,14 @@ class Ability
     can :read, Availability
     can :read, Booking, order: { user_id: user.id }
     can :create, Booking
-    can :update, Booking, order: { user_id: user.id }
+    can :update, Booking
   end
 
   # Abilities for speakers
   def speaker_abilities(user)
     user_abilities(user)
     can :read, Booking, event: { speaker_id: user.id }
+    can :manage, Booking
     can :manage, Event, speaker_id: user.id
     can :update, Booking, event: { speaker_id: user.id }
     can :manage, Availability, speaker_id: user.id

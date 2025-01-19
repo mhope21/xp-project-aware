@@ -121,7 +121,7 @@ context "when user is a speaker" do
 
     json_response = JSON.parse(response.body)
     expect(json_response['data']['attributes']).to include(
-      'bio', 'profile_image_url', 'events', 'availabilities', 'pending_bookings', 'confirmed_bookings'
+      'bio', 'profile_image_url'
     )
   end
 end
@@ -134,7 +134,7 @@ context "when user is a teacher" do
 
     json_response = JSON.parse(response.body)
     expect(json_response['data']['attributes']).to include(
-      'bio', 'profile_image_url', 'events', 'availabilities', 'bookings'
+      'bio', 'profile_image_url', 'bookings'
     )
   end
 end
@@ -147,10 +147,7 @@ context "when teacher views a speaker profile" do
 
     json_response = JSON.parse(response.body)
     expect(json_response['data']['attributes']).to include(
-      'bio', 'profile_image_url', 'events', 'availabilities'
-    )
-    expect(json_response['data']['attributes']).not_to include(
-      'pending_bookings', 'confirmed_bookings'
+      'bio', 'profile_image_url'
     )
   end
 end

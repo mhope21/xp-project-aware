@@ -21,6 +21,7 @@ import AddNew from './components/pages/AddNew';
 import NewKitItem from './components/NewKitItem';
 import AddItemToKit from './components/AddItemToKit';
 import UserProfile from './components/pages/UserProfile';
+import SpeakerCalendar from './components/SpeakerCalendar';
 import { AuthContext } from './components/auth/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 

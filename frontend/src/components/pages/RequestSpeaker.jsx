@@ -44,7 +44,6 @@ function RequestSpeaker() {
       }
     };
   
-    // useEffect to fetch users when the component mounts
     useEffect(() => {
       fetchUsers();
     }, []);

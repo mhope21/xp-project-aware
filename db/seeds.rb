@@ -386,6 +386,16 @@ users = [
     bio: "I am a neurodiversity consultant with over 15 years of experience in inclusive education. My work focuses on training teachers and staff to better understand the needs of neurodivergent students, ensuring classrooms are environments of empathy and acceptance.",
     organization_id: nil,
     password: "password"
+  },
+  {
+    id: 10,
+    email: "teacher@example.com",
+    role: "teacher",
+    first_name: "Teacher",
+    last_name: "User",
+    bio: "Teacher User is a dedicated educator who loves expanding the knowledge of new studentss. In their free time, they enjoy biking and reading classic literary novels.",
+    organization_id: nil,
+    password: "password"
   }
 ]
 
@@ -410,14 +420,4 @@ users.each do |user_data|
       puts "Failed to attach image for #{user_data[:first_name]}: #{e.message}"
     end
   end
-end
-
-# Seed addresses
-10.times do
-  FactoryBot.create(:address)
-end
-
-# Seed orders
-3.times do
-  FactoryBot.create(:order)
 end

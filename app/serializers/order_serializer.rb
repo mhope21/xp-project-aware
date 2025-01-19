@@ -1,6 +1,6 @@
 class OrderSerializer < ActiveModel::Serializer
   # Defines how to display the Order model
-  attributes :id, :order_name, :order_email, :ordered_product, :order_address, :product_type, :product_id, :user_id, :address_id, :school_year, :comments, :phone, :created_at, :event_name, :event_speaker, :start_time, :end_time, :status
+  attributes :id, :order_name, :order_email, :ordered_product, :order_address, :product_type, :product_id, :user_id, :address_id, :school_year, :comments, :phone, :created_at, :event_name, :event_speaker, :start_time, :end_time, :status, :availability_start, :availability_end
 
   def order_name
     object.user.name if object.user.present?
@@ -56,5 +56,13 @@ class OrderSerializer < ActiveModel::Serializer
 
   def status
     object.product.status if object.product.is_a?(Booking)
+  end
+
+  def availability_start
+    object.product.availability.start_time if object.product.is_a?(Booking)
+  end
+
+  def availability_end
+    object.product.availability.end_time if object.product.is_a?(Booking)
   end
 end

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Address = ({ user, onAddressSelect }) => {
+const Address = ({ user, onAddressSelect, handleNewAddressSave }) => {
   const [useNewAddress, setUseNewAddress] = useState(false);
   const [newAddress, setNewAddress] = useState({
     street_address: '',
@@ -12,17 +12,36 @@ const Address = ({ user, onAddressSelect }) => {
 
   const handleAddressChange = (event) => {
     const selectedAddressId = parseInt(event.target.value, 10);
-    const selectedAddress = user?.addresses?.find(address => address.id === selectedAddressId) || user?.organization?.address;
+    const selectedAddress = user?.addresses?.find((address) => address.id === selectedAddressId) || user?.organization?.addresses?.find((address) => address.id === selectedAddressId);
+    if (selectedAddress) {
     onAddressSelect(selectedAddress);
+    }
   };
 
   const handleNewAddressChange = (event) => {
     const { name, value, type, checked } = event.target;
-    setNewAddress(prevAddress => ({
+    
+    // Update the state based on the input change (checkbox or text)
+    setNewAddress((prevAddress) => ({
       ...prevAddress,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
+  
+    // If the checkbox for "save_to_user" is checked, save the address
+    if (name === "save_to_user" && checked) {
+      handleSaveAddress(); // Only save if checked
+    }
   };
+  
+  // Use effect to log the state after it's updated
+  useEffect(() => {
+    console.log("New address state after change:", newAddress);
+  }, [newAddress]);  // This will log every time the state changes
+  
+
+  const handleSaveAddress = () => {
+    handleNewAddressSave(newAddress);
+  }
 
   const toggleUseNewAddress = () => {
     setUseNewAddress(!useNewAddress);
@@ -39,7 +58,7 @@ const Address = ({ user, onAddressSelect }) => {
 
   return (
     <div>
-        <form>
+       
       <label>Select an Address</label>
       <select className="select-container mt-3" onChange={handleAddressChange} disabled={useNewAddress}>
         <option value="">Select an address</option>
@@ -48,11 +67,18 @@ const Address = ({ user, onAddressSelect }) => {
             {address.street_address}, {address.city}, {address.state}, {address.postal_code}
           </option>
         ))}
-        {user.organization?.address && (
-          <option key={user.organization.address.id} value={user.organization.address.id}>
-            {user.organization.address.street_address}, {user.organization.address.city}, {user.organization.address.state}, {user.organization.address.postal_code} (Organization)
-          </option>
-        )}
+        {user.organization?.addresses?.length > 0 && (
+  <option
+    key={user.organization?.addresses[0]?.id}
+    value={user.organization?.addresses[0]?.id}
+  >
+    {user.organization?.addresses[0]?.street_address}, 
+    {user.organization?.addresses[0]?.city}, 
+    {user.organization?.addresses[0]?.state}, 
+    {user.organization?.addresses[0]?.postal_code} 
+    (Organization)
+  </option>
+)}
       </select>
       <div>
         <label>
@@ -67,7 +93,7 @@ const Address = ({ user, onAddressSelect }) => {
       </div>
       {useNewAddress && (
         <div>
-            <form>
+            
             <div className='form-group mb-3'>
           <input
             className='form-control shadow mb-3'
@@ -111,10 +137,9 @@ const Address = ({ user, onAddressSelect }) => {
             Save to User
           </label>
           </div>
-          </form>
         </div>
       )}
-      </form>
+      
     </div>
   );
 };

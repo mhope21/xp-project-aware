@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       get "kit_items_only", to: "kit_items#index_kit_items_only"
       post "kit_items_only", to: "kit_items#create_kit_items_only"
       patch "kit_items_only/:id", to: "kit_items#update_kit_items_only"
+      get ":speaker_id/bookings", to: "bookings#bookings_by_speaker"
       resources :users do
         resources :addresses, only: [ :create, :update, :destroy ]
         member do
@@ -29,6 +30,10 @@ Rails.application.routes.draw do
         end
       end
       resources :donations
+      resources :organizations do
+        post "create_and_assign_to_user", on: :collection
+        resources :addresses, only: [ :create, :update, :destroy ]
+      end
       resources :contacts
       resources :events
       resources :bookings, only: [ :create, :update, :index, :show ]

@@ -18,7 +18,7 @@ class BookingMailer < ApplicationMailer
   def booking_modified_notification(speaker, booking)
     @speaker = speaker
     @booking = booking
-    @location = @booking.user.organization.address
+    @location = @booking.user.organization&.addresses&.first
     mail(to: @speaker.email, subject: "Booking Request Modified")
   end
 end

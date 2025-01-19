@@ -34,12 +34,6 @@ function RequestKit() {
     }
   }, [kitId]);
 
-  useEffect(() => {
-    if (user) {
-      setUser(user);
-    }
-  },
-  [user]);
 
   const [address, setAddress] = useState({
     street_address: '',
@@ -55,7 +49,7 @@ function RequestKit() {
     schoolYear: "",
     email: user ? user.email : "",
     firstName: user ? user.first_name : "",
-    lastName: user ? user.last_name : "",
+    lastName: user ? user?.last_name : "",
   });
 
   useEffect(() => {
@@ -63,47 +57,64 @@ function RequestKit() {
   }, []);
 
   const handleAddressSelect = (selectedAddress) => {
-    setOrderForm({
-      ...orderForm,
-      streetAddress: selectedAddress.street_address,
+    console.log("Address selected: ", address)
+    setAddress({
+      ...address,
+      street_address: selectedAddress.street_address,
       city: selectedAddress.city,
       state: selectedAddress.state,
-      postalCode: selectedAddress.postal_code,
+      postal_code: selectedAddress.postal_code,
       save_to_user: false
     });
   };
 
+  const handleNewAddressSave = (newAddress) => {
+    // Update the 'address' state with the new address data
+    setAddress(prevAddress => ({
+      ...prevAddress,
+      street_address: newAddress.street_address,
+      city: newAddress.city,
+      state: newAddress.state,
+      postal_code: newAddress.postal_code,
+      save_to_user: newAddress.save_to_user,
+    }));
+  
+    console.log("New address saved:", newAddress);
+  };
+  useEffect(() => {
+  // Log the updated address whenever it changes
+  console.log("New address saved:", address);
+}, [address]);
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setOrderMessages("")
+
     // Find the address based on the street address entered in the form
-    const selectedAddress = user.addresses.find(
-      (address) => address.street_address === orderForm.streetAddress
-    );
-    const addressId = selectedAddress ? selectedAddress.id : null;
+    const addressId = user.addresses?.find(
+      (addr) => addr.street_address === address.street_address
+    )?.id || user.organization.addresses?.find((addr) => addr.street_address === address.street_address)?.id;
 
     const data = {
       order: {
         user_id: user.id,
-        address_id: addressId,
         phone: orderForm.phone,
         school_year: orderForm.schoolYear,
         product_id: productId,
         product_type: productType,
         comments: orderForm.comments,
-        address_attributes: {
-          street_address: orderForm.streetAddress,
-          city: orderForm.city,
-          state: orderForm.state,
-          postal_code: orderForm.postalCode,
-          addressable_type: "User",
-          addressable_id: user.id,
-        },
+        ...(addressId
+          ? { address_id: addressId }
+          : { address_attributes: { ...address, addressable_type: "User", addressable_id: user.id, save_to_user: address.save_to_user, } }),
       },
     };
 
     try {
+      console.log("Address data:", address);
+      console.log("Order data being submitted:", data);
+
       // Send POST request to registration endpoint
       await validationSchema.validate(orderForm, { abortEarly: false });
       const response = await fetch(ordersUrl, {
@@ -117,10 +128,11 @@ function RequestKit() {
 
       if (response.ok) {
         // Handle successful registration
+        const kitOrderData = await response.json();
         console.log("Order saved.");
         alert("Your order has been processed.");
 
-        navigate("/confirmation");
+        navigate("/confirmation", { state: { kitOrderData }});
       } else {
         // Handle request error
         const errorData = await response.json();
@@ -234,7 +246,7 @@ function RequestKit() {
                       {orderMessages.phone && <div className="text-center text-danger text-bold mt-3 mb-3">{orderMessages.phone}</div>}
                     </div>
                     <div className="form-group mb-3">
-                      <Address user={user} onAddressSelect={handleAddressSelect} />
+                      <Address user={user} onAddressSelect={handleAddressSelect} handleNewAddressSave={handleNewAddressSave} />
                     </div>
                   </div>
                   <div className="form-group mb-3">

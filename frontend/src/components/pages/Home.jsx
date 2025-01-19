@@ -36,7 +36,7 @@ function Home() {
                         </span>
                         <h4 className="my-3">Invite an Expert</h4>
                         <p className="text-muted">We offer the opportunity for schools to host expert speakers on neurodiversity. Our engaging talks are designed to enrich your educational environment with valuable insights and knowledge about neurodiversity.</p>
-                        <Link className="btn btn-primary btn-small text-uppercase" to="/speaker">Request a Speaker</Link>
+                        <Link className="btn btn-primary btn-small text-uppercase" to="/speaker">Browse Speakers</Link>
                     </div>
                     <div className="col-md-4">
                         <span className="fa-stack fa-4x">

@@ -1,6 +1,6 @@
 class Organization < ApplicationRecord
   has_many :users
-  has_one :address, as: :addressable
+  has_many :addresses, as: :addressable
 
  validates :name, :org_type, presence: true
 

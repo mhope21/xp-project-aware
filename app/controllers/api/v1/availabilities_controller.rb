@@ -1,29 +1,17 @@
 class Api::V1::AvailabilitiesController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_availability, only: [ :show, :update, :destroy ]
 
   def index
-    # This shows the availabilities including recurring availabilities for the month
-    # and year sent in the request from the frontend or a default month and year.
-
+    speaker_id = params[:speaker_id]
     viewing_month = params[:month].to_i || Date.today.month
     viewing_year = params[:year].to_i || Date.today.year
-    start_date = Date.new(viewing_year, viewing_month, 1)
-    end_date = start_date.end_of_month
-
-    puts "Received Year: #{params[:year]}, Month: #{params[:month]}"  # Debugging the incoming params
-
-    # Debugging the parsed values of year and month
-    puts "Parsed Year: #{viewing_year}, Month: #{viewing_month}"
 
     # Handling cases where the month or year might be invalid (e.g., 0 or nil)
     if viewing_month == 0 || viewing_year == 0
-      puts "Invalid date parameters, setting to current date."  # Debugging invalid date handling
       viewing_month = Date.today.month
       viewing_year = Date.today.year
     end
-
-    # Debugging the final year and month values used for date calculation
-    puts "Final Year: #{viewing_year}, Month: #{viewing_month}"
 
     begin
       # Create start and end date for the requested month and year
@@ -36,10 +24,13 @@ class Api::V1::AvailabilitiesController < ApplicationController
     end
 
     # Trigger the job to create next month's availabilities if needed
-    trigger_recurring_availability_job(viewing_month, viewing_year)
+    # trigger_recurring_availability_job(viewing_month, viewing_year)
 
     # Fetch the availabilities within the specified date range
     @availabilities = Availability.where(start_time: start_date..end_date)
+    @availabilities = @availabilities.where(speaker_id: speaker_id) if speaker_id.present?
+    @availabilities = @availabilities.where(booked: false)
+
     render json: @availabilities
   end
 
@@ -49,48 +40,80 @@ class Api::V1::AvailabilitiesController < ApplicationController
   end
 
   def create
-    @availability = Availability.new(availability_params)
+    speaker_id = availability_params[:speaker_id]
+    @speaker = User.find_by(id: speaker_id, role: "speaker")
 
-    if @availability.save
+    if @speaker.nil?
+      return render json: { error: "Speaker not found" }, status: :not_found
+    end
+
+    availability_attributes = availability_params.except(:is_recurring, :recurring_end_date)
+    @availability = @speaker.availabilities.create!(availability_attributes)
+
+    is_recurring = params[:availability][:is_recurring]
+
+    if is_recurring
+      recurring_end_date = params[:availability][:recurring_end_date]
+      create_recurring_availability(@availability, recurring_end_date)
+    end
+
+    if @availability.persisted?
       render json: @availability, status: :created
     else
       render json: { errors: @availability.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
+  # PUT /availabilities/:id
   def update
-    if @availability.update(availability_params)
-      render json: @availability, status: :ok
+    availability = Availability.find(params[:id])
+
+    if availability.update(availability_params)
+      render json: availability, status: :ok
     else
-      puts @availability.errors.full_messages  # Add this line to log validation errors
-      render json: { errors: @availability.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: availability.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
+  # DELETE /availabilities/:id
   def destroy
+    if @availability.recurring_availability_id.present?
+      recurring_availability = RecurringAvailability.find(@availability.recurring_availability_id)
+
+      # Only delete recurring availability if there are no other associated availabilities
+      recurring_availability.destroy if recurring_availability.availabilities.empty?
+    end
+
     @availability.destroy
     head :no_content
   end
 
   private
 
-  def set_availability
-    @availability = Availability.find(params[:id])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Availability not found" }, status: :not_found
+  def create_recurring_availability(availability, recurring_end_date)
+    recurring_end_date = recurring_end_date&.to_date
+    recurring_availability = RecurringAvailability.create!(end_date: recurring_end_date)
+
+    availability.update!(recurring_availability_id: recurring_availability.id)
   end
 
   def availability_params
-    params.require(:availability).permit(:start_time, :end_time, :speaker_id, :recurring_availability_id)
+    params.require(:availability).permit(:speaker_id, :start_time, :end_time, :is_recurring, :recurring_end_date, :booked)
   end
+
+  def set_availability
+    @availability = Availability.find_by(id: params[:id])
+    render json: { error: "Availability not found" }, status: :not_found if @availability.nil?
+  end
+
 
   def trigger_recurring_availability_job(viewing_month, viewing_year)
     # Calculate the next month and year based on the viewing month and year
-    next_month_date = Date.new(viewing_year, viewing_month, 1).next_month
-    next_month = next_month_date.month
-    next_year = next_month_date.year
+    # next_month_date = Date.new(viewing_year, viewing_month, 1).next_month
+    # next_month = next_month_date.month
+    # next_year = next_month_date.year
 
     # Trigger the job for the next month
-    RecurringAvailabilityJob.perform_later(next_month, next_year)
+    RecurringAvailabilityJob.perform_later(viewing_month, viewing_year)
   end
 end

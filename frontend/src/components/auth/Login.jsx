@@ -74,10 +74,11 @@ export default function Login() {
         // Handle other errors
         console.log("An error occurred:", error)
         setLoginMessages("An error occurred, please try again.");
-        setLoginMessages("An error occurred, please try again.");
         logout();
       }
     };
+    const jwt = localStorage.getItem("jwt")
+    console.log("Token set: ", jwt )
   
     return (
       // Displays registration form
