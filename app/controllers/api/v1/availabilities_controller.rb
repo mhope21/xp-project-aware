@@ -24,7 +24,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
     end
 
     # Trigger the job to create next month's availabilities if needed
-    #trigger_recurring_availability_job(viewing_month, viewing_year)
+    # trigger_recurring_availability_job(viewing_month, viewing_year)
 
     # Fetch the availabilities within the specified date range
     @availabilities = Availability.where(start_time: start_date..end_date)

@@ -157,7 +157,7 @@ class Api::V1::OrdersController < ApplicationController
       # Check if the address should be saved to the user
       if order.address.save_to_user
         # Ensure the address is not already associated with the user or the organization
-        unless order.user.addresses.exists?(id: order.address.id) || 
+        unless order.user.addresses.exists?(id: order.address.id) ||
                (order.user.organization && order.user.organization.addresses.exists?(id: order.address.id))
           order.user.addresses << order.address
         end
