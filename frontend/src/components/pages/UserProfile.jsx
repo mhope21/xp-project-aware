@@ -59,9 +59,11 @@ const UserProfile = () => {
         
       <div className='container fluid ms-4 me-1 w-25'>
         <div className='profile-card'><UserDetails profile={profile} />
+        {(profile?.role === "teacher" || profile?.role === "speaker") && user?.id === profile?.id && (
       <div>
       <UserActions profile={profile} />
       </div>
+        )}
       </div>
       </div>
       
@@ -71,7 +73,7 @@ const UserProfile = () => {
               <div className='other-card-header'>
                 <h4>Speaker Calendar</h4>
               </div>
-              <SpeakerCalendar user={user} speakerId={id} />
+              <SpeakerCalendar user={user} speakerId={id} profile={profile} />
             </div>
           )}
           {profile?.role == "speaker" && (

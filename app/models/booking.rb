@@ -11,6 +11,16 @@ class Booking < ApplicationRecord
     "#{availability.start_time} - #{availability.end_time}" if availability.present?
   end
 
+  def accept!
+    update!(status: "confirmed")
+    BookingMailer.booking_accepted_notification(user, self).deliver_now
+  end
+
+  def denied!
+    update!(status: "denied")
+    BookingMailer.booking_denied_notification(user, self).deliver_now
+  end
+
 
   validates :start_time, presence: true
   validates :end_time, presence: true

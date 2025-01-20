@@ -8,7 +8,7 @@ import AvailabilityModal from "./AvailabilityModal";
 import { useLocation } from "react-router-dom";
 import BookingModal from "./BookingModal";
 
-const SpeakerCalendar = ({ user, speakerId }) => { 
+const SpeakerCalendar = ({ user, speakerId, profile }) => { 
   const [events, setEvents] = useState([]);
   const [availabilities, setAvailabilities] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -41,8 +41,8 @@ const SpeakerCalendar = ({ user, speakerId }) => {
       const formattedEvents = data.map((avail) => ({
         id: avail.id,
         title: "Speaker Availability",
-        start: avail.start_time,
-        end: avail.end_time,
+        start: new Date(avail.start_time).toISOString(),
+        end: new Date(avail.end_time).toISOString(),
         backgroundColor: avail.color || "#4CAF50",
       }));
 
@@ -204,51 +204,55 @@ const SpeakerCalendar = ({ user, speakerId }) => {
         </div>
 
         <div style={{  marginLeft: 60, marginRight: 60 }}>
-          {user?.role === "teacher" && ( <p> Click on a date to view the day view of the calendar. Then click on a speaker's availability to create a booking for that date. Note: must be within availability window. </p> )}
+          {user?.role === "teacher" && ( <p> Click on a date with an availability to view the day view of the calendar. Then click on a speaker's availability to create a booking for that date. Note: must be within availability window. </p> )}
           {user?.role === "speaker" && ( <p> Click on a date to create an availability for that date. </p> )} </div>
 
-        <div className="btn btn-primary text-center d-flex justify-content-center" onClick={handleToggleTable}>
-        {showTable ? 'Hide Table' : 'Show Table'}
-      </div>
+          {user.id === profile.id && (
+  <div className="btn btn-primary text-center d-flex justify-content-center" onClick={handleToggleTable}>
+    {showTable ? 'Hide Table' : 'Show Table'}
+  </div>
+)}
 
-      {showTable && (
-        <>
-        <div className="other-card-header mt-5" ><h6>Monthly Availabilities</h6></div>
-       <table className="w-100">
-       <thead>
-         <tr>
-           <th>Speaker ID</th>
-           <th>Start Time</th>
-           <th>End Time</th>
-           <th>Is Recurring</th>
-           <th>Recurring End Date</th>
-           <th>Action</th>
-         </tr>
-       </thead>
-       <tbody>
-         {availabilities.map((availability) => (
-           <tr key={availability.id}>
-             <td>{availability.speaker_id}</td>
-             <td>{new Date(availability.start_time).toLocaleString()}</td>
-             <td>{new Date(availability.end_time).toLocaleString()}</td>
-             <td>{availability.recurring_availability_id ? "Yes" : "No"}</td>
-             <td>
-               {availability.recurring_availability?.end_date
-                 ? new Date(availability.recurring_availability?.end_date).toLocaleDateString()
-                 : "N/A"}
-             </td>
-             <td>
+{user.id === profile.id && showTable && (
+  <>
+    <div className="other-card-header mt-5"><h6>Monthly Availabilities</h6></div>
+    <table className="w-100">
+      <thead>
+        <tr>
+          <th>Speaker ID</th>
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th>Is Recurring</th>
+          <th>Recurring End Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {availabilities.map((availability) => (
+          <tr key={availability.id}>
+            <td>{availability.speaker_id}</td>
+            <td>{moment(availability.start_time).format('YYYY-MM-DD HH:mm:ss')}</td>
+            <td>{moment(availability.end_time).format('YYYY-MM-DD HH:mm:ss')}</td>
+
+            <td>{availability.recurring_availability_id ? "Yes" : "No"}</td>
+            <td>
+              {availability.recurring_availability?.end_date
+                ? new Date(availability.recurring_availability?.end_date).toLocaleDateString()
+                : "N/A"}
+            </td>
+            <td>
               <div className="btn-group">
-              <div className="btn btn-primary btn-small" onClick={() => handleEdit(availability)}>Edit</div>
-             <div className="btn btn-danger btn-small"onClick={() => handleDelete(availability.id)}>Destroy</div>
-             </div>
-             </td>
-           </tr>
-         ))}
-       </tbody>
-     </table>
-     </>
-      )}
+                <div className="btn btn-primary btn-small" onClick={() => handleEdit(availability)}>Edit</div>
+                <div className="btn btn-danger btn-small" onClick={() => handleDelete(availability.id)}>Destroy</div>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </>
+)}
+
     </div>
   </div>
   );

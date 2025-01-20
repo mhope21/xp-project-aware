@@ -105,10 +105,10 @@ const UserBookings = ({ profile }) => {
                     : "No speaker name provided"}
                     </td>
                 <td style={{ padding: "10px" }}>
-                  {moment(booking.start_time).tz("America/Chicago").toISOString()}
+                  {moment(booking.start_time).format("MM/DD/YYYY, h:mm A")}
                 </td>
                 <td style={{ padding: "10px" }}>
-                  {moment(booking.end_time).tz("America/Chicago").toISOString()}
+                  {moment(booking.end_time).format("MM/DD/YYYY, h:mm A")}
                 </td>
                 <td
                   style={{

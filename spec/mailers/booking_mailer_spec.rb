@@ -45,4 +45,54 @@ RSpec.describe BookingMailer, type: :mailer do
       expect(mail.body.encoded).to include("Booking Request Modified")
     end
   end
+
+  describe "booking_accepted_notification and booking_denied_notification" do
+    let(:user) { create(:user, email: "user@example.com", first_name: "John", last_name: "Doe") }
+    let(:organization) { create(:organization, name: "Example Organization") }
+    let(:address) { create(:address, organization: organization, street: "123 Main St", city: "Sample City", state: "SC", zip: "12345") }
+    let(:booking) { create(:booking, user: user) }
+    let(:address1) { create(:address) }
+    let(:address2) { create(:address) }
+
+    before do
+      allow(booking.user).to receive(:organization).and_return(organization)
+      allow(organization).to receive(:addresses).and_return([ address1, address2 ])
+    end
+
+    describe "#booking_accepted_notification" do
+    let(:mail) { BookingMailer.booking_accepted_notification(user, booking) }
+
+    it "sends to the correct email address" do
+      expect(mail.to).to eq([ user.email ])
+    end
+
+    it "has the correct subject" do
+      expect(mail.subject).to eq("Booking Request Accepted")
+    end
+
+    it 'includes the booking details in the body' do
+      expect(mail.body.encoded).to include("Your booking has been accepted")
+
+      expect(mail.body.encoded).to include("The booking status is confirmed. Please visit your profile for details.")
+    end
+  end
+
+  describe "#booking_denied_notification" do
+    let(:mail) { BookingMailer.booking_denied_notification(user, booking) }
+
+    it "sends to the correct email address" do
+      expect(mail.to).to eq([ user.email ])
+    end
+
+    it "has the correct subject" do
+      expect(mail.subject).to eq("Booking Request Denied")
+    end
+
+    it 'includes the booking details in the body' do
+      expect(mail.body.encoded).to include("Your booking has been declined")
+
+      expect(mail.body.encoded).to include("We regret to inform you that your booking has been declined.")
+    end
+  end
+end
 end

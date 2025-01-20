@@ -17,7 +17,7 @@ const UserActions = ({ profile }) => {
     first_name: user?.first_name || '',
     last_name: user?.last_name || "",
     email: profile?.email || '',
-    addresses: profile?.addresses.map(address => ({
+    addresses: profile?.addresses?.map(address => ({
       address_id: address?.address_id,
       street_address: address?.street_address || '',
       city: address?.city || '',
@@ -26,16 +26,16 @@ const UserActions = ({ profile }) => {
     })),
     organization_id: user?.organization_id || "",
     organization_name: profile?.organization.name || '',
-    org_type: profile.organization?.org_type || "",
+    org_type: profile?.organization?.org_type || "",
     organization_address: {
       address_id: profile?.organization?.address_id || "",
-      street_address: profile.organization.addresses?.street_address || '',
-      city: profile.organization.addresses?.city || '',
-      state: profile.organization.addresses?.state || '',
-      postal_code: profile.organization.addresses?.postal_code || ''
+      street_address: profile?.organization?.addresses?.street_address || '',
+      city: profile?.organization?.addresses?.city || '',
+      state: profile?.organization?.addresses?.state || '',
+      postal_code: profile?.organization?.addresses?.postal_code || ''
     },
-    bio: profile.bio || '',
-    profile_image_url: profile.profile_image_url || ''
+    bio: profile?.bio || '',
+    profile_image_url: profile?.profile_image_url || ''
   });
 
   const handleClose = () => setShow(false);
@@ -402,7 +402,7 @@ const UserActions = ({ profile }) => {
               Update User Details
             </Button>
            
-            {formData.addresses.map((address, index) => (
+            {formData.addresses?.map((address, index) => (
               <div className='mt-3' key={index}>
                 <h5>Address {index + 1}</h5>
                 <Form.Group className='mb-2' controlId={`formStreetAddress${index}`}>

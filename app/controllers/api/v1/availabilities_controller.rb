@@ -27,7 +27,7 @@ class Api::V1::AvailabilitiesController < ApplicationController
     # trigger_recurring_availability_job(viewing_month, viewing_year)
 
     # Fetch the availabilities within the specified date range
-    @availabilities = Availability.where(start_time: start_date..end_date)
+    @availabilities = Availability.future.where(start_time: start_date..end_date)
     @availabilities = @availabilities.where(speaker_id: speaker_id) if speaker_id.present?
     @availabilities = @availabilities.where(booked: false)
 
@@ -45,6 +45,12 @@ class Api::V1::AvailabilitiesController < ApplicationController
 
     if @speaker.nil?
       return render json: { error: "Speaker not found" }, status: :not_found
+    end
+
+    # Check if the start_time is in the past
+    start_time = availability_params[:start_time]
+    if start_time.present? && start_time < Time.now
+      return render json: { error: "Start time must be in the future" }, status: :unprocessable_entity
     end
 
     availability_attributes = availability_params.except(:is_recurring, :recurring_end_date)
