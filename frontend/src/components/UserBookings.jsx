@@ -63,9 +63,9 @@ const UserBookings = ({ profile }) => {
     setBookings((prevBookings) =>
       prevBookings.map((booking) => {
         const currentId =
-          userRole === "teacher" ? booking.id : booking.data?.attributes?.id;
+          userRole === "teacher" ? booking.product_id : booking.data?.attributes?.product_id;
         const updatedId =
-          userRole === "teacher" ? updatedBooking.id : updatedBooking.data.id;
+          userRole === "teacher" ? updatedBooking.product_id : updatedBooking.data.product_id;
         console.log(
           `Comparing IDs - Current: ${currentId}, Updated: ${updatedId}`
         );
@@ -85,6 +85,7 @@ const UserBookings = ({ profile }) => {
         >
           <thead>
             <tr>
+              <th style={{ padding: "10px" }}>Booking Id</th>
               <th style={{ padding: "10px" }}>Event</th>
               <th style={{ padding: "10px" }}>Speaker</th>
               <th style={{ padding: "10px" }}>Start Time</th>
@@ -96,6 +97,9 @@ const UserBookings = ({ profile }) => {
           <tbody>
             {bookings.map((booking, index) => (
               <tr key={index}>
+                <td style={{ padding: "10px" }}>
+                  {booking.product_id || "No booking id provided"}
+                </td>
                 <td style={{ padding: "10px" }}>
                   {booking.event_name || "No event name provided"}
                 </td>

@@ -24,12 +24,19 @@ class Api::V1::BookingsController < ApplicationController
         availability = Availability.find(@booking.availability_id)
         availability.update(booked: true)
 
-        BookingMailer.booking_confirmation(@booking.user, @booking).deliver_now
-        BookingMailer.new_booking_notification(@booking.speaker, @booking).deliver_now
+        begin
+          BookingMailer.booking_confirmation(@booking.user, @booking).deliver_now
+          BookingMailer.new_booking_notification(@booking.speaker, @booking).deliver_now
+        rescue => e
+          Rails.logger.error("Mailer error: #{e.message}")
+        end
 
         render json: BookingSerializer.new(@booking).serializable_hash, status: :created
+        Rails.logger.info("Response: #{BookingSerializer.new(@booking).serializable_hash}")
+
       else
-        render json: @booking.errors, status: :unprocessable_entity
+        Rails.logger.error("Failed to update availability for Booking ID: #{@booking.id}")
+        render json: { error: "Failed to update availability." }, status: :unprocessable_entity
       end
   end
 
@@ -42,6 +49,8 @@ class Api::V1::BookingsController < ApplicationController
     Rails.logger.info("Params: #{params.inspect}")
     Rails.logger.info("Booking Times - Start: #{params[:start_time]}, End: #{params[:end_time]}")
     Rails.logger.info("Availability Times - Start: #{@availability.start_time}, End: #{@availability.end_time}")
+    Rails.logger.info("Current booking status: #{@booking.status}")
+
 
 
     if @booking.status == "pending"

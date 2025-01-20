@@ -67,6 +67,7 @@ const SpeakerBookings = ({ speakerBookings }) => {
       <table className="table">
   <thead>
     <tr>
+      <th>Booking Id</th>
       <th>Event Name</th>
       <th>Start Time</th>
       <th>End Time</th>
@@ -78,6 +79,9 @@ const SpeakerBookings = ({ speakerBookings }) => {
     {speakerBookings?.data?.length > 0 ? (
       speakerBookings.data.map((booking) => (
         <tr key={booking.id}>
+          <td style={{ padding: '10px', marginRight: '20px' }}>
+            {booking.attributes.id || 'No booking id provided'}
+          </td>
           <td style={{ padding: '10px', marginRight: '20px' }}>
             {booking.attributes.event_name || 'No event name provided'}
           </td>
@@ -125,9 +129,12 @@ const SpeakerBookings = ({ speakerBookings }) => {
   {`${selectedBooking.attributes.booking_location[0]?.street_address}, ${selectedBooking.attributes.booking_location[0]?.city}, ${selectedBooking.attributes.booking_location[0]?.state} ${selectedBooking.attributes.booking_location[0]?.postal_code}`}</p>
             <p><strong>Time:</strong> {moment(selectedBooking.attributes.start_time).format("MM/DD/YYYY, h:mm A")} - {moment(selectedBooking.attributes.end_time).format("MM/DD/YYYY, h:mm A")}</p>
             <p><strong>Current Status:</strong> {selectedBooking.attributes.status}</p>
+            <form>
+            <div>
             <label>
               Status:
               <select
+                className='form-control'
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
               >
@@ -136,6 +143,8 @@ const SpeakerBookings = ({ speakerBookings }) => {
                 <option value="denied">Denied</option>
               </select>
             </label>
+            </div>
+            </form>
           </Modal.Body>
           <Modal.Footer>
             <div className='btn-group'>

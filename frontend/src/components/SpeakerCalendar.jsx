@@ -7,6 +7,7 @@ import { API_URL } from "../constants";
 import AvailabilityModal from "./AvailabilityModal";
 import { useLocation } from "react-router-dom";
 import BookingModal from "./BookingModal";
+import moment from "moment-timezone";
 
 const SpeakerCalendar = ({ user, speakerId, profile }) => { 
   const [events, setEvents] = useState([]);
@@ -64,6 +65,7 @@ const SpeakerCalendar = ({ user, speakerId, profile }) => {
       calendarApi.changeView("timeGridDay", info.dateStr);
     } else if (user?.role === "speaker") {
       const localDate = new Date(info.dateStr);
+      localDate.setHours(localDate.getHours() + 6);
       setSelectedDate(localDate);
       setModalIsOpen(true);
     }
@@ -231,13 +233,13 @@ const SpeakerCalendar = ({ user, speakerId, profile }) => {
         {availabilities.map((availability) => (
           <tr key={availability.id}>
             <td>{availability.speaker_id}</td>
-            <td>{moment(availability.start_time).format('YYYY-MM-DD HH:mm:ss')}</td>
-            <td>{moment(availability.end_time).format('YYYY-MM-DD HH:mm:ss')}</td>
+            <td>{moment(availability.start_time).format('MMMM Do, YYYY [,] h:mm A')}</td>
+            <td>{moment(availability.start_time).format('MMMM Do, YYYY [,] h:mm A')}</td>
 
             <td>{availability.recurring_availability_id ? "Yes" : "No"}</td>
             <td>
               {availability.recurring_availability?.end_date
-                ? new Date(availability.recurring_availability?.end_date).toLocaleDateString()
+                ? moment(availability.recurring_availability?.end_date).format('MMMM Do, YYYY [,] h:mm A')
                 : "N/A"}
             </td>
             <td>
