@@ -1,6 +1,6 @@
 class BookingSerializer
   include JSONAPI::Serializer
-  attributes :id, :event_name, :event_speaker, :start_time, :end_time, :status, :event_id, :availability_id, :availability_window
+  attributes :id, :event_name, :event_speaker, :start_time, :end_time, :status, :event_id, :availability_id, :availability_window, :booking_name, :booking_location
 
   belongs_to :event, serializer: EventSerializer
 
@@ -12,6 +12,24 @@ class BookingSerializer
   end
   attribute :availability_window do |booking|
     booking.availability_window
+  end
+
+  attribute :booking_name do |booking|
+    # Ensure booking.order and user are present before accessing
+    if booking.order && booking.order.user.present?
+      booking.order.user.name
+    else
+      nil
+    end
+  end
+
+  attribute :booking_location do |booking|
+    # Ensure booking.order, user, and organization are present before accessing
+    if booking.order && booking.order.user && booking.order.user.organization.present?
+      booking.order.user.organization.addresses
+    else
+      nil
+    end
   end
 
   def start_time

@@ -69,6 +69,7 @@ export default function Registration() {
         setRegistrationMessages("Registration successful!");
         
         navigate("/login");
+        alert("Please complete your profile for full site functionality.")
       } else {
         // Handle registration error
         const errorData = await response.json();

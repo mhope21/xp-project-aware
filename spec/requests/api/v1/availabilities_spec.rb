@@ -70,8 +70,8 @@ RSpec.describe "Api::V1::Availabilities", type: :request do
         sign_in speaker
         post '/api/v1/availabilities', params: {
           availability: {
-            start_time: Date.new(2025, 1, 1).iso8601,
-            end_time: Date.new(2025, 1, 16).iso8601,
+            start_time: Date.new(2025, 2, 1).iso8601,
+            end_time: Date.new(2025, 2, 16).iso8601,
             speaker_id: speaker.id
           },
           year: 2025,

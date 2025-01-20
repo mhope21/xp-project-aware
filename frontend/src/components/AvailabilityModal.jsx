@@ -18,8 +18,8 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
       setIsRecurring(availability.is_recurring);
       setRecurringEndDate(availability.recurring_end_date ? new Date (availability.recurring_end_date) : null);
     } else {
-      const localStartTime = new Date(selectedDate).toLocaleString();setStartTime(new Date(localStartTime));
-      setEndTime(new Date(localStartTime));
+      setStartTime(new Date(selectedDate));
+      setEndTime(new Date(selectedDate));
     }
   }, [availability, selectedDate]);
   
@@ -30,13 +30,18 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
         return;
       }
 
+      if (isRecurring && !recurringEndDate) {
+        alert("Please select a recurring end date.");
+        return;
+      }
+
     const newAvailability = {
       availability: {
       speaker_id: speakerId,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString(),
       is_recurring: isRecurring,
-      recurring_end_date: isRecurring ? recurringEndDate : null,
+      recurring_end_date: isRecurring ? recurringEndDate.toISOString() : null,
       }
     };
 
@@ -53,7 +58,7 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
 
       if (response.ok) {
         const data = await response.json();
-        
+        console.log("Availability data: ", data)
         const newEvent = {
             id: data.id,
             start: data.start_time,
@@ -87,7 +92,7 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
           alert("Your availability has been created.")
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.errors.join(', '));
+        setErrorMessage(errorData.error);
       }
     } catch (error) {
       console.error('Error creating availability:', error);
@@ -105,12 +110,6 @@ const AvailabilityModal = ({ speakerId, isOpen, onClose, selectedDate, setEvents
     resetFormFields();
     onClose();
   }
-
-  useEffect(() => {
-    const localStartTime = new Date(selectedDate).toLocaleString(); // Convert to local time
-    setStartTime(new Date(localStartTime));
-    setEndTime(new Date(localStartTime));
-  }, [selectedDate]);
 
   return (
     <Modal show={isOpen} onHide={onClose}>

@@ -65,42 +65,51 @@ const SpeakerBookings = ({ speakerBookings }) => {
   return (
     <div>
       <table className="table">
-        <thead>
-          <tr>
-            <th>Event Name</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Status</th>
-            <th>Modify Status</th>
-          </tr>
-        </thead>
-        <tbody>
-        {speakerBookings?.data?.map((booking) => (
-    <tr key={booking.id}>
-      <td style={{ padding: '10px', marginRight: '20px' }}>
-        {booking.attributes.event_name || 'No event name provided'}
-      </td>
-      <td style={{ padding: '10px', marginRight: '20px' }}>
-        {moment(booking.attributes.start_time).tz("America/Chicago").toISOString()}
-      </td>
-      <td style={{ padding: '10px', marginRight: '20px' }}>
-        {moment(booking.attributes.end_time).tz("America/Chicago").toISOString()}
-      </td>
-      <td style={{ padding: '10px', marginRight: '20px', color: booking.attributes.status === 'confirmed' ? 'green' : booking.attributes.status === 'denied' ? 'red' : 'blue' }}>
-        {booking.attributes.status?.toUpperCase() || 'No status provided'}
-      </td>
-      <td>
-        <div
-          className="btn btn-primary btn-sm"
-          onClick={() => handleShowModal(booking)}
-        >
-          Modify Status
-        </div>
-      </td>
+  <thead>
+    <tr>
+      <th>Event Name</th>
+      <th>Start Time</th>
+      <th>End Time</th>
+      <th>Status</th>
+      <th>Modify Status</th>
     </tr>
-  ))}
-</tbody>
-        </table>
+  </thead>
+  <tbody>
+    {speakerBookings?.data?.length > 0 ? (
+      speakerBookings.data.map((booking) => (
+        <tr key={booking.id}>
+          <td style={{ padding: '10px', marginRight: '20px' }}>
+            {booking.attributes.event_name || 'No event name provided'}
+          </td>
+          <td style={{ padding: '10px', marginRight: '20px' }}>
+            {moment(booking?.attributes?.start_time).format("MM/DD/YYYY, h:mm A")}
+          </td>
+          <td style={{ padding: '10px', marginRight: '20px' }}>
+            {moment(booking.attributes.end_time).format("MM/DD/YYYY, h:mm A")}
+          </td>
+          <td style={{ padding: '10px', marginRight: '20px', color: booking.attributes.status === 'confirmed' ? 'green' : booking.attributes.status === 'denied' ? 'red' : 'blue' }}>
+            {booking.attributes.status?.toUpperCase() || 'No status provided'}
+          </td>
+          <td>
+            <div
+              className="btn btn-primary btn-sm"
+              onClick={() => handleShowModal(booking)}
+            >
+              Modify Status
+            </div>
+          </td>
+        </tr>
+      ))
+    ) : (
+      <tr>
+        <td colSpan="5" style={{ textAlign: 'center', padding: '20px' }}>
+          No bookings yet.
+        </td>
+      </tr>
+    )}
+  </tbody>
+</table>
+
 
       {/* Modal for updating status */}
       {selectedBooking && (
@@ -111,7 +120,11 @@ const SpeakerBookings = ({ speakerBookings }) => {
           </Modal.Header>
           <Modal.Body>
             <h5>{selectedBooking.attributes.event_name}</h5>
-            <p>Status: {selectedBooking.attributes.status}</p>
+            <p><strong>Booker:</strong> {selectedBooking.attributes.booking_name}</p>
+            <p><strong>Location:</strong>
+  {`${selectedBooking.attributes.booking_location[0]?.street_address}, ${selectedBooking.attributes.booking_location[0]?.city}, ${selectedBooking.attributes.booking_location[0]?.state} ${selectedBooking.attributes.booking_location[0]?.postal_code}`}</p>
+            <p><strong>Time:</strong> {moment(selectedBooking.attributes.start_time).format("MM/DD/YYYY, h:mm A")} - {moment(selectedBooking.attributes.end_time).format("MM/DD/YYYY, h:mm A")}</p>
+            <p><strong>Current Status:</strong> {selectedBooking.attributes.status}</p>
             <label>
               Status:
               <select

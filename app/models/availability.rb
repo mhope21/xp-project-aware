@@ -7,6 +7,7 @@ class Availability < ApplicationRecord
   # Scope to filter by booked status
   scope :booked, -> { where(booked: true) }
   scope :available, -> { where(booked: false) }
+  scope :future, -> { where("start_time >= ?", Time.now) }
 
   # Validations
   validates :start_time, :end_time, :speaker, presence: true

@@ -27,6 +27,11 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
     return moment(utcDate).tz('America/Chicago');
  };
 
+ const handleClose = () => {
+    setIsEditing(false);
+    setErrorMessage(null);
+  };
+
   const handleUpdate = async () => {
     const params = {
         start_time: convertUTCToCST(startTime.toISOString()),
@@ -58,7 +63,7 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
     alert("Your booking has been updated.");
     } catch (error) {
         setErrorMessage(error.message)
-      console.error('Error updating booking:', error);
+      console.error('Error updating booking:', error.message);
     }
   };
 
@@ -73,7 +78,7 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
          <div className='btn btn-primary btn-small' onClick={() => setIsEditing(true)}>Modify Booking</div>
         
     </div>
-    <Modal show={isEditing} onHide={() => setIsEditing(false)}>
+    <Modal show={isEditing} onHide={handleClose}>
         <Modal.Header closeButton>
             <Modal.Title>Modify Booking</Modal.Title>
         </Modal.Header>
@@ -82,8 +87,8 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
             {errorMessage && <p style={{ color: 'red'}}>{errorMessage}</p>}
             </div>
             <div>
-            <p><strong>Booking status:</strong> {capitalizeFirstLetter(booking.status)}</p>
-            <p><strong>Booking availability window:</strong><br></br> {moment(booking.availability_start).format("MM/DD/YYYY, h:mm A")} - {moment(booking.availability_end).format("MM/DD/YYYY, h:mm A")}</p>
+            <p><strong>Booking status:</strong> {capitalizeFirstLetter(booking?.status)}</p>
+            <p><strong>Booking availability window:</strong><br></br> {moment(booking?.availability_start).format("MM/DD/YYYY, h:mm A")} - {moment(booking?.availability_end).format("MM/DD/YYYY, h:mm A")}</p>
             </div>
             <div>
           {userRole === 'teacher' && (

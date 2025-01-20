@@ -19,11 +19,14 @@ class Api::V1::BookingsController < ApplicationController
   def create
     @booking = Booking.new(booking_params)
     @booking.user = current_user
+
       if @booking.save
         availability = Availability.find(@booking.availability_id)
         availability.update(booked: true)
+
         BookingMailer.booking_confirmation(@booking.user, @booking).deliver_now
         BookingMailer.new_booking_notification(@booking.speaker, @booking).deliver_now
+
         render json: BookingSerializer.new(@booking).serializable_hash, status: :created
       else
         render json: @booking.errors, status: :unprocessable_entity
@@ -34,31 +37,18 @@ class Api::V1::BookingsController < ApplicationController
     @booking = Booking.find(params[:id])
     @availability = @booking.availability
 
+    Rails.logger.info("Updating booking with ID: #{@booking.id}")
+    Rails.logger.info("Availability ID: #{@availability.id}")
+    Rails.logger.info("Params: #{params.inspect}")
+    Rails.logger.info("Booking Times - Start: #{params[:start_time]}, End: #{params[:end_time]}")
+    Rails.logger.info("Availability Times - Start: #{@availability.start_time}, End: #{@availability.end_time}")
+
+
     if @booking.status == "pending"
       if current_user.role == "teacher"
-        # Ensure the update is within the original availability times
-        if params[:start_time] >= @availability.start_time && params[:end_time] <= @availability.end_time
-          if @booking.update(booking_params)
-            BookingMailer.booking_modified_notification(@booking.speaker, @booking).deliver_now
-            render json: BookingSerializer.new(@booking).serializable_hash.to_json
-          else
-            render json: @booking.errors, status: :unprocessable_entity
-          end
-        else
-          render json: { error: "New times are not within the original availability times." }, status: :unprocessable_entity
-        end
+        handle_teacher_update
       elsif current_user.role == "speaker"
-        # Ensure the status update is valid
-        if params[:status] && [ "pending", "confirmed", "denied" ].include?(params[:status])
-          @booking.status = params[:status]
-          if @booking.save
-            render json: BookingSerializer.new(@booking).serializable_hash.to_json
-          else
-            render json: @booking.errors, status: :unprocessable_entity
-          end
-        else
-          render json: { error: "Invalid status value." }, status: :unprocessable_entity
-        end
+        handle_speaker_update
       else
         render json: { error: "User does not have permission to update." }, status: :unprocessable_entity
       end
@@ -79,6 +69,42 @@ class Api::V1::BookingsController < ApplicationController
   end
 
   private
+
+  def handle_teacher_update
+    if @booking.update(booking_params)
+      BookingMailer.booking_modified_notification(@booking.speaker, @booking).deliver_now
+      render json: BookingSerializer.new(@booking).serializable_hash.to_json
+    else
+      render json: @booking.errors, status: :unprocessable_entity
+    end
+  end
+
+  def handle_speaker_update
+    if valid_status_update?
+      case params[:status]
+      when "confirmed"
+        if @booking.accept!
+          render json: { message: "Booking accepted successfully.", booking: BookingSerializer.new(@booking).serializable_hash }, status: :ok
+        else
+          render json: { error: "Failed to accept booking." }, status: :unprocessable_entity
+        end
+      when "denied"
+        if @booking.denied!
+          render json: { message: "Booking denied successfully.", booking: BookingSerializer.new(@booking).serializable_hash }, status: :ok
+        else
+          render json: { error: "Failed to decline booking." }, status: :unprocessable_entity
+        end
+      else
+        render json: { error: "Unsupported status update." }, status: :unprocessable_entity
+      end
+    else
+      render json: { error: "Invalid status value." }, status: :unprocessable_entity
+    end
+  end
+
+  def valid_status_update?
+    params[:status] && %w[pending confirmed denied].include?(params[:status])
+  end
 
   def set_booking
     @booking = Booking.includes(:event).find(params[:id])

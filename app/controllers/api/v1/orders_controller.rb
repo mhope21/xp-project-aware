@@ -52,7 +52,7 @@ class Api::V1::OrdersController < ApplicationController
   def create_booking_order
     # Check if address information is provided (either address_id or address_attributes)
     unless params[:order][:address_id].present? || params[:order][:address_attributes].present?
-      return render json: { error: "Address information is required" }, status: :unprocessable_entity
+      return render json: { error: "Address information is required. Please complete your Organization address in your profile." }, status: :unprocessable_entity
     end
 
     booking = Booking.find_by(id: params[:product_id])
@@ -65,7 +65,6 @@ class Api::V1::OrdersController < ApplicationController
       return render json: { error: @order.errors.full_messages }, status: :unprocessable_entity
     end
 
-    # associate_address_with_user(@order)
     render json: { order: @order, message: "Booking order created successfully" }, status: :created
   end
 
@@ -104,7 +103,7 @@ class Api::V1::OrdersController < ApplicationController
     end
     Rails.logger.info("Order created successfully: #{@order.inspect}")
     Rails.logger.info("Associating address with user if save_to_user is true...")
-    # associate_address_with_user(@order)
+    associate_address_with_user(@order)
     Rails.logger.info("Address association complete.")
     Rails.logger.info("Kit order created successfully: #{@order.inspect}")
     render json: {
@@ -138,19 +137,6 @@ class Api::V1::OrdersController < ApplicationController
       address.save_to_user = permitted_attributes[:save_to_user] if permitted_attributes[:save_to_user].present?
     end
   end
-
-  # def associate_address_with_user(order)
-  #   return unless order.address && order.user
-
-  #   existing_address = order.user.addresses.find_by(
-  #     street_address: order.address.street_address,
-  #     city: order.address.city,
-  #     state: order.address.state,
-  #     postal_code: order.address.postal_code
-  #   )
-
-  #   order.user.addresses << order.address unless existing_address
-  # end
 
   def associate_address_with_user(order)
     if order.address && order.user

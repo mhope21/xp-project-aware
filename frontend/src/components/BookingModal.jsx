@@ -206,7 +206,7 @@ console.log("Booking ID: ", booking.data.id);
             zIndex: 1000,
           },
         content: {
-          width: "400px",
+          width: "600px",
           margin: "auto",
           padding: "20px",
           borderRadius: "8px",

@@ -36,6 +36,10 @@ class UserProfileSerializer
     end
   end
 
+  attribute :addresses do |user|
+    user.addresses.map { |address| AddressSerializer.new(address).serializable_hash[:data][:attributes] }
+  end
+
   attribute :organization do |user|
     if user.organization
       OrganizationSerializer.new(user.organization).serializable_hash[:data][:attributes]
