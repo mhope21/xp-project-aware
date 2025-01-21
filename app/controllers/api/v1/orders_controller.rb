@@ -55,6 +55,9 @@ class Api::V1::OrdersController < ApplicationController
       return render json: { error: "Address information is required. Please complete your Organization address in your profile." }, status: :unprocessable_entity
     end
 
+    Rails.logger.info("Order params: #{params[:order]}")
+    Rails.logger.info("Product ID: #{params[:product_id]}")
+
     booking = Booking.find_by(id: params[:product_id])
     unless booking
       return render json: { error: "Booking not found" }, status: :not_found

@@ -36,12 +36,13 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
     const params = {
         start_time: convertUTCToCST(startTime.toISOString()),
         end_time: convertUTCToCST(endTime.toISOString()),
+        status: status,
       };
     
       console.log("Updating Booking - ID:", booking.id);
       console.log("Update Params:", params);
     try {
-      const response = await fetch(`${API_URL}/bookings/${booking.id}`, {
+      const response = await fetch(`${API_URL}/bookings/${booking.product_id}`, {
         method: 'PUT',
         headers: {
             Authorization: `Bearer ${jwt}`,
@@ -57,10 +58,11 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
 
       const data = await response.json();
     console.log("API Response:", data);
-    onUpdate({ ...data.data.attributes, id: data.data.attributes.id });
+    onUpdate({ ...data.data.attributes, id: data.data.attributes.product_id });
     setIsEditing(false);
     setErrorMessage('');
     alert("Your booking has been updated.");
+    window.location.reload();
     } catch (error) {
         setErrorMessage(error.message)
       console.error('Error updating booking:', error.message);
@@ -90,6 +92,7 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
             <p><strong>Booking status:</strong> {capitalizeFirstLetter(booking?.status)}</p>
             <p><strong>Booking availability window:</strong><br></br> {moment(booking?.availability_start).format("MM/DD/YYYY, h:mm A")} - {moment(booking?.availability_end).format("MM/DD/YYYY, h:mm A")}</p>
             </div>
+            <form>
             <div>
           {userRole === 'teacher' && (
             <>
@@ -126,6 +129,7 @@ const ModifyBooking = ({ booking, userRole, onUpdate }) => {
             </label>
           )}
           </div>
+          </form>
           </Modal.Body>
           <Modal.Footer>
           <div className='btn-group'>

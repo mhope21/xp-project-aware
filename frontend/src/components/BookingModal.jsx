@@ -161,29 +161,34 @@ console.log("Booking ID: ", booking.data.id);
         onClose();
 
         const bookingDetails = {
-            name: user?.name,
-            organization: user?.organization?.name,
-            address: {
-              street_address: user?.organization?.addresses?.[0]?.street_address,
-              city: user?.organization?.addresses?.[0]?.city,
-              state: user?.organization?.addresses?.[0]?.state,
-              postal_code: user?.organization?.addresses?.[0]?.postal_code,
-            },
-            event: {
-              id: booking.event.id,
-              title: booking.event.title,
-              speaker_id: booking.event.speaker_id,
-              description: booking.event.description,
-              duration: booking.event.duration,
-            },
-            startTime: booking.start_time,
-            endTime: booking.end_time,
-            phone: order.order.phone,
-            comments: order.order.comments,
-            schoolYear: order.order.school_year,
-            productType: order.order.product_type,
-          };
+          name: user?.name,
+          organization: user?.organization?.name,
+          address: {
+            street_address: user?.organization?.addresses?.[0]?.street_address,
+            city: user?.organization?.addresses?.[0]?.city,
+            state: user?.organization?.addresses?.[0]?.state,
+            postal_code: user?.organization?.addresses?.[0]?.postal_code,
+          },
+          event: {
+            id: booking?.event?.id,
+            title: booking?.data?.attributes?.event_name,
+            speaker_first: booking?.data?.attributes?.event_speaker?.first_name,
+            speaker_last: booking?.data?.attributes?.event_speaker?.last_name,
+          },
+          startTime: booking?.data?.attributes?.start_time,
+          endTime: booking?.data?.attributes?.end_time,
+          phone: order?.order?.phone,
+          comments: order?.order?.comments,
+          schoolYear: order?.order?.school_year,
+          productType: order?.order?.product_type,
+        };
 
+        
+
+          console.log("Selected Event:", selectedEvent);
+          console.log("Booking Details to Navigate:", bookingDetails);
+
+          console.log("Navigating to confirmation...");
           navigate("/confirmation", { state: { bookingDetails } });
 
           
@@ -217,11 +222,13 @@ console.log("Booking ID: ", booking.data.id);
       }}
     >
       <h2>Create a Booking</h2>
+      <form>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <div>
+      <div className="mb-3">
         <label>
           Select Event:
           <select
+            className="form-control"
             value={selectedEvent ? selectedEvent.id : ""}
             onChange={(e) =>
               setSelectedEvent(events.find((event) => event.id === parseInt(e.target.value)))
@@ -238,7 +245,7 @@ console.log("Booking ID: ", booking.data.id);
           </select>
         </label>
       </div>
-      <div>
+      <div className="mb-3">
         <label>
           Start Time:
           <DatePicker
@@ -251,7 +258,7 @@ console.log("Booking ID: ", booking.data.id);
       />
         </label>
       </div>
-      <div>
+      <div className="mb-3">
         <label>
           End Time:
           <DatePicker
@@ -265,10 +272,11 @@ console.log("Booking ID: ", booking.data.id);
         </label>
       </div>
 
-      <div>
+      <div className="mb-3">
         <label>
           Phone:
           <input
+            className="form-control"
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -276,10 +284,11 @@ console.log("Booking ID: ", booking.data.id);
           />
         </label>
       </div>
-      <div>
+      <div className="mb-3">
         <label>
           School Year:
           <input
+            className="form-control"
             type="text"
             value={schoolYear}
             onChange={(e) => setSchoolYear(e.target.value)}
@@ -288,17 +297,18 @@ console.log("Booking ID: ", booking.data.id);
         </label>
       </div>
 
-      <div>
+      <div className="mb-3">
         <label>
           Comments:
           <textarea
+            className="form-control"
             value={comments}
             onChange={(e) => setComments(e.target.value)}
             placeholder="Add any comments"
           />
         </label>
       </div>
-      <div style={{ marginTop: "20px" }}>
+      <div className="mb-3" style={{ marginTop: "20px" }}>
         <button
           onClick={handleBooking}
           disabled={loading}
@@ -326,6 +336,7 @@ console.log("Booking ID: ", booking.data.id);
           Cancel
         </button>
       </div>
+      </form>
     </Modal>
   );
 };

@@ -14,6 +14,16 @@ function Confirmation() {
   const { product } = order || {};
   const { name, description } = product || {};
 
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return "N/A";
+    const cleaned = ('' + phone).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return `(${match[1]}) ${match[2]}-${match[3]}`;
+    }
+    return phone;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -38,7 +48,7 @@ function Confirmation() {
                     <strong className="label">Event Title:</strong> {event.title}
                   </p>
                   <p className="detail">
-                    <strong className="label">Event Description:</strong> {event.description}
+                    <strong className="label">Event Speaker:</strong> {event.speaker_first} {event.speaker_last}
                   </p>
                   <p className="detail">
                     <strong className="label">Location:</strong> {organization}, {address.street_address}, {address.city}, {address.state}, {address.postal_code}
@@ -50,7 +60,7 @@ function Confirmation() {
                     <strong className="label">Event End Time:</strong> {new Date(endTime).toLocaleString()}
                   </p>
                   <p className="detail">
-                    <strong className="label">Phone:</strong> {phone}
+                    <strong className="label">Phone:</strong> {formatPhoneNumber(phone)}
                   </p>
                   <p className="detail">
                     <strong className="label">Comments:</strong> {comments}
