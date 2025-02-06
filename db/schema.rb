@@ -136,9 +136,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_01_14_235147) do
     t.string "phone"
     t.text "comments"
     t.integer "user_id"
-    t.integer "address_id"
     t.string "product_type"
     t.integer "product_id"
+    t.integer "address_id"
     t.index ["product_type", "product_id"], name: "index_orders_on_product"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end

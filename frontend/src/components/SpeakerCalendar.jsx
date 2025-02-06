@@ -234,7 +234,7 @@ const SpeakerCalendar = ({ user, speakerId, profile }) => {
           <tr key={availability.id}>
             <td>{availability.speaker_id}</td>
             <td>{moment(availability.start_time).format('MMMM Do, YYYY [,] h:mm A')}</td>
-            <td>{moment(availability.start_time).format('MMMM Do, YYYY [,] h:mm A')}</td>
+            <td>{moment(availability.end_time).format('MMMM Do, YYYY [,] h:mm A')}</td>
 
             <td>{availability.recurring_availability_id ? "Yes" : "No"}</td>
             <td>
