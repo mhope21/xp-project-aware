@@ -11,7 +11,7 @@ const SampleChartTwo = () => {
       {
         label: 'Donations',
         data: [165, 80, 150, 200, 256],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        backgroundColor: 'rgba(98, 231, 98, 0.8)',
       },
     ],
   };

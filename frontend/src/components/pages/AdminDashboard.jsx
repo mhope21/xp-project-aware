@@ -8,10 +8,12 @@ import DataEndpoint from "../DataEndpoint";
 import DashTable from "../DashTable";
 import EditModal from "../EditModal";
 import { AuthContext } from "../auth/AuthContext";
+import { use } from "react";
 
 const AdminDashboard = () => {
   const { user, setLoggedIn, setUser } = useContext(AuthContext);
   // Necessary api endpoints
+  const [data, setData] = useState([]);
   const userUrl = `${API_URL}/users`;
   const kitsUrl = `${API_URL}/kits`;
   const kitItemsUrl = `${API_URL}/kit_items_only`;
@@ -31,7 +33,7 @@ const AdminDashboard = () => {
   }, []);
   // Sets the headers for the tables based on the endpoint
   const headers = {
-    userUrl: [
+    adminUserUrl: [
       { key: "id", label: "User Id" },
       { key: "email", label: "User Email" },
       { key: "first_name", label: "First Name" },
@@ -54,10 +56,10 @@ const AdminDashboard = () => {
       { key: "id", label: "Order Id" },
       { key: "order_name", label: "Order Name" },
       { key: "order_email", label: "Order Email" },
-      { key: "ordered_kit", label: "Kit Name" },
-      { key: "kit_id", label: "Kit Id" },
-      { key: "school_name", label: "School Name" },
-      { key: "school_address", label: "School Address" },
+      { key: "product_id", label: "Product Id"},
+      { key: "product_type", label: "Product Type" },
+      { key: "ordered_product", label: "Product Name" },
+      { key: "order_address", label: "Order Address" },
       { key: "school_year", label: "School Year" },
       { key: "created_at", label: "Date Ordered" },
     ],
@@ -142,11 +144,12 @@ const AdminDashboard = () => {
   // Displays the appropriate tables based on the api endpoint, and gives access to correct modal if show action is used.
   const UserTable = () => (
     <DashTable
-      headers={headers.userUrl}
-      apiEndpoint={userUrl}
+      headers={headers.adminUserUrl}
+      apiEndpoint={adminUserUrl}
       handleShow={(item) => handleShow(item, "user")}
       setLoggedIn={setLoggedIn}
       setUser={setUser}
+      setData={setData}
     />
   );
   const KitsTable = () => (
@@ -156,6 +159,7 @@ const AdminDashboard = () => {
       handleShow={(item) => handleShow(item, "kit")}
       setLoggedIn={setLoggedIn}
       setUser={setUser}
+      setData={setData}
     />
   );
   const KitItemsTable = () => (
@@ -165,6 +169,7 @@ const AdminDashboard = () => {
       handleShow={(item) => handleShow(item, "kitItem")}
       setLoggedIn={setLoggedIn}
       setUser={setUser}
+      setData={setData}
     />
   );
   const OrdersTable = () => (
@@ -172,6 +177,7 @@ const AdminDashboard = () => {
       header={headers.ordersUrl}
       apiEndpoint={ordersUrl}
       handleShow={(item) => handleShow(item, "order")}
+      setData={setData}
     />
   );
   const DonationsTable = () => (
@@ -181,6 +187,7 @@ const AdminDashboard = () => {
       handleShow={(item) => handleShow(item, "donation")}
       setLoggedIn={setLoggedIn}
       setUser={setUser}
+      setData={setData}
     />
   );
   const ContactsTable = () => (
@@ -190,6 +197,7 @@ const AdminDashboard = () => {
       handleShow={(item) => handleShow(item, "contact")}
       setLoggedIn={setLoggedIn}
       setUser={setUser}
+      setData={setData}
     />
   );
 
@@ -197,7 +205,7 @@ const AdminDashboard = () => {
   // This sets the appropriate api endpoint for getting data from backend for the tables
   useEffect(() => {
     switch (selectedEndpoint) {
-      case userUrl:
+      case adminUserUrl:
         setCardHeader("User Table");
         break;
       case kitItemsUrl:
@@ -235,8 +243,8 @@ const AdminDashboard = () => {
     // Displays cards, graph data, and Data tables
     <>
       <nav
-        className="navbar justify-content-between mt-0"
-        style={{ zIndex: -1, backgroundColor: "black" }}
+        className="navbar justify-content-between bg-secondary mt-0"
+        style={{ zIndex: -1 }}
       >
         <div
           className="d-inline-flex w-100 justify-content-between p-0 ms-4 me-4"
@@ -280,7 +288,7 @@ const AdminDashboard = () => {
           ></button>
         </div>
         <DataEndpoint
-          userUrl={userUrl}
+          adminUserUrl={adminUserUrl}
           kitsUrl={kitsUrl}
           kitItemsUrl={kitItemsUrl}
           donationUrl={donationUrl}
@@ -318,11 +326,14 @@ const AdminDashboard = () => {
                   <div id="table" style={{ overflowX: "auto" }}>
                     {selectedEndpoint && (
                       <>
-                        {selectedEndpoint === userUrl && (
+                        {selectedEndpoint === adminUserUrl && (
                           <DashTable
-                            headers={headers.userUrl}
-                            apiEndpoint={userUrl}
+                            headers={headers.adminUserUrl}
+                            apiEndpoint={adminUserUrl}
                             handleShow={(item) => handleShow(item, "user")}
+                            adminUserUrl={adminUserUrl}
+                            setData={setData}
+                            data={data}
                             />
                         )}
                         {selectedEndpoint === kitsUrl && (
@@ -332,6 +343,9 @@ const AdminDashboard = () => {
                             handleShow={(item) => handleShow(item, "kit")}
                             setLoggedIn={setLoggedIn}
                             setUser={setUser}
+                            adminUserUrl={adminUserUrl}
+                            setData={setData}
+                            data={data}
                           />
                         )}
                         {selectedEndpoint === kitItemsUrl && (
@@ -341,6 +355,9 @@ const AdminDashboard = () => {
                             handleShow={(item) => handleShow(item, "kitItem")}
                             setLoggedIn={setLoggedIn}
                             setUser={setUser}
+                            adminUserUrl={adminUserUrl}
+                            setData={setData}
+                            data={data}
                           />
                         )}
                         {selectedEndpoint === ordersUrl && (
@@ -352,6 +369,9 @@ const AdminDashboard = () => {
                             }
                             setLoggedIn={setLoggedIn}
                             setUser={setUser}
+                            adminUserUrl={adminUserUrl}
+                            setData={setData}
+                            data={data}
                           />
                         )}
                         {selectedEndpoint === donationUrl && (
@@ -361,6 +381,9 @@ const AdminDashboard = () => {
                             handleShow={(item) => handleShow(item, "donation")}
                             setLoggedIn={setLoggedIn}
                             setUser={setUser}
+                            adminUserUrl={adminUserUrl}
+                            setData={setData}
+                            data={data}
                           />
                         )}
                         {selectedEndpoint === contactsUrl && (
@@ -370,6 +393,9 @@ const AdminDashboard = () => {
                             handleShow={(item) => handleShow(item, "contact")}
                             setLoggedIn={setLoggedIn}
                             setUser={setUser}
+                            adminUserUrl={adminUserUrl}
+                            setData={setData}
+                            data={data}
                           />
                         )}
                       </>
@@ -398,6 +424,8 @@ const AdminDashboard = () => {
               handleClose={handleClose}
               handleDelete={handleDelete}
               recordType={recordType}
+              setData={setData}
+              data={data}
             />
           )}
         </div>

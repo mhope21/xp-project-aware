@@ -302,6 +302,7 @@ console.log("Booking ID: ", booking.data.id);
           Comments:
           <textarea
             className="form-control"
+            style={{ width: "500px" }}
             value={comments}
             onChange={(e) => setComments(e.target.value)}
             placeholder="Add any comments"

@@ -3,7 +3,7 @@ import { Modal, Button } from 'react-bootstrap';
 import { API_URL2, API_URL } from '../constants';
 import { useNavigate } from 'react-router-dom';
 
-const EditModal = ({ record, show, handleClose, handleDelete, recordType }) => {
+const EditModal = ({ record, show, handleClose, handleDelete, recordType, setData }) => {
   const [formData, setFormData] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const jwt = localStorage.getItem('jwt');
@@ -47,9 +47,9 @@ const EditModal = ({ record, show, handleClose, handleDelete, recordType }) => {
     } else if (recordType === 'order') {
         updatedFormData.append('order[phone]', formData.phone);
         updatedFormData.append('order[school_year]', formData.school_year);
-        updatedFormData.append('order[kit_id]', formData.kit_id);
-        updatedFormData.append('order[school_name]', formData.school_name);
-        updatedFormData.append('order[school_address]', formData.school_address);
+        updatedFormData.append('order[product_id]', formData.product_id);
+        updatedFormData.append('order[product_type]', formData.product_type);
+        updatedFormData.append('order[order_address]', formData.order_address);
         updatedFormData.append('order[comments]', formData.comments);
         updatedFormData.append('order[user_id]', formData.user_id);
         api = "orders";
@@ -70,6 +70,7 @@ const EditModal = ({ record, show, handleClose, handleDelete, recordType }) => {
       // Add first name and last name
       updatedFormData.append('user[first_name]', formData.first_name);  
       updatedFormData.append('user[last_name]', formData.last_name);
+      updatedFormData.append('user[email]', formData.email);
       updatedFormData.append('user[role]', formData.role);
     }
     
@@ -102,7 +103,11 @@ if (recordType === 'user') {
     if (result.success) {
         console.log(`${recordType} updated successfully!`);
         alert(`${recordType} updated successfully!`);
-        handleClose(); // Close the modal after success
+        handleClose();
+        setData((prevData) => {
+          return prevData.map((item) =>
+            item.id === formData.id ? { ...item, ...formData } : item
+          )});
     } else {
       alert("An error occurred with the update.")
     }
@@ -194,6 +199,16 @@ if (recordType === 'user') {
                   className="form-control"
                   name="last_name"
                   value={formData.last_name || ''}
+                  onChange={onChange}
+                />
+                </div>
+                <div className="mb-3">
+                <label>Email</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  name="email"
+                  value={formData.email || ''}
                   onChange={onChange}
                 />
                 </div>
@@ -310,21 +325,21 @@ if (recordType === 'user') {
                 />
               </div>
               <div className="mb-3">
-                <label>School Name</label>
+                <label>Product Type</label>
                 <input
                   className="form-control"
-                  name="school_name"
-                  value={formData.school_name || ''}
+                  name="product_type"
+                  value={formData.product_type || ''}
                   onChange={onChange}
                   
                 />
               </div>
               <div className="mb-3">
-                <label>School Address</label>
+                <label>Order Address</label>
                 <input
                   className="form-control"
                   name="school_address"
-                  value={formData.school_address || ''}
+                  value={formData.order_address || ''}
                   onChange={onChange}
                 />
               </div>
@@ -347,11 +362,11 @@ if (recordType === 'user') {
                 />
               </div>
               <div className="mb-3">
-                <label>Kit Id</label>
+                <label>Product Id</label>
                 <input
                   className="form-control"
                   name="kit_id"
-                  value={formData.kit_id || ''}
+                  value={formData.product_id || ''}
                   onChange={onChange}
                 />
               </div>

@@ -30,7 +30,7 @@ const SampleChartThree = () => {
         label: 'Donations',
         data: [565, 359, 480, 281, 756, 355, 440],
         fill: false,
-        borderColor: 'rgba(75,192,192,1)',
+        borderColor: 'rgba(98, 231, 98, 0.8)',
         tension: 0.1,
       },
     ],

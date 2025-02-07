@@ -113,7 +113,7 @@ const NewKit = () => {
       </div>
       
       <button type="submit" className="btn btn-primary me-5">Add Kit</button>
-      <button className='btn btn-danger'><Link to={"/admin"} style={{ textDecoration: 'none' }}>Cancel</Link></button>
+      <button className='btn btn-danger'><Link to={"/authenticated/admin"} style={{ textDecoration: 'none' }}>Cancel</Link></button>
       <div>{messages}</div>
     </form>
   );

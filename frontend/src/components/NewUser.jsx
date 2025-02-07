@@ -55,7 +55,7 @@ const NewUser = () => {
           setLastName("");
           setRole("");
     
-          ("/authenticated/admin");
+          navigate("/authenticated/admin");
         } else {
           
           const errorData = await response.json();
@@ -123,7 +123,7 @@ const NewUser = () => {
         />
       </div>
       <button type="submit" className="btn btn-primary me-5">Add User</button>
-      <button className='btn btn-danger'><Link to={"/admin"} style={{ textDecoration: 'none' }}>Cancel</Link></button>
+      <button className='btn btn-danger'><Link to={"/authenticated/admin"} style={{ textDecoration: 'none' }}>Cancel</Link></button>
       <div>{registrationMessages}</div>
     </form>
   );

@@ -6,7 +6,8 @@ import { AuthContext } from './auth/AuthContext';
 const DashCardSet = () => {
   const { logout } = useContext(AuthContext);
   const [userCount, setUserCount] = useState(0);
-  const [orderCount, setOrderCount] = useState(0);
+  const [bookingOrderCount, setBookingOrderCount] = useState(0);
+  const [kitOrderCount, setKitOrderCount] = useState(0);
   const [totalDonations, setTotalDonations] = useState(0);
   const dashUrl = `${API_URL}/admin_dashboard`
 
@@ -24,7 +25,8 @@ const DashCardSet = () => {
         if (response.ok) {
           const data = await response.json();
           setUserCount(data.users_count);
-          setOrderCount(data.orders_count);
+          setBookingOrderCount(data.booking_orders_count);
+          setKitOrderCount(data.kit_orders_count);
           setTotalDonations(parseFloat(data.total_donations));
         } else {
           console.error('Failed to fetch data:', response.statusText);
@@ -43,14 +45,17 @@ const DashCardSet = () => {
   return (
     // Displays data using the dashboard card component
     <div className="row h-100">
-      <div className="col-md-4 mb-3">
-        <DashboardCard title="Total # of Registered Users" value={userCount} color="success" />
+      <div className="col-md-3 mb-3">
+        <DashboardCard title="Total # of Registered Users" value={userCount} color="rgb(248, 102, 224)" />
       </div>
-      <div className="col-md-4 mb-3">
-        <DashboardCard title="Total # of Orders" value={orderCount} color="info" />
+      <div className="col-md-3 mb-3">
+        <DashboardCard title="Total # of Booking Orders" value={bookingOrderCount} color="#0dcaf0" />
       </div>
-      <div className="col-md-4 mb-3">
-        <DashboardCard title="Total Donations" value={`$${totalDonations.toFixed(2)}`} color="warning" />
+      <div className="col-md-3 mb-3">
+        <DashboardCard title="Total # of Kit Orders" value={kitOrderCount} color="rgb(252, 174, 86)" />
+      </div>
+      <div className="col-md-3 mb-3">
+        <DashboardCard title="Total Donations" value={`$${totalDonations.toFixed(2)}`} color="rgb(98, 231, 98)" />
       </div>
     </div>
   );

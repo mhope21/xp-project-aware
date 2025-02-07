@@ -2,9 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from './auth/AuthContext';
 
 // Passed in api endpoint, headers for tables, and the event handler for showing the Edit Modal from Admin Dashboard component
-const DashTable = ({ apiEndpoint, headers, handleShow }) => {
+const DashTable = ({ apiEndpoint, headers, handleShow, adminUserUrl, setData, data }) => {
   const { logout } = useContext(AuthContext);
-  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,7 +25,11 @@ const DashTable = ({ apiEndpoint, headers, handleShow }) => {
         }
 
         const jsonData = await response.json();
-        setData(jsonData); 
+        if (apiEndpoint === adminUserUrl) { 
+          setData(jsonData.data || []);
+        } else {
+          setData(jsonData || []);
+        }
       } catch (err) {
         setError(err.message); 
         console.error("Error fetching data:", err);
@@ -37,7 +40,7 @@ const DashTable = ({ apiEndpoint, headers, handleShow }) => {
     };
 
     fetchData();
-  }, [apiEndpoint, headers]);
+  }, [apiEndpoint, adminUserUrl]);
 
   // If loading, display loading message
   if (loading) {
@@ -51,9 +54,9 @@ const DashTable = ({ apiEndpoint, headers, handleShow }) => {
 
   return (
     // Show the correct table for the chosen data and handle if the edit button is clicked by showing the correct modal
-    <div >
+    <div>
       {data.length > 0 ? (
-        <table className='table-striped table-info table-bordered table-hover table-responsive'>
+        <table id="table" className='table-striped table-info table-bordered table-hover table-responsive'>
           <thead>
             <tr>
               {headers.map(header => (

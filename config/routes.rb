@@ -11,7 +11,7 @@ Rails.application.routes.draw do
     registrations: "users/registrations"
   }
   namespace :admin do
-    resources :users, only: [ :update ]
+    resources :users, only: [ :update, :index ]
   end
   # API routes
   namespace :api do

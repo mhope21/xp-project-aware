@@ -4,12 +4,14 @@ class Api::V1::AdminDashboardController < ApplicationController
   # GET /api/v1/admin_dashboard
   def index
     users_count = User.count
-    orders_count = Order.count
+    booking_orders_count = Order.where(product_type: "Booking").count
+    kit_orders_count = Order.where(product_type: "Kit").count
     total_donations = Donation.sum(:amount)
     if current_user.role === "admin"
     render json: {
       users_count: users_count,
-      orders_count: orders_count,
+      booking_orders_count: booking_orders_count,
+      kit_orders_count: kit_orders_count,
       total_donations: total_donations
     }, status: :ok
     else
