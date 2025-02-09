@@ -33,6 +33,7 @@ gem "devise"
 gem "devise-jwt"
 gem "cancancan"
 gem "jsonapi-serializer"
+gem "stripe"
 
 
 group :development, :test do

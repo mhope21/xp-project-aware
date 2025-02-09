@@ -1,5 +1,5 @@
 class Api::V1::DonationsController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource except: [ :success, :cancel ]
 
   # GET /api/v1/donations
   def index
@@ -12,33 +12,42 @@ class Api::V1::DonationsController < ApplicationController
     @donation = Donation.active.find(params[:id])
     render json: @donation
   end
-
   # POST /api/v1/donations
   def create
-    payment_token = params[:donation][:payment_token][0]
-    @donation = Donation.new(donation_params.merge(canceled: false))
-    @donation.user = @current_user
+    Stripe.api_key = Rails.application.credentials.dig(:stripe, :secret_key)
 
-    # Process the payment
-    payment_result = MockPaymentProcessor.process(@donation.amount, payment_token, params[:donation][:save_payment_info])
-    Rails.logger.info("Payment Processor Response: #{payment_result.inspect}")
-    Rails.logger.info("Payment Token Before Assignment: #{payment_result[:token].inspect}")
+    amount = donation_params[:amount].to_i * 100 # Convert to cents for Stripe
 
-    if payment_result[:success]
-      @donation.payment_status = "successful"
-      @donation.payment_token = payment_result[:token].to_s
-      Rails.logger.info("Assigned Payment Token: #{@donation.payment_token}")
+    customer = Stripe::Customer.create({
+      email: current_user.email,
+      name: current_user.name
+    })
 
-      if @donation.save  # Save the donation record
-        render json: @donation, status: :created
-      else
-        Rails.logger.error("Donation Errors: #{@donation.errors.full_messages}")
-        render json: { error: @donation.errors.full_messages }, status: :unprocessable_entity
-      end
-    else
-      @donation.payment_status = "failed"
-      render json: { error: payment_result[:message] }, status: :unprocessable_entity
-    end
+    session = Stripe::Checkout::Session.create(
+      payment_method_types: [ "card" ],
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "Donation"
+          },
+          unit_amount: amount
+        },
+        quantity: 1
+      } ],
+      mode: "payment",
+      success_url: "http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}",
+      cancel_url: "http://localhost:5173/cancel?session_id={CHECKOUT_SESSION_ID}",
+      customer: customer.id,
+      metadata: {
+        user_email: current_user.email,
+        name: current_user.name
+      }
+    )
+
+    render json: { id: session.id }, status: :created
+  rescue Stripe::StripeError => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   # PATCH/PUT /api/v1/donations/1
@@ -61,9 +70,40 @@ class Api::V1::DonationsController < ApplicationController
     end
   end
 
+  # GET /api/v1/donations/success
+  def success
+    session_id = params[:session_id]
+    Stripe.api_key = Rails.application.credentials.dig(:stripe, :secret_key)
+    session = Stripe::Checkout::Session.retrieve(session_id)
+    donation = Donation.find_by(stripe_checkout_session_id: session_id)
+
+
+    if donation
+      donation.update(payment_status: "completed", stripe_payment_intent_id: session.payment_intent)
+    end
+
+    render json: { message: "Donation successful", donation: donation, session: session }
+  rescue Stripe::StripeError => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
+  # GET /api/v1/donations/cancel
+  def cancel
+    session_id = params[:session_id] # This would be passed in the cancel URL if you want to track which donation was canceled
+    donation = Donation.find_by(stripe_checkout_session_id: session_id)
+
+    if donation
+      # Update the donation status to canceled
+      donation.update(payment_status: "canceled")
+    end
+
+    render json: { message: "Donation canceled", donation: donation }
+  end
+
+
   private
 
   def donation_params
-    params.require(:donation).permit(:user_id, :amount, :payment_status, :save_payment_info, :payment_token)
+    params.require(:donation).permit(:user_id, :amount, :payment_status, :stripe_checkout_session_id, :stripe_payment_intent_id)
   end
 end

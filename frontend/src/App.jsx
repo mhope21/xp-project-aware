@@ -21,9 +21,10 @@ import AddNew from './components/pages/AddNew';
 import NewKitItem from './components/NewKitItem';
 import AddItemToKit from './components/AddItemToKit';
 import UserProfile from './components/pages/UserProfile';
-import SpeakerCalendar from './components/SpeakerCalendar';
 import { AuthContext } from './components/auth/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import SuccessPage from './components/pages/SuccessPage';
+import CancelPage from './components/pages/CancelPage';
 
 
 
@@ -48,6 +49,8 @@ function App() {
             <Route path="/orders" element={<RequestKit />} />
             <Route path="/registration" element={<Registration />} />
             <Route path="/speaker" element={<RequestSpeaker/>}/>
+            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/cancel" element={<CancelPage />} />
             <Route path="/login" element={<Login />}/>
             <Route path="/authenticated/*" element={
               <ProtectedRoute>

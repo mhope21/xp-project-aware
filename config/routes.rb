@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "/current_user", to: "current_user#show"
+  post "/webhooks/stripe", to: "webhooks#stripe"
   devise_for :users, path: "", path_names: {
     sign_in: "login",
     sign_out: "logout",
@@ -29,7 +30,12 @@ Rails.application.routes.draw do
           get "profile"
         end
       end
-      resources :donations
+      resources :donations do
+        collection do
+          get "success"
+          get "cancel"
+        end
+      end
       resources :organizations do
         post "create_and_assign_to_user", on: :collection
         resources :addresses, only: [ :create, :update, :destroy ]
